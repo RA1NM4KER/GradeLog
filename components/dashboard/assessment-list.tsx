@@ -16,23 +16,36 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { formatPercent } from "@/lib/grade-utils";
+import {
+  formatPercent,
+  getAssessmentCategoryLabel,
+  getAssessmentPercent,
+  getAssessmentStatus,
+  getGroupedAssessmentMetrics,
+  isGroupedAssessment,
+} from "@/lib/grade-utils";
 import { Assessment } from "@/lib/types";
 
 interface AssessmentListProps {
   assessments: Assessment[];
+  className?: string;
+  contentClassName?: string;
 }
 
-export function AssessmentList({ assessments }: AssessmentListProps) {
+export function AssessmentList({
+  assessments,
+  className,
+  contentClassName,
+}: AssessmentListProps) {
   const columns = useMemo<ColumnDef<Assessment>[]>(
     () => [
       {
         accessorKey: "name",
-        header: "Assessment",
+        header: "Assignment",
         cell: ({ row }) => {
           const assessment = row.original;
           const statusIcon =
-            assessment.status === "completed" ? (
+            getAssessmentStatus(assessment) === "completed" ? (
               <CheckCircle2 className="h-4 w-4 text-stone-900" />
             ) : (
               <CircleDashed className="h-4 w-4 text-stone-500" />
@@ -46,7 +59,9 @@ export function AssessmentList({ assessments }: AssessmentListProps) {
               <div>
                 <p className="font-medium text-stone-900">{assessment.name}</p>
                 <p className="text-xs uppercase tracking-[0.18em] text-stone-500">
-                  {assessment.category}
+                  {isGroupedAssessment(assessment)
+                    ? `${getAssessmentCategoryLabel(assessment)} · ${getGroupedAssessmentMetrics(assessment).progressLabel}`
+                    : getAssessmentCategoryLabel(assessment)}
                 </p>
               </div>
             </div>
@@ -67,6 +82,26 @@ export function AssessmentList({ assessments }: AssessmentListProps) {
         header: "Result",
         cell: ({ row }) => {
           const assessment = row.original;
+
+          if (isGroupedAssessment(assessment)) {
+            const metrics = getGroupedAssessmentMetrics(assessment);
+            if (metrics.currentPercent === null) {
+              return <span className="text-stone-400">Awaiting marks</span>;
+            }
+
+            return (
+              <div>
+                <p className="font-medium text-stone-900">
+                  {formatPercent(metrics.currentPercent)}
+                </p>
+                <p className="text-xs text-stone-500">
+                  {metrics.progressLabel} ·{" "}
+                  {formatPercent(metrics.weightedContribution)}
+                </p>
+              </div>
+            );
+          }
+
           if (assessment.scoreAchieved === null) {
             return <span className="text-stone-400">Awaiting mark</span>;
           }
@@ -89,7 +124,7 @@ export function AssessmentList({ assessments }: AssessmentListProps) {
         cell: ({ row }) => (
           <div className="inline-flex items-center rounded-full border border-stone-200 bg-stone-100/80 px-3 py-1 text-xs font-semibold capitalize text-stone-700">
             <Dot className="-ml-1 h-4 w-4" />
-            {row.original.status}
+            {getAssessmentStatus(row.original)}
           </div>
         ),
       },
@@ -104,19 +139,19 @@ export function AssessmentList({ assessments }: AssessmentListProps) {
   });
 
   return (
-    <Card>
-      <CardHeader className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+    <Card className={className}>
+      <CardHeader className="flex flex-col gap-2 pb-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <CardTitle>Assessment breakdown</CardTitle>
-          <CardDescription>
-            Each weighting is explicit, so your progress stays auditable.
-          </CardDescription>
+          <CardTitle>Assignment breakdown</CardTitle>
+          <CardDescription>All graded items in one place.</CardDescription>
         </div>
       </CardHeader>
       <CardContent className="overflow-hidden pt-0">
-        <div className="hidden overflow-hidden rounded-[24px] border border-stone-200 md:block">
+        <div
+          className={`hidden overflow-auto rounded-[24px] border border-stone-200 md:block ${contentClassName ?? ""}`}
+        >
           <table className="w-full text-left">
-            <thead className="bg-stone-100/80 text-xs uppercase tracking-[0.2em] text-stone-500">
+            <thead className="sticky top-0 bg-stone-100/95 text-xs uppercase tracking-[0.2em] text-stone-500 backdrop-blur">
               {table.getHeaderGroups().map((headerGroup) => (
                 <tr key={headerGroup.id}>
                   {headerGroup.headers.map((header) => (
@@ -155,7 +190,9 @@ export function AssessmentList({ assessments }: AssessmentListProps) {
           </table>
         </div>
 
-        <div className="space-y-3 md:hidden">
+        <div
+          className={`space-y-3 overflow-auto md:hidden ${contentClassName ?? ""}`}
+        >
           {assessments.map((assessment) => (
             <div
               key={assessment.id}
@@ -167,11 +204,13 @@ export function AssessmentList({ assessments }: AssessmentListProps) {
                     {assessment.name}
                   </p>
                   <p className="mt-1 text-xs uppercase tracking-[0.18em] text-stone-500">
-                    {assessment.category}
+                    {isGroupedAssessment(assessment)
+                      ? `${getAssessmentCategoryLabel(assessment)} · ${getGroupedAssessmentMetrics(assessment).progressLabel}`
+                      : getAssessmentCategoryLabel(assessment)}
                   </p>
                 </div>
                 <div className="rounded-full border border-stone-200 bg-stone-100/80 px-3 py-1 text-xs font-semibold capitalize text-stone-700">
-                  {assessment.status}
+                  {getAssessmentStatus(assessment)}
                 </div>
               </div>
               <div className="mt-4 grid grid-cols-3 gap-3 text-sm text-stone-600">
@@ -192,9 +231,13 @@ export function AssessmentList({ assessments }: AssessmentListProps) {
                     Result
                   </p>
                   <p className="mt-1">
-                    {assessment.scoreAchieved === null
-                      ? "Pending"
-                      : `${assessment.scoreAchieved}/${assessment.totalPossible}`}
+                    {isGroupedAssessment(assessment)
+                      ? getAssessmentPercent(assessment) === null
+                        ? "Pending"
+                        : `${formatPercent(getAssessmentPercent(assessment) ?? 0)} · ${formatPercent(getGroupedAssessmentMetrics(assessment).weightedContribution)}`
+                      : assessment.scoreAchieved === null
+                        ? "Pending"
+                        : `${assessment.scoreAchieved}/${assessment.totalPossible}`}
                   </p>
                 </div>
               </div>

@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import { ReactNode, SyntheticEvent, useState } from "react";
 
 import {
   Dialog,
@@ -16,48 +16,83 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Course } from "@/lib/types";
 
+const defaultGradeBands = [
+  { id: "grade-band-a", label: "A", threshold: 80 },
+  { id: "grade-band-b", label: "B", threshold: 70 },
+  { id: "grade-band-c", label: "C", threshold: 60 },
+  { id: "grade-band-d", label: "D", threshold: 50 },
+];
+
 interface CourseDialogProps {
-  onCreateCourse: (course: Course) => void;
+  onSaveCourse: (course: Course) => void;
+  triggerLabel?: string;
+  triggerVariant?: "default" | "secondary" | "outline" | "ghost";
+  course?: Course;
+  triggerAsChild?: boolean;
+  triggerChildren?: ReactNode;
 }
 
-export function CourseDialog({ onCreateCourse }: CourseDialogProps) {
+export function CourseDialog({
+  onSaveCourse,
+  triggerLabel = "Add course",
+  triggerVariant = "default",
+  course,
+  triggerAsChild = false,
+  triggerChildren,
+}: CourseDialogProps) {
   const [open, setOpen] = useState(false);
   const [form, setForm] = useState({
-    code: "",
-    name: "",
-    instructor: "",
-    credits: "12",
+    code: course?.code ?? "",
+    name: course?.name ?? "",
+    instructor: course?.instructor ?? "",
+    credits: String(course?.credits ?? 12),
   });
 
-  function submit(event: FormEvent<HTMLFormElement>) {
+  function submit(event: SyntheticEvent<HTMLFormElement, SubmitEvent>) {
     event.preventDefault();
 
-    const course: Course = {
-      id: crypto.randomUUID(),
+    const nextCourse: Course = {
+      id: course?.id ?? crypto.randomUUID(),
       code: form.code.toUpperCase(),
       name: form.name,
       instructor: form.instructor,
       credits: Number(form.credits),
-      accent: "from-stone-950 via-stone-900 to-stone-700",
-      assessments: [],
+      accent: course?.accent ?? "from-stone-950 via-stone-900 to-stone-700",
+      gradeBands:
+        course?.gradeBands ??
+        defaultGradeBands.map((band) => ({
+          ...band,
+          id: `${form.code.toLowerCase() || "course"}-${band.id}`,
+        })),
+      assessments: course?.assessments ?? [],
     };
 
-    onCreateCourse(course);
-    setForm({ code: "", name: "", instructor: "", credits: "12" });
+    onSaveCourse(nextCourse);
+    setForm({
+      code: course?.code ?? "",
+      name: course?.name ?? "",
+      instructor: course?.instructor ?? "",
+      credits: String(course?.credits ?? 12),
+    });
     setOpen(false);
   }
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button>Add course</Button>
-      </DialogTrigger>
+      {triggerChildren ? (
+        <DialogTrigger asChild={triggerAsChild}>
+          {triggerChildren}
+        </DialogTrigger>
+      ) : (
+        <DialogTrigger asChild>
+          <Button variant={triggerVariant}>{triggerLabel}</Button>
+        </DialogTrigger>
+      )}
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Create a new course</DialogTitle>
+          <DialogTitle>{course ? "Edit module" : "Add module"}</DialogTitle>
           <DialogDescription>
-            Set up the module shell now and layer in assessments when you have
-            the brief.
+            {course ? "Update module details." : "Create a module."}
           </DialogDescription>
         </DialogHeader>
         <form className="space-y-4" onSubmit={submit}>
@@ -69,9 +104,10 @@ export function CourseDialog({ onCreateCourse }: CourseDialogProps) {
                 onChange={(event) =>
                   setForm((current) => ({
                     ...current,
-                    code: event.target.value,
+                    code: event.target.value.toUpperCase().slice(0, 7),
                   }))
                 }
+                maxLength={7}
                 placeholder="ECO214"
                 required
                 value={form.code}
@@ -107,7 +143,7 @@ export function CourseDialog({ onCreateCourse }: CourseDialogProps) {
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="course-instructor">Instructor</Label>
+            <Label htmlFor="course-instructor">Lecturer</Label>
             <Input
               id="course-instructor"
               onChange={(event) =>
@@ -122,7 +158,9 @@ export function CourseDialog({ onCreateCourse }: CourseDialogProps) {
             />
           </div>
           <DialogFooter>
-            <Button type="submit">Create course</Button>
+            <Button type="submit">
+              {course ? "Save changes" : "Create module"}
+            </Button>
           </DialogFooter>
         </form>
       </DialogContent>

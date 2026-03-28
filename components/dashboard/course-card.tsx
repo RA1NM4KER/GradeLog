@@ -86,7 +86,7 @@ export function CourseCard({ course, isActive, onSelect }: CourseCardProps) {
                 </div>
                 <div className="flex items-center gap-2">
                   <GraduationCap className="h-4 w-4 text-stone-500" />
-                  <span>{course.assessments.length} graded checkpoints</span>
+                  <span>{course.assessments.length} graded assignments</span>
                 </div>
               </div>
             </div>
@@ -94,7 +94,7 @@ export function CourseCard({ course, isActive, onSelect }: CourseCardProps) {
 
           <div className="flex items-center justify-between">
             <p className="text-sm text-stone-500">
-              Open the course to inspect weighting and target scenarios.
+              Open the course to inspect weighting and grading scenarios.
             </p>
             <Button variant="ghost" size="sm" className="gap-2">
               View details

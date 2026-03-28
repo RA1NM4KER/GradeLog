@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import { SyntheticEvent, useState } from "react";
 
 import {
   Dialog,
@@ -14,60 +14,67 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Assessment, Course } from "@/lib/types";
+import { Course, SingleAssessment } from "@/lib/types";
 
 interface AssessmentDialogProps {
   course: Course;
-  onCreateAssessment: (courseId: string, assessment: Assessment) => void;
+  onSaveAssessment: (courseId: string, assessment: SingleAssessment) => void;
+  triggerLabel?: string;
+  triggerVariant?: "default" | "secondary" | "outline" | "ghost";
+  assessment?: SingleAssessment;
 }
 
 export function AssessmentDialog({
   course,
-  onCreateAssessment,
+  onSaveAssessment,
+  triggerLabel = "Add assignment",
+  triggerVariant = "outline",
+  assessment,
 }: AssessmentDialogProps) {
   const [open, setOpen] = useState(false);
   const [form, setForm] = useState({
-    name: "",
-    weight: "20",
-    totalPossible: "100",
-    dueDate: "",
+    name: assessment?.name ?? "",
+    weight: String(assessment?.weight ?? 20),
   });
 
-  function submit(event: FormEvent<HTMLFormElement>) {
+  function submit(event: SyntheticEvent<HTMLFormElement, SubmitEvent>) {
     event.preventDefault();
 
-    const assessment: Assessment = {
-      id: crypto.randomUUID(),
+    const nextAssessment: SingleAssessment = {
+      kind: "single",
+      id: assessment?.id ?? crypto.randomUUID(),
       name: form.name,
       weight: Number(form.weight),
-      scoreAchieved: null,
-      totalPossible: Number(form.totalPossible),
-      dueDate: form.dueDate,
-      category: "assignment",
-      status: "ongoing",
+      scoreAchieved: assessment?.scoreAchieved ?? null,
+      totalPossible: 100,
+      dueDate: assessment?.dueDate ?? "",
+      category: assessment?.category ?? "assignment",
+      status: assessment?.status ?? "ongoing",
     };
 
-    onCreateAssessment(course.id, assessment);
-    setForm({ name: "", weight: "20", totalPossible: "100", dueDate: "" });
+    onSaveAssessment(course.id, nextAssessment);
+    setForm({
+      name: assessment?.name ?? "",
+      weight: String(assessment?.weight ?? 20),
+    });
     setOpen(false);
   }
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline">Add assessment</Button>
+        <Button variant={triggerVariant}>{triggerLabel}</Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Add an assessment</DialogTitle>
-          <DialogDescription>
-            Attach a new grading checkpoint to {course.code} and keep the
-            weighting explicit.
-          </DialogDescription>
+          <DialogTitle>
+            {assessment ? "Edit assignment" : "Add assignment"}
+          </DialogTitle>
+          <DialogDescription>{course.code}</DialogDescription>
         </DialogHeader>
         <form className="space-y-4" onSubmit={submit}>
           <div className="space-y-2">
-            <Label htmlFor="assessment-name">Assessment name</Label>
+            <Label htmlFor="assessment-name">Assignment name</Label>
             <Input
               id="assessment-name"
               onChange={(event) =>
@@ -78,7 +85,7 @@ export function AssessmentDialog({
               value={form.name}
             />
           </div>
-          <div className="grid gap-4 sm:grid-cols-3">
+          <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-2">
               <Label htmlFor="assessment-weight">Weight (%)</Label>
               <Input
@@ -96,40 +103,11 @@ export function AssessmentDialog({
                 value={form.weight}
               />
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="assessment-total">Total points</Label>
-              <Input
-                id="assessment-total"
-                min={1}
-                onChange={(event) =>
-                  setForm((current) => ({
-                    ...current,
-                    totalPossible: event.target.value,
-                  }))
-                }
-                required
-                type="number"
-                value={form.totalPossible}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="assessment-date">Due label</Label>
-              <Input
-                id="assessment-date"
-                onChange={(event) =>
-                  setForm((current) => ({
-                    ...current,
-                    dueDate: event.target.value,
-                  }))
-                }
-                placeholder="May 14"
-                required
-                value={form.dueDate}
-              />
-            </div>
           </div>
           <DialogFooter>
-            <Button type="submit">Save assessment</Button>
+            <Button type="submit">
+              {assessment ? "Save changes" : "Save assignment"}
+            </Button>
           </DialogFooter>
         </form>
       </DialogContent>

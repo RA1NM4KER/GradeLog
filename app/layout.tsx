@@ -2,8 +2,10 @@ import type { Metadata } from "next";
 
 import { AppShell } from "@/components/layout/app-shell";
 import { TopNav } from "@/components/layout/top-nav";
+import { WorkspaceProvider } from "@/components/workspace/workspace-provider";
 
 import "./globals.css";
+import React from "react";
 
 export const metadata: Metadata = {
   title: "Gradeflow",
@@ -19,10 +21,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="font-sans antialiased">
-        <AppShell>
-          <TopNav />
-          {children}
-        </AppShell>
+        <WorkspaceProvider>
+          <AppShell>
+            <TopNav />
+            {children}
+          </AppShell>
+        </WorkspaceProvider>
       </body>
     </html>
   );

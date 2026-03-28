@@ -1,0 +1,11 @@
+{
+  "semesters": [
+    {
+      "id": "semester-1-2026",
+      "name": "Semester 1 2026",
+      "periodLabel": "February to June",
+      "courses": []
+    }
+  ],
+  "selectedSemesterId": "semester-1-2026"
+}

@@ -1,14 +1,61 @@
 export type AssessmentStatus = "completed" | "ongoing";
-
-export interface Assessment {
+export type SingleAssessmentCategory =
+  | "exam"
+  | "project"
+  | "quiz"
+  | "assignment"
+  | "presentation";
+export type GroupedAssessmentCategory = "tutorials";
+export interface AssessmentBase {
   id: string;
   name: string;
   weight: number;
+  dueDate: string;
+  status: AssessmentStatus;
+}
+
+export interface SingleAssessment extends AssessmentBase {
+  kind: "single";
   scoreAchieved: number | null;
   totalPossible: number;
-  dueDate: string;
-  category: "exam" | "project" | "quiz" | "assignment" | "presentation";
-  status: AssessmentStatus;
+  category: SingleAssessmentCategory;
+}
+
+export interface GroupedAssessmentItem {
+  id: string;
+  label: string;
+  scoreAchieved: number | null;
+  totalPossible: number;
+}
+
+export interface GroupedAssessmentBase extends AssessmentBase {
+  kind: "group";
+  dropLowest: number;
+  items: GroupedAssessmentItem[];
+}
+
+export interface TutorialsAssessment extends GroupedAssessmentBase {
+  category: "tutorials";
+}
+
+export type GroupedAssessment = TutorialsAssessment;
+
+export interface GroupedAssessmentDefinition {
+  category: GroupedAssessmentCategory;
+  label: string;
+  itemPrefix: string;
+  defaultName: string;
+  defaultWeight: number;
+  defaultItemCount: number;
+  defaultDropLowest: number;
+  dueDateLabel: string;
+}
+export type Assessment = SingleAssessment | GroupedAssessment;
+
+export interface GradeBand {
+  id: string;
+  label: string;
+  threshold: number;
 }
 
 export interface Course {
@@ -18,6 +65,7 @@ export interface Course {
   instructor: string;
   credits: number;
   accent: string;
+  gradeBands: GradeBand[];
   assessments: Assessment[];
 }
 
@@ -25,16 +73,8 @@ export interface Semester {
   id: string;
   name: string;
   periodLabel: string;
-  targetAverage: number;
   courses: Course[];
 }
-
-export interface SummaryMetric {
-  label: string;
-  value: string;
-  detail: string;
-}
-
 export interface RequiredScoreResult {
   achievable: boolean;
   neededAverage: number;

@@ -1,28 +1,145 @@
-import { Course, RequiredScoreResult, Semester } from "@/lib/types";
+import {
+  Assessment,
+  Course,
+  GradeBand,
+  GroupedAssessment,
+  RequiredScoreResult,
+  Semester,
+  SingleAssessment,
+} from "@/lib/types";
+import { getGroupedAssessmentDefinition } from "@/lib/grouped-assessment-utils";
 
 function round(value: number, digits = 1) {
   const factor = 10 ** digits;
   return Math.round(value * factor) / factor;
 }
 
+export function isGroupedAssessment(
+  assessment: Assessment,
+): assessment is GroupedAssessment {
+  return assessment.kind === "group";
+}
+
+export function isSingleAssessment(
+  assessment: Assessment,
+): assessment is SingleAssessment {
+  return assessment.kind === "single";
+}
+
+function getSinglePercent(assessment: SingleAssessment) {
+  if (assessment.scoreAchieved === null || assessment.totalPossible <= 0) {
+    return null;
+  }
+
+  return (assessment.scoreAchieved / assessment.totalPossible) * 100;
+}
+
+export function getGroupedAssessmentMetrics(assessment: GroupedAssessment) {
+  const gradedItems = assessment.items.filter(
+    (item) => item.scoreAchieved !== null,
+  );
+  const sorted = [...gradedItems].sort((left, right) => {
+    const leftPercent = (left.scoreAchieved ?? 0) / left.totalPossible;
+    const rightPercent = (right.scoreAchieved ?? 0) / right.totalPossible;
+    return leftPercent - rightPercent;
+  });
+
+  const appliedDropCount =
+    gradedItems.length > assessment.dropLowest
+      ? assessment.dropLowest
+      : Math.max(gradedItems.length - 1, 0);
+  const keptItems = sorted.slice(appliedDropCount);
+  const keptAverage =
+    keptItems.length > 0
+      ? keptItems.reduce(
+          (sum, item) => sum + (item.scoreAchieved ?? 0) / item.totalPossible,
+          0,
+        ) / keptItems.length
+      : null;
+
+  const effectiveItemCount = Math.max(
+    assessment.items.length - assessment.dropLowest,
+    1,
+  );
+  const currentWeight =
+    (assessment.weight * keptItems.length) / effectiveItemCount;
+  const weightedContribution = (keptAverage ?? 0) * currentWeight;
+  const progressLabel = `${gradedItems.length}/${assessment.items.length} graded`;
+
+  return {
+    currentPercent: keptAverage === null ? null : round(keptAverage * 100),
+    currentWeight: round(currentWeight, 2),
+    weightedContribution: round(weightedContribution, 2),
+    progressLabel,
+    keptCount: keptItems.length,
+    gradedCount: gradedItems.length,
+    totalCount: assessment.items.length,
+    dropCount: assessment.dropLowest,
+    appliedDropCount,
+    status:
+      gradedItems.length >= assessment.items.length ? "completed" : "ongoing",
+  };
+}
+
+export function getAssessmentCategoryLabel(assessment: Assessment) {
+  if (isSingleAssessment(assessment)) {
+    return assessment.category;
+  }
+
+  return getGroupedAssessmentDefinition(assessment.category).label;
+}
+
+export function getAssessmentPercent(assessment: Assessment) {
+  if (isSingleAssessment(assessment)) {
+    const percent = getSinglePercent(assessment);
+    return percent === null ? null : round(percent);
+  }
+
+  return getGroupedAssessmentMetrics(assessment).currentPercent;
+}
+
+export function getAssessmentCurrentWeight(assessment: Assessment) {
+  if (isSingleAssessment(assessment)) {
+    return assessment.scoreAchieved === null ? 0 : assessment.weight;
+  }
+
+  return getGroupedAssessmentMetrics(assessment).currentWeight;
+}
+
+export function getAssessmentWeightedContribution(assessment: Assessment) {
+  if (isSingleAssessment(assessment)) {
+    const percent = getSinglePercent(assessment);
+    return percent === null ? 0 : (percent / 100) * assessment.weight;
+  }
+
+  return getGroupedAssessmentMetrics(assessment).weightedContribution;
+}
+
+export function getAssessmentRemainingWeight(assessment: Assessment) {
+  return round(
+    Math.max(assessment.weight - getAssessmentCurrentWeight(assessment), 0),
+    2,
+  );
+}
+
+export function getAssessmentStatus(assessment: Assessment) {
+  if (isSingleAssessment(assessment)) {
+    return assessment.scoreAchieved === null ? "ongoing" : assessment.status;
+  }
+
+  return getGroupedAssessmentMetrics(assessment).status;
+}
+
 export function getCompletedWeight(course: Course) {
-  return course.assessments
-    .filter((assessment) => assessment.status === "completed")
-    .reduce((sum, assessment) => sum + assessment.weight, 0);
+  return course.assessments.reduce((sum, assessment) => {
+    return sum + getAssessmentCurrentWeight(assessment);
+  }, 0);
 }
 
 export function getSecuredContribution(course: Course) {
-  return course.assessments
-    .filter(
-      (assessment) =>
-        assessment.status === "completed" && assessment.scoreAchieved !== null,
-    )
-    .reduce((sum, assessment) => {
-      const scoreAchieved = assessment.scoreAchieved ?? 0;
-      return (
-        sum + (scoreAchieved / assessment.totalPossible) * assessment.weight
-      );
-    }, 0);
+  return course.assessments.reduce((sum, assessment) => {
+    return sum + getAssessmentWeightedContribution(assessment);
+  }, 0);
 }
 
 export function getCourseCurrentGrade(course: Course) {
@@ -33,22 +150,36 @@ export function getCourseCurrentGrade(course: Course) {
 
   return round((getSecuredContribution(course) / completedWeight) * 100);
 }
-
-export function getCourseFinalGrade(course: Course) {
-  const securedContribution = getSecuredContribution(course);
-  const remainingWeight = getRemainingWeight(course);
-
-  if (remainingWeight > 0) {
-    return round((securedContribution / (100 - remainingWeight)) * 100);
-  }
-
-  return round(securedContribution);
+export function getCourseGuaranteedGrade(course: Course) {
+  return round(getSecuredContribution(course));
 }
 
 export function getRemainingWeight(course: Course) {
-  return course.assessments
-    .filter((assessment) => assessment.status === "ongoing")
-    .reduce((sum, assessment) => sum + assessment.weight, 0);
+  return round(
+    course.assessments.reduce((sum, assessment) => {
+      return sum + getAssessmentRemainingWeight(assessment);
+    }, 0),
+    2,
+  );
+}
+
+export function getSortedGradeBands(course: Course) {
+  return [...course.gradeBands].sort(
+    (left, right) => right.threshold - left.threshold,
+  );
+}
+
+export function getGradeBandState(
+  course: Course,
+  band: GradeBand,
+): "guaranteed" | "reachable" | "unreachable" {
+  if (getCourseGuaranteedGrade(course) >= band.threshold) {
+    return "guaranteed";
+  }
+
+  return calculateRequiredScore(course, band.threshold).achievable
+    ? "reachable"
+    : "unreachable";
 }
 
 export function calculateRequiredScore(
@@ -147,20 +278,14 @@ export function gradeToGpa(grade: number) {
   if (grade >= 50) return 1.7;
   return 0;
 }
-
-export function getSemesterCreditsCompleted(semester: Semester) {
-  return semester.courses.reduce((sum, course) => {
-    return sum + (getCompletedWeight(course) >= 100 ? course.credits : 0);
-  }, 0);
-}
-
 export function formatPercent(value: number) {
   return `${round(value)}%`;
 }
 
 export function getAssessmentPace(course: Course) {
-  const completed = course.assessments.filter(
-    (assessment) => assessment.status === "completed",
-  ).length;
+  const completed = course.assessments.reduce((sum, assessment) => {
+    return sum + (getAssessmentStatus(assessment) === "completed" ? 1 : 0);
+  }, 0);
+
   return `${completed}/${course.assessments.length} done`;
 }
