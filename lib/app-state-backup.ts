@@ -1,12 +1,15 @@
 import {
+  APP_STATE_VERSION,
   AppState,
-  migrateAppState,
+  validateImportedAppState,
   serializePersistedAppState,
 } from "@/lib/app-state";
 
 export interface AppStateBackupSummary {
+  assessmentCount: number;
   moduleCount: number;
   semesterCount: number;
+  version: number;
 }
 
 function buildBackupFileName(date = new Date()) {
@@ -18,11 +21,21 @@ export function getAppStateBackupSummary(
   state: AppState,
 ): AppStateBackupSummary {
   return {
+    assessmentCount: state.semesters.reduce(
+      (count, semester) =>
+        count +
+        semester.modules.reduce(
+          (moduleCount, module) => moduleCount + module.assessments.length,
+          0,
+        ),
+      0,
+    ),
     semesterCount: state.semesters.length,
     moduleCount: state.semesters.reduce(
       (count, semester) => count + semester.modules.length,
       0,
     ),
+    version: APP_STATE_VERSION,
   };
 }
 
@@ -42,5 +55,5 @@ export function downloadAppStateBackup(state: AppState) {
 
 export async function importAppStateBackup(file: File): Promise<AppState> {
   const serializedState = await file.text();
-  return migrateAppState(JSON.parse(serializedState), true);
+  return validateImportedAppState(JSON.parse(serializedState));
 }

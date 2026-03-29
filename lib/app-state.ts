@@ -17,9 +17,15 @@ export interface PersistedAppState extends AppState {
   version: number;
 }
 
+export interface PersistedAppStateMetadata {
+  snapshot: string;
+  updatedAt: string;
+  version: number;
+}
+
 type RecordValue = Record<string, unknown>;
 
-const LEGACY_APP_STATE_VERSION = 1;
+const UNVERSIONED_APP_STATE_VERSION = 1;
 export const APP_STATE_VERSION = 2;
 
 export function getDefaultAppState(): AppState {
@@ -207,6 +213,10 @@ export function normalizeAppState(state?: Partial<AppState> | null): AppState {
   };
 }
 
+function normalizePersistedAppState(rawState: RecordValue) {
+  return normalizeAppState(extractRawAppState(rawState));
+}
+
 export function toPersistedAppState(state: AppState): PersistedAppState {
   return {
     version: APP_STATE_VERSION,
@@ -214,12 +224,22 @@ export function toPersistedAppState(state: AppState): PersistedAppState {
   };
 }
 
-function migrateLegacyAppState(rawState: RecordValue): PersistedAppState {
-  return toPersistedAppState(extractRawAppState(rawState));
+function migrateUnversionedAppState(rawState: RecordValue): PersistedAppState {
+  return toPersistedAppState(normalizePersistedAppState(rawState));
 }
 
 function migrateVersion2AppState(rawState: RecordValue): PersistedAppState {
-  return toPersistedAppState(extractRawAppState(rawState));
+  return toPersistedAppState(normalizePersistedAppState(rawState));
+}
+
+function resolveRawAppStateVersion(rawState: RecordValue) {
+  return typeof rawState.version === "number"
+    ? rawState.version
+    : UNVERSIONED_APP_STATE_VERSION;
+}
+
+export function validateImportedAppState(rawState: unknown) {
+  return migrateAppState(rawState, true);
 }
 
 export function migrateAppState(
@@ -242,10 +262,7 @@ export function migrateAppState(
     );
   }
 
-  const rawVersion =
-    typeof rawState.version === "number"
-      ? rawState.version
-      : LEGACY_APP_STATE_VERSION;
+  const rawVersion = resolveRawAppStateVersion(rawState);
 
   if (rawVersion > APP_STATE_VERSION) {
     throw new Error(
@@ -254,13 +271,28 @@ export function migrateAppState(
   }
 
   switch (rawVersion) {
-    case LEGACY_APP_STATE_VERSION:
-      return migrateLegacyAppState(rawState);
+    case UNVERSIONED_APP_STATE_VERSION:
+      return migrateUnversionedAppState(rawState);
     case APP_STATE_VERSION:
       return migrateVersion2AppState(rawState);
     default:
       throw new Error(`Unsupported Gradeflow state version: ${rawVersion}.`);
   }
+}
+
+export function getPersistedAppStateSnapshot(state: AppState) {
+  return JSON.stringify(toPersistedAppState(state));
+}
+
+export function getPersistedAppStateMetadata(
+  state: AppState,
+  updatedAt = new Date().toISOString(),
+): PersistedAppStateMetadata {
+  return {
+    snapshot: getPersistedAppStateSnapshot(state),
+    updatedAt,
+    version: APP_STATE_VERSION,
+  };
 }
 
 export function serializePersistedAppState(state: AppState) {

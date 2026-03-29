@@ -3,6 +3,7 @@
 import {
   createContext,
   ReactNode,
+  useCallback,
   useContext,
   useEffect,
   useMemo,
@@ -76,25 +77,24 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
     }
   }, [experimentAppState, pathname]);
 
-  const updateActiveAppState = useMemo(
-    () =>
-      function updateActiveAppState(
-        updater: AppState | ((current: AppState) => AppState),
-      ) {
-        if (!persistedAppState) {
-          return;
-        }
+  const applyWorkspaceState = useCallback(
+    (updater: AppState | ((current: AppState) => AppState)) => {
+      if (!persistedAppState) {
+        return;
+      }
 
-        if (experimentAppState) {
-          setExperimentAppState((currentState) => {
-            const baseState = currentState ?? persistedAppState;
-            return typeof updater === "function" ? updater(baseState) : updater;
-          });
-          return;
-        }
+      if (experimentAppState) {
+        setExperimentAppState((currentState) => {
+          const experimentBaseState = currentState ?? persistedAppState;
+          return typeof updater === "function"
+            ? updater(experimentBaseState)
+            : updater;
+        });
+        return;
+      }
 
-        replacePersistedAppState(updater);
-      },
+      replacePersistedAppState(updater);
+    },
     [experimentAppState, persistedAppState, replacePersistedAppState],
   );
 
@@ -134,32 +134,32 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
         setExperimentAppState(null);
       },
       addSemester: (nextSemester) => {
-        updateActiveAppState((currentState) =>
+        applyWorkspaceState((currentState) =>
           appStateActions.addSemester(currentState, nextSemester),
         );
       },
       deleteSemester: (semesterId) => {
-        updateActiveAppState((currentState) =>
+        applyWorkspaceState((currentState) =>
           appStateActions.deleteSemester(currentState, semesterId),
         );
       },
       updateSemester: (semesterId, updates) => {
-        updateActiveAppState((currentState) =>
+        applyWorkspaceState((currentState) =>
           appStateActions.updateSemester(currentState, semesterId, updates),
         );
       },
       selectSemester: (semesterId) => {
-        updateActiveAppState((currentState) =>
+        applyWorkspaceState((currentState) =>
           appStateActions.selectSemester(currentState, semesterId),
         );
       },
       addModule: (module) => {
-        updateActiveAppState((currentState) =>
+        applyWorkspaceState((currentState) =>
           appStateActions.addModule(currentState, semester.id, module),
         );
       },
       updateModule: (moduleId, updates) => {
-        updateActiveAppState((currentState) =>
+        applyWorkspaceState((currentState) =>
           appStateActions.updateModule(
             currentState,
             semester.id,
@@ -169,7 +169,7 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
         );
       },
       addAssessment: (moduleId, assessment) => {
-        updateActiveAppState((currentState) =>
+        applyWorkspaceState((currentState) =>
           appStateActions.addAssessment(
             currentState,
             semester.id,
@@ -179,7 +179,7 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
         );
       },
       updateAssessment: (moduleId, nextAssessment) => {
-        updateActiveAppState((currentState) =>
+        applyWorkspaceState((currentState) =>
           appStateActions.updateAssessment(
             currentState,
             semester.id,
@@ -189,7 +189,7 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
         );
       },
       reorderAssessments: (moduleId, fromAssessmentId, toAssessmentId) => {
-        updateActiveAppState((currentState) =>
+        applyWorkspaceState((currentState) =>
           appStateActions.reorderAssessments(
             currentState,
             semester.id,
@@ -200,7 +200,7 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
         );
       },
       recordGrade: (moduleId, assessmentId, scoreAchieved, totalPossible) => {
-        updateActiveAppState((currentState) =>
+        applyWorkspaceState((currentState) =>
           appStateActions.recordGrade(
             currentState,
             semester.id,
@@ -214,10 +214,10 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
     };
   }, [
     activeAppState,
+    applyWorkspaceState,
     isExperimenting,
     persistedAppState,
     replacePersistedAppState,
-    updateActiveAppState,
   ]);
 
   if (!isHydrated || !value) {
@@ -237,8 +237,8 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
       />
     ) : (
       <WorkspaceBootState
-        description="Opening your local workspace and restoring your saved semesters."
-        title="Loading Gradeflow"
+        description="Restoring your saved semesters, modules, and assessments."
+        title="Opening workspace"
       />
     );
   }

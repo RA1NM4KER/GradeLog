@@ -21,8 +21,8 @@ export function WorkspaceBootState({
 }) {
   return (
     <div className="mx-auto flex min-h-[calc(100vh-5.5rem)] max-w-5xl items-center px-5 py-8 sm:px-8">
-      <Card className="w-full">
-        <CardHeader>
+      <Card className="w-full max-w-2xl bg-white/85 shadow-card">
+        <CardHeader className="space-y-2">
           <CardTitle className="text-base">{title}</CardTitle>
           <CardDescription className="max-w-xl text-sm leading-6">
             {description}

@@ -57,6 +57,8 @@ async function findNavigationFallback(request) {
     return exactMatch;
   }
 
+  // These are the intentional app-shell fallbacks for first-load offline opens
+  // when a deep link has not been visited yet.
   for (const fallbackUrl of NAVIGATION_FALLBACK_URLS) {
     const fallbackResponse = await caches.match(fallbackUrl);
 

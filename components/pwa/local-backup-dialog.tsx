@@ -1,6 +1,6 @@
 "use client";
 
-import { ChangeEvent, useRef, useState } from "react";
+import { ChangeEvent, useMemo, useRef, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -26,15 +26,28 @@ export function LocalBackupDialog({
   appState: AppState;
   onRestoreAppState: (state: AppState) => void;
 }) {
+  const [open, setOpen] = useState(false);
   const inputRef = useRef<HTMLInputElement | null>(null);
   const [importError, setImportError] = useState<string | null>(null);
   const [isImporting, setIsImporting] = useState(false);
   const [pendingImport, setPendingImport] = useState<{
     fileName: string;
+    lastModified: string | null;
     state: AppState;
   } | null>(null);
 
   const summary = getAppStateBackupSummary(appState);
+  const pendingImportSummary = useMemo(
+    () =>
+      pendingImport ? getAppStateBackupSummary(pendingImport.state) : null,
+    [pendingImport],
+  );
+
+  function resetImportState() {
+    setImportError(null);
+    setIsImporting(false);
+    setPendingImport(null);
+  }
 
   async function handleFileChange(event: ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0];
@@ -51,6 +64,10 @@ export function LocalBackupDialog({
       const importedState = await importAppStateBackup(file);
       setPendingImport({
         fileName: file.name,
+        lastModified:
+          file.lastModified > 0
+            ? new Date(file.lastModified).toLocaleString()
+            : null,
         state: importedState,
       });
     } catch (error) {
@@ -70,21 +87,23 @@ export function LocalBackupDialog({
       return;
     }
 
-    const shouldReplace = window.confirm(
-      `Replace your current local Gradeflow data with "${pendingImport.fileName}"? This cannot be undone inside the app.`,
-    );
-
-    if (!shouldReplace) {
-      return;
-    }
-
     onRestoreAppState(pendingImport.state);
     setPendingImport(null);
     setImportError(null);
+    setOpen(false);
   }
 
   return (
-    <Dialog>
+    <Dialog
+      onOpenChange={(nextOpen) => {
+        setOpen(nextOpen);
+
+        if (!nextOpen) {
+          resetImportState();
+        }
+      }}
+      open={open}
+    >
       <DialogTrigger asChild>
         <button
           className="rounded-full border border-stone-200 bg-white/70 px-4 py-2 text-sm text-stone-700 transition hover:border-stone-300 hover:bg-white hover:text-stone-950"
@@ -97,8 +116,8 @@ export function LocalBackupDialog({
         <DialogHeader>
           <DialogTitle>Local backup</DialogTitle>
           <DialogDescription>
-            Export your private Gradeflow data to JSON or restore a local
-            backup.
+            Export your private Gradeflow data to JSON or restore a local backup
+            on this device.
           </DialogDescription>
         </DialogHeader>
 
@@ -108,8 +127,9 @@ export function LocalBackupDialog({
               Export current data
             </p>
             <p className="mt-1 text-sm leading-6 text-stone-600">
-              {summary.semesterCount} semesters and {summary.moduleCount}{" "}
-              modules will be saved to a local JSON file.
+              Version {summary.version}. {summary.semesterCount} semesters,{" "}
+              {summary.moduleCount} modules, and {summary.assessmentCount}{" "}
+              assessments will be saved to a local JSON file.
             </p>
             <Button
               className="mt-4"
@@ -125,8 +145,8 @@ export function LocalBackupDialog({
               Import backup
             </p>
             <p className="mt-1 text-sm leading-6 text-stone-600">
-              Importing replaces the current local state on this device after
-              confirmation.
+              Review the backup before replacing the current local state on this
+              device.
             </p>
             <input
               accept="application/json,.json"
@@ -160,11 +180,16 @@ export function LocalBackupDialog({
                   Ready to import {pendingImport.fileName}
                 </p>
                 <p className="mt-1 text-sm text-stone-600">
-                  {getAppStateBackupSummary(pendingImport.state).semesterCount}{" "}
-                  semesters and{" "}
-                  {getAppStateBackupSummary(pendingImport.state).moduleCount}{" "}
-                  modules detected.
+                  Version {pendingImportSummary?.version}.{" "}
+                  {pendingImportSummary?.semesterCount} semesters,{" "}
+                  {pendingImportSummary?.moduleCount} modules, and{" "}
+                  {pendingImportSummary?.assessmentCount} assessments detected.
                 </p>
+                {pendingImport.lastModified ? (
+                  <p className="mt-1 text-sm text-stone-500">
+                    File updated {pendingImport.lastModified}
+                  </p>
+                ) : null}
               </div>
             ) : null}
           </div>
@@ -176,7 +201,7 @@ export function LocalBackupDialog({
             onClick={confirmImport}
             type="button"
           >
-            Import backup
+            Replace local data
           </Button>
         </DialogFooter>
       </DialogContent>
