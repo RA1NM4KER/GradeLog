@@ -10,7 +10,7 @@ The core idea is simple:
 
 This project exists because grades feel more private than most student tools treat them. A lot of academic software assumes your marks should live in somebody else's database by default. Gradeflow takes the opposite stance: your grades should stay with you unless you explicitly choose otherwise.
 
-Right now the app is built to run locally and persist to a local JSON file. If this ever becomes a deployed product, grades should not just be "stored securely" in vague marketing terms. They should be end-to-end encrypted so the server is not casually trusted with the raw data.
+Right now the app is built to run locally and persist inside the browser with IndexedDB. If this ever becomes a deployed product, grades should not just be "stored securely" in vague marketing terms. They should be end-to-end encrypted so the server is not casually trusted with the raw data.
 
 ## What the project is trying to be
 
@@ -44,7 +44,8 @@ Today the app supports:
 - assignment tracking inside a module
 - grouped tutorial tracking with drop-lowest support
 - current-grade calculations, weighted contributions, and grade-band views
-- local persistence across refreshes
+- browser-local persistence across refreshes
+- installable offline-first behavior after the first load
 
 ## Privacy model
 
@@ -52,10 +53,9 @@ Gradeflow is local-first by design.
 
 Current behavior:
 
-- app state is written to `.gradeflow/state.json`
-- if no live state exists yet, the app seeds from `.gradeflow/state.template.json`
-- the live state file is git-ignored
+- app state is written to IndexedDB in the browser
 - the app does not require a remote database to function
+- the app shell can reopen offline after it has been loaded once
 
 This is not a temporary implementation detail. It is part of the product direction.
 
@@ -93,30 +93,22 @@ Open [http://localhost:3000](http://localhost:3000).
 
 ## Persistence
 
-Local state lives under:
+Local state lives in the browser via IndexedDB.
 
-```text
-.gradeflow/state.json
-```
+On first launch, Gradeflow seeds from the app's default semester template. After that, all semester, module, and assessment changes are stored locally in the browser with no backend or cloud dependency.
 
-Tracked starter state lives at:
-
-```text
-.gradeflow/state.template.json
-```
-
-This means the repo can ship with a starting structure without committing your ongoing personal grade data.
+The app also ships with a minimal service worker and web app manifest so it can be installed and reopened offline after the first successful load.
 
 ## Project structure
 
 High-level layout:
 
-- `app/` — routes and API endpoints
+- `app/` — routes, manifest, service worker, and app metadata
 - `components/landing/` — semester-first root page
 - `components/workspace/` — semester and module workspace UI
 - `components/dashboard/` — shared module and form components
 - `components/ui/` — base UI primitives
-- `lib/` — types, grade calculations, semester utilities, and local state helpers
+- `lib/` — types, grade calculations, semester utilities, and client-side state helpers
 
 Important files:
 
@@ -126,7 +118,7 @@ Important files:
 - [components/workspace/module-screen.tsx](/components/workspace/module-screen.tsx) — module detail screen
 - [components/workspace/workspace-provider.tsx](/components/workspace/workspace-provider.tsx) — shared client state
 - [lib/grade-utils.ts](lib/grade-utils.ts) — grade and weighting logic
-- [lib/state-file.ts](lib/state-file.ts) — local JSON persistence
+- [lib/app-state-storage.ts](lib/app-state-storage.ts) — IndexedDB persistence
 
 ## Product stance
 

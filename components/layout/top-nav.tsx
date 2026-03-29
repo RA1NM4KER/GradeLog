@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { BookOpenText } from "lucide-react";
 
+import { InstallButton } from "@/components/pwa/install-button";
+
 export function TopNav() {
   return (
     <header className="sticky top-0 z-30 border-b border-stone-200/70 bg-[#f6f2ea]/85 backdrop-blur-xl">
@@ -20,6 +22,7 @@ export function TopNav() {
         </Link>
 
         <div className="flex items-center gap-2 sm:gap-3">
+          <InstallButton />
           <nav className="hidden items-center gap-1 rounded-full border border-stone-200 bg-white/70 p-1 md:flex">
             <Link
               className="rounded-full px-4 py-2 text-sm text-stone-600 transition hover:bg-stone-100 hover:text-stone-950"

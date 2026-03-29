@@ -11,7 +11,9 @@ import {
 } from "react";
 import { usePathname } from "next/navigation";
 
-import { getDefaultAppState } from "@/lib/app-state";
+import { WorkspaceBootState } from "@/components/workspace/workspace-boot-state";
+import { normalizeAppState } from "@/lib/app-state";
+import { loadAppState, saveAppState } from "@/lib/app-state-storage";
 import { createSemester } from "@/lib/semester-utils";
 import { Assessment, Course, Semester } from "@/lib/types";
 
@@ -53,15 +55,13 @@ const WorkspaceContext = createContext<WorkspaceContextValue | null>(null);
 
 export function WorkspaceProvider({ children }: { children: ReactNode }) {
   const pathname = usePathname();
-  const defaultState = getDefaultAppState();
-  const [semesters, setSemesters] = useState<Semester[]>(
-    defaultState.semesters,
-  );
-  const [selectedSemesterId, setSelectedSemesterId] = useState(
-    defaultState.selectedSemesterId,
-  );
+  const [semesters, setSemesters] = useState<Semester[]>([]);
+  const [selectedSemesterId, setSelectedSemesterId] = useState("");
   const [isExperimenting, setIsExperimenting] = useState(false);
+  const [isHydrated, setIsHydrated] = useState(false);
+  const [bootError, setBootError] = useState<string | null>(null);
   const hasLoadedRef = useRef(false);
+  const lastSavedStateRef = useRef<string>("");
   const experimentSnapshotRef = useRef<{
     semesters: Semester[];
     selectedSemesterId: string;
@@ -71,16 +71,30 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
     let cancelled = false;
 
     async function loadState() {
-      const response = await fetch("/api/state", { cache: "no-store" });
-      const state = await response.json();
+      try {
+        const state = await loadAppState();
+        const normalizedState = normalizeAppState(state);
 
-      if (cancelled) {
-        return;
+        if (cancelled) {
+          return;
+        }
+
+        setSemesters(normalizedState.semesters);
+        setSelectedSemesterId(normalizedState.selectedSemesterId);
+        lastSavedStateRef.current = JSON.stringify(normalizedState);
+        hasLoadedRef.current = true;
+        setBootError(null);
+        setIsHydrated(true);
+      } catch (error) {
+        if (cancelled) {
+          return;
+        }
+
+        console.error("Failed to load Gradeflow state from IndexedDB.", error);
+        setBootError(
+          "Gradeflow could not open your browser's private storage. Check storage permissions or private browsing restrictions, then reload.",
+        );
       }
-
-      setSemesters(state.semesters);
-      setSelectedSemesterId(state.selectedSemesterId);
-      hasLoadedRef.current = true;
     }
 
     void loadState();
@@ -99,16 +113,23 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
       return;
     }
 
-    void fetch("/api/state", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        semesters,
-        selectedSemesterId,
-      }),
+    const normalizedState = normalizeAppState({
+      semesters,
+      selectedSemesterId,
     });
+    const serializedState = JSON.stringify(normalizedState);
+
+    if (serializedState === lastSavedStateRef.current) {
+      return;
+    }
+
+    void saveAppState(normalizedState)
+      .then((savedState) => {
+        lastSavedStateRef.current = JSON.stringify(savedState);
+      })
+      .catch((error) => {
+        console.error("Failed to save Gradeflow state to IndexedDB.", error);
+      });
   }, [isExperimenting, selectedSemesterId, semesters]);
 
   useEffect(() => {
@@ -325,6 +346,29 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
       },
     };
   }, [isExperimenting, selectedSemesterId, semesters]);
+
+  if (!isHydrated) {
+    return bootError ? (
+      <WorkspaceBootState
+        action={
+          <button
+            className="inline-flex h-11 items-center rounded-full bg-stone-950 px-5 text-sm font-semibold text-stone-50"
+            onClick={() => window.location.reload()}
+            type="button"
+          >
+            Reload app
+          </button>
+        }
+        description={bootError}
+        title="Local storage unavailable"
+      />
+    ) : (
+      <WorkspaceBootState
+        description="Opening your local workspace and restoring your saved semesters."
+        title="Loading Gradeflow"
+      />
+    );
+  }
 
   return (
     <WorkspaceContext.Provider value={value}>
