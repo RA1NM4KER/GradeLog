@@ -18,6 +18,7 @@ export function ModuleHeader({
         <Link
           className="inline-flex items-center gap-2 text-sm text-stone-500 transition hover:text-stone-950"
           href="/workspace"
+          prefetch={false}
         >
           <ArrowLeft className="h-4 w-4" />
           Semester
