@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useParams } from "next/navigation";
 import { Calculator } from "lucide-react";
 
 import { EmptyState } from "@/components/dashboard/empty-state";
@@ -11,7 +12,9 @@ import { ModuleHeader } from "@/components/workspace/module-header";
 import { useWorkspace } from "@/components/workspace/workspace-provider";
 import { Assessment } from "@/lib/types";
 
-export function ModuleScreen({ moduleId }: { moduleId: string }) {
+export function ModuleScreen() {
+  const params = useParams<{ moduleId: string }>();
+  const moduleId = params.moduleId;
   const {
     semester,
     addAssessment,

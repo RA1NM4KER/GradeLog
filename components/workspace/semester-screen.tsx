@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { BookMarked, Plus } from "lucide-react";
 
 import { ModuleDialog } from "@/components/dashboard/module-dialog";
@@ -24,12 +24,10 @@ import {
 } from "@/lib/grade-utils";
 import { Module } from "@/lib/types";
 
-export function SemesterScreen({
-  semesterIdFromUrl,
-}: {
-  semesterIdFromUrl?: string;
-}) {
+export function SemesterScreen() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const semesterIdFromUrl = searchParams.get("semester") ?? undefined;
   const {
     semester,
     semesters,
