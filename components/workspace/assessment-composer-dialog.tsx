@@ -97,7 +97,7 @@ export function AssessmentComposerDialog({
           <Button variant={triggerVariant}>{triggerLabel}</Button>
         </DialogTrigger>
       )}
-      <DialogContent className="max-h-[90vh] overflow-auto sm:max-w-4xl">
+      <DialogContent className="max-h-[88vh] overflow-y-auto overflow-x-hidden sm:max-w-4xl">
         <DialogHeader>
           <DialogTitle>Add assignment</DialogTitle>
           <DialogDescription>{module.code}</DialogDescription>
@@ -119,7 +119,7 @@ export function AssessmentComposerDialog({
           </div>
 
           {mode === "single" ? (
-            <div className="grid gap-4 rounded-[28px] border border-stone-200 bg-white p-4">
+            <div className="grid gap-4 rounded-[24px] border border-stone-200 bg-white p-4 sm:rounded-[28px]">
               <div className="space-y-2">
                 <Label htmlFor="single-name">Assignment name</Label>
                 <Input
@@ -185,7 +185,7 @@ function ModeCard({
 }) {
   return (
     <button
-      className={`rounded-[24px] border px-4 py-4 text-left transition ${
+      className={`rounded-[20px] border px-4 py-3.5 text-left transition sm:rounded-[24px] sm:py-4 ${
         isActive
           ? "border-stone-950 bg-stone-950 text-stone-50"
           : "border-stone-200 bg-stone-50/70 text-stone-950 hover:border-stone-300"

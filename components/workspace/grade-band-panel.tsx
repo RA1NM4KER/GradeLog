@@ -37,106 +37,269 @@ export function GradeBandPanel({
   const ceiling = guaranteedGrade + remainingWeight;
   const completion = getCompletedWeight(module);
   const bands = getSortedGradeBands(module);
+  const bandTargets = bands.map((band) => {
+    const result = calculateRequiredScore(module, band.threshold);
+    const state = hasAssessments
+      ? getGradeBandState(module, band)
+      : "reachable";
+    const needed = !hasAssessments
+      ? "Not set"
+      : state === "guaranteed"
+        ? formatPercent(band.threshold)
+        : result.remainingWeight === 0
+          ? "Closed"
+          : `${result.neededAverage}%`;
+
+    return {
+      band,
+      needed,
+      state,
+    };
+  });
 
   return (
-    <div className="grid gap-4 min-[900px]:grid-cols-[280px_minmax(0,1fr)] min-[900px]:items-start">
-      <div className="min-w-0">
-        <p className="mb-3 text-center text-sm text-stone-500">
-          Current standing
-        </p>
-        <div className="relative h-[500px] overflow-hidden rounded-[24px] border border-stone-200 bg-white/90">
-          {hasAssessments ? (
-            <>
-              <div
-                className="absolute inset-x-0 top-0 bg-[repeating-linear-gradient(135deg,rgba(214,211,209,0.62),rgba(214,211,209,0.62)_3px,transparent_3px,transparent_7px)] transition-[height] duration-500 ease-out"
-                style={{ height: `${100 - getLinePosition(ceiling)}%` }}
-              />
-              <div
-                className="absolute inset-x-0 bottom-0 bg-[repeating-linear-gradient(135deg,rgba(214,211,209,0.58),rgba(214,211,209,0.58)_3px,transparent_3px,transparent_7px)] transition-[height] duration-500 ease-out"
-                style={{ height: `${getLinePosition(guaranteedGrade)}%` }}
-              />
-            </>
-          ) : null}
-
-          {[90, 80, 70, 60, 50, 40, 30, 20, 10].map((line) => (
-            <GuideLine key={line} value={line} />
-          ))}
-
-          {hasAssessments
-            ? bands.map((band) => (
-                <BandLine
-                  band={band}
+    <div className="grid gap-4">
+      <div className="min-w-0 md:hidden">
+        <div className="overflow-hidden rounded-[24px] border border-stone-200 bg-white/90 shadow-card">
+          <div className="border-b border-stone-200 px-4 py-2.5">
+            <div className="flex items-end justify-between gap-3">
+              <div>
+                <p className="text-[0.7rem] font-semibold uppercase tracking-[0.2em] text-stone-400">
+                  Progress
+                </p>
+                <p className="mt-1 text-[1.7rem] font-semibold leading-none tracking-tight text-stone-900">
+                  {hasRecordedGrade
+                    ? formatPercent(animatedCurrentGrade)
+                    : "No grade yet"}
+                </p>
+              </div>
+              <div className="text-right">
+                <p className="text-[0.7rem] font-semibold uppercase tracking-[0.2em] text-stone-400">
+                  Completion
+                </p>
+                <p className="mt-1 text-xs font-medium text-stone-700">
+                  {hasRecordedGrade
+                    ? `${formatPercent(completion)} complete`
+                    : hasAssessments
+                      ? "Waiting for first grade"
+                      : "Add assignments"}
+                </p>
+              </div>
+            </div>
+          </div>
+          <MobileStandingChart
+            bands={bands}
+            ceiling={ceiling}
+            currentGrade={animatedCurrentGrade}
+            guaranteedGrade={guaranteedGrade}
+            hasAssessments={hasAssessments}
+            hasRecordedGrade={hasRecordedGrade}
+          />
+          <div className="border-t border-stone-200 px-3 py-2">
+            <p className="mb-2 text-center text-[0.72rem] font-medium uppercase tracking-[0.18em] text-stone-400">
+              What do I need?
+            </p>
+            <div
+              className="grid gap-2"
+              style={{
+                gridTemplateColumns: `repeat(${Math.min(Math.max(bandTargets.length, 1), 5)}, minmax(0, 1fr))`,
+              }}
+            >
+              {bandTargets.map(({ band, needed, state }) => (
+                <div
+                  className={`rounded-2xl border px-2 py-2 text-center ${
+                    state === "unreachable"
+                      ? "border-stone-200 bg-stone-50/70 text-stone-400"
+                      : "border-stone-200 bg-stone-50/80 text-stone-700"
+                  }`}
                   key={band.id}
-                  state={getGradeBandState(module, band)}
-                />
-              ))
-            : null}
-
-          {hasRecordedGrade ? (
-            <CurrentLine value={animatedCurrentGrade} />
-          ) : null}
-          {hasRecordedGrade ? (
-            <CurrentPill value={animatedCurrentGrade} />
-          ) : null}
-
-          <p className="absolute inset-x-0 bottom-4 text-center text-sm text-stone-600">
-            {hasRecordedGrade
-              ? `${formatPercent(completion)} complete`
-              : hasAssessments
-                ? "Waiting for first grade"
-                : "Add assignments to start tracking"}
-          </p>
+                >
+                  <p className="text-[0.65rem] font-semibold uppercase tracking-[0.18em] text-stone-400">
+                    {band.label}
+                  </p>
+                  <p className="mt-1 text-[1.15rem] font-semibold leading-none tracking-tight">
+                    {renderNeededValue(needed)}
+                  </p>
+                  <div className="mt-1.5 flex justify-center">
+                    <InlineBandThreshold
+                      band={band}
+                      onCommit={(threshold) =>
+                        onUpdateGradeBand(band.id, threshold)
+                      }
+                    />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
 
-      <div className="min-w-0">
-        <p className="mb-3 text-center text-sm text-stone-500">
-          Remainder of grades must average:
-        </p>
-        <div className="overflow-hidden rounded-[24px] border border-stone-200 bg-white/90">
-          {bands.map((band) => {
-            const result = calculateRequiredScore(module, band.threshold);
-            const state = hasAssessments
-              ? getGradeBandState(module, band)
-              : "reachable";
-            const needed = !hasAssessments
-              ? "Not set"
-              : state === "guaranteed"
-                ? formatPercent(band.threshold)
-                : result.remainingWeight === 0
-                  ? "Closed"
-                  : `${result.neededAverage}%`;
+      <div className="grid gap-4 md:grid-cols-[240px_minmax(0,1fr)] md:items-start lg:grid-cols-[280px_minmax(0,1fr)]">
+        <div className="hidden min-w-0 md:block">
+          <p className="mb-3 text-center text-sm text-stone-500">
+            Current standing
+          </p>
+          <div className="relative h-[500px] overflow-hidden rounded-[24px] border border-stone-200 bg-white/90">
+            {hasAssessments ? (
+              <>
+                <div
+                  className="absolute inset-x-0 top-0 bg-[repeating-linear-gradient(135deg,rgba(214,211,209,0.62),rgba(214,211,209,0.62)_3px,transparent_3px,transparent_7px)] transition-[height] duration-500 ease-out"
+                  style={{ height: `${100 - getLinePosition(ceiling)}%` }}
+                />
+                <div
+                  className="absolute inset-x-0 bottom-0 bg-[repeating-linear-gradient(135deg,rgba(214,211,209,0.58),rgba(214,211,209,0.58)_3px,transparent_3px,transparent_7px)] transition-[height] duration-500 ease-out"
+                  style={{ height: `${getLinePosition(guaranteedGrade)}%` }}
+                />
+              </>
+            ) : null}
 
-            return (
-              <div
-                className={`grid gap-1.5 border-t border-stone-200 px-4 py-3 first:border-t-0 ${
-                  state === "unreachable" ? "text-stone-400" : "text-stone-700"
-                }`}
-                key={band.id}
-              >
-                <div className="flex items-baseline justify-between gap-4">
-                  <div className="flex min-w-0 flex-wrap items-baseline gap-x-2 gap-y-1">
-                    <p className="text-[1.7rem] font-semibold leading-none tracking-tight">
-                      {renderNeededValue(needed)}
-                    </p>
-                    <p className="text-base leading-none">
-                      <span className="font-medium text-stone-500">for a </span>
-                      <span className="font-semibold text-stone-950">
-                        {band.label}
-                      </span>
-                    </p>
-                  </div>
-                  <InlineBandThreshold
+            {[90, 80, 70, 60, 50, 40, 30, 20, 10].map((line) => (
+              <GuideLine key={line} value={line} />
+            ))}
+
+            {hasAssessments
+              ? bands.map((band) => (
+                  <BandLine
                     band={band}
-                    onCommit={(threshold) =>
-                      onUpdateGradeBand(band.id, threshold)
-                    }
+                    key={band.id}
+                    state={getGradeBandState(module, band)}
                   />
-                </div>
-              </div>
-            );
-          })}
+                ))
+              : null}
+
+            {hasRecordedGrade ? (
+              <CurrentLine value={animatedCurrentGrade} />
+            ) : null}
+            {hasRecordedGrade ? (
+              <CurrentPill value={animatedCurrentGrade} />
+            ) : null}
+
+            <p className="absolute inset-x-0 bottom-4 text-center text-sm text-stone-600">
+              {hasRecordedGrade
+                ? `${formatPercent(completion)} complete`
+                : hasAssessments
+                  ? "Waiting for first grade"
+                  : "Add assignments to start tracking"}
+            </p>
+          </div>
         </div>
+        <div className="min-w-0">
+          <div className="overflow-hidden rounded-[24px] border border-stone-200 bg-white/90">
+            <div className="hidden md:block">
+              {bandTargets.map(({ band, needed, state }) => (
+                <div
+                  className={`grid gap-1.5 border-t border-stone-200 px-4 py-3 first:border-t-0 ${
+                    state === "unreachable"
+                      ? "text-stone-400"
+                      : "text-stone-700"
+                  }`}
+                  key={band.id}
+                >
+                  <div className="flex items-baseline justify-between gap-4">
+                    <div className="flex min-w-0 flex-wrap items-baseline gap-x-2 gap-y-1">
+                      <p className="text-[1.7rem] font-semibold leading-none tracking-tight">
+                        {renderNeededValue(needed)}
+                      </p>
+                      <p className="text-base leading-none">
+                        <span className="font-medium text-stone-500">
+                          for a{" "}
+                        </span>
+                        <span className="font-semibold text-stone-950">
+                          {band.label}
+                        </span>
+                      </p>
+                    </div>
+                    <InlineBandThreshold
+                      band={band}
+                      onCommit={(threshold) =>
+                        onUpdateGradeBand(band.id, threshold)
+                      }
+                    />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function MobileStandingChart({
+  bands,
+  ceiling,
+  currentGrade,
+  guaranteedGrade,
+  hasAssessments,
+  hasRecordedGrade,
+}: {
+  bands: GradeBand[];
+  ceiling: number;
+  currentGrade: number;
+  guaranteedGrade: number;
+  hasAssessments: boolean;
+  hasRecordedGrade: boolean;
+}) {
+  return (
+    <div className="px-4 pb-3 pt-3">
+      <div className="relative overflow-hidden rounded-[22px] border border-stone-200 bg-stone-50/70 px-3 pb-8 pt-8">
+        {hasAssessments ? (
+          <>
+            <div
+              className="absolute inset-y-0 right-0 bg-[repeating-linear-gradient(135deg,rgba(214,211,209,0.62),rgba(214,211,209,0.62)_3px,transparent_3px,transparent_7px)] transition-[width] duration-500 ease-out"
+              style={{ width: `${100 - getLinePosition(ceiling)}%` }}
+            />
+            <div
+              className="absolute inset-y-0 left-0 bg-[repeating-linear-gradient(135deg,rgba(214,211,209,0.58),rgba(214,211,209,0.58)_3px,transparent_3px,transparent_7px)] transition-[width] duration-500 ease-out"
+              style={{ width: `${getLinePosition(guaranteedGrade)}%` }}
+            />
+          </>
+        ) : null}
+
+        {[10, 20, 30, 40, 50, 60, 70, 80, 90].map((line) => (
+          <div
+            className="absolute inset-y-0 border-l border-stone-200"
+            key={line}
+            style={{ left: `${getLinePosition(line)}%` }}
+          >
+            <span className="absolute bottom-2 -translate-x-1/2 text-[10px] text-stone-400">
+              {line}%
+            </span>
+          </div>
+        ))}
+
+        {bands.map((band) => (
+          <div
+            className="absolute top-2 -translate-x-1/2"
+            key={band.id}
+            style={{ left: `${getLinePosition(band.threshold)}%` }}
+          >
+            <span className="inline-flex h-7 min-w-7 items-center justify-center rounded-full border border-stone-400 bg-white px-2 text-xs font-medium text-stone-700 shadow-sm">
+              {band.label}
+            </span>
+          </div>
+        ))}
+
+        {hasRecordedGrade ? (
+          <>
+            <div
+              className="absolute inset-y-0 border-l-2 border-stone-600 transition-[left] duration-500 ease-out"
+              style={{ left: `${getLinePosition(currentGrade)}%` }}
+            />
+            <div
+              className="absolute bottom-8 -translate-x-1/2 transition-[left] duration-500 ease-out"
+              style={{ left: `${getLinePosition(currentGrade)}%` }}
+            >
+              <div className="rounded-full border border-stone-500 bg-white px-3 py-1 shadow-sm">
+                <p className="text-base font-semibold leading-none tracking-tight text-stone-700">
+                  {formatPercent(currentGrade)}
+                </p>
+              </div>
+            </div>
+          </>
+        ) : null}
       </div>
     </div>
   );

@@ -24,6 +24,15 @@ export function ModuleScreen({ moduleId }: { moduleId?: string }) {
   } = useWorkspace();
   const module = semester.modules.find((item) => item.id === moduleId) ?? null;
 
+  function toggleExperiment() {
+    if (isExperimenting) {
+      stopExperiment();
+      return;
+    }
+
+    startExperiment();
+  }
+
   function saveAssessment(nextModuleId: string, assessment: Assessment) {
     const exists = module?.assessments.some(
       (item) => item.id === assessment.id,
@@ -73,7 +82,7 @@ export function ModuleScreen({ moduleId }: { moduleId?: string }) {
   }
 
   return (
-    <div className="mx-auto h-[calc(100vh-5.5rem)] max-w-7xl overflow-hidden px-5 py-4 sm:px-8">
+    <div className="mx-auto min-h-[calc(100vh-5.5rem)] max-w-7xl px-4 pb-8 pt-4 sm:px-8 sm:py-4">
       <div className="mb-4">
         <ModuleHeader
           module={module}
@@ -91,23 +100,21 @@ export function ModuleScreen({ moduleId }: { moduleId?: string }) {
       </div>
 
       {isExperimenting ? (
-        <div className="mb-4">
-          <ExperimentModePill onStop={stopExperiment} />
-        </div>
+        <ExperimentModePill onStopAction={stopExperiment} />
       ) : null}
 
-      <div className="grid h-[calc(100%-5.5rem)] min-h-0 gap-3 min-[900px]:grid-cols-[minmax(0,1fr)_560px] lg:gap-4">
-        <div className="mt-7 grid min-h-0">
+      <div className="grid gap-4 md:grid-cols-[minmax(0,1fr)_minmax(320px,26rem)] md:items-start lg:grid-cols-[minmax(0,1fr)_560px]">
+        <div className="order-2 mt-2 grid min-h-0 md:order-1 md:mt-7">
           <AssessmentTable
             module={module}
             isExperimenting={isExperimenting}
-            onStartExperiment={startExperiment}
+            onToggleExperiment={toggleExperiment}
             onReorderAssessments={reorderAssessments}
             onSaveAssessment={saveAssessment}
           />
         </div>
 
-        <div className="grid min-h-0 content-start gap-4 overflow-y-auto pr-1">
+        <div className="order-1 grid min-h-0 content-start gap-4 md:order-2 md:overflow-y-auto md:pr-1">
           <GradeBandPanel module={module} onUpdateGradeBand={updateGradeBand} />
         </div>
       </div>

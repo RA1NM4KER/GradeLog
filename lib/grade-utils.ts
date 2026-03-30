@@ -7,19 +7,11 @@ import {
   Semester,
   SingleAssessment,
 } from "@/lib/types";
-import { getGroupedAssessmentDefinition } from "@/lib/grouped-assessment-utils";
 
 function round(value: number, digits = 1) {
   const factor = 10 ** digits;
   return Math.round(value * factor) / factor;
 }
-
-export function isGroupedAssessment(
-  assessment: Assessment,
-): assessment is GroupedAssessment {
-  return assessment.kind === "group";
-}
-
 export function isSingleAssessment(
   assessment: Assessment,
 ): assessment is SingleAssessment {
@@ -80,15 +72,6 @@ export function getGroupedAssessmentMetrics(assessment: GroupedAssessment) {
       gradedItems.length >= assessment.items.length ? "completed" : "ongoing",
   };
 }
-
-export function getAssessmentCategoryLabel(assessment: Assessment) {
-  if (isSingleAssessment(assessment)) {
-    return assessment.category;
-  }
-
-  return getGroupedAssessmentDefinition(assessment.category).label;
-}
-
 export function getAssessmentPercent(assessment: Assessment) {
   if (isSingleAssessment(assessment)) {
     const percent = getSinglePercent(assessment);

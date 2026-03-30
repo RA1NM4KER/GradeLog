@@ -12,16 +12,20 @@ export function TopNav() {
 
   return (
     <header className="sticky top-0 z-30 border-b border-stone-200/70 bg-[#f6f2ea]/85 backdrop-blur-xl">
-      <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-4 sm:px-8">
-        <Link className="flex items-center gap-3" href="/" prefetch={false}>
-          <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-stone-950 text-stone-50 shadow-card">
-            <BookOpenText className="h-5 w-5" />
+      <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-2.5 sm:px-8 sm:py-4">
+        <Link
+          className="flex items-center gap-2.5 sm:gap-3"
+          href="/"
+          prefetch={false}
+        >
+          <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-stone-950 text-stone-50 shadow-card sm:h-11 sm:w-11">
+            <BookOpenText className="h-4.5 w-4.5 sm:h-5 sm:w-5" />
           </div>
           <div>
             <p className="text-[0.7rem] font-semibold uppercase tracking-[0.24em] text-stone-500">
               Gradeflow
             </p>
-            <p className="text-sm text-stone-700">
+            <p className="hidden text-sm text-stone-700 sm:block">
               Local-first grade tracking.
             </p>
           </div>
@@ -31,7 +35,7 @@ export function TopNav() {
           <InstallButton />
           <LocalBackupDialog
             appState={appState}
-            onRestoreAppState={replaceAppState}
+            onRestoreAppStateAction={replaceAppState}
           />
           <nav className="hidden items-center gap-1 rounded-full border border-stone-200 bg-white/70 p-1 md:flex">
             <Link

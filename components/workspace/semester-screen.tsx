@@ -99,15 +99,13 @@ export function SemesterScreen() {
   }, [selectedSemesterId, semesterIdFromUrl]);
 
   return (
-    <div className="mx-auto h-[calc(100vh-5.5rem)] max-w-7xl overflow-hidden px-5 py-4 sm:px-8">
+    <div className="mx-auto min-h-[calc(100vh-5.5rem)] max-w-7xl px-4 pb-8 pt-4 sm:px-8 sm:py-4">
       {isExperimenting ? (
-        <div className="mb-4">
-          <ExperimentModePill onStop={stopExperiment} />
-        </div>
+        <ExperimentModePill onStopAction={stopExperiment} />
       ) : null}
 
       <Card>
-        <CardContent className="grid gap-4 p-4">
+        <CardContent className="grid gap-4 p-3 sm:p-4">
           <SemesterSummaryStrip
             average={average}
             credits={totalCredits}

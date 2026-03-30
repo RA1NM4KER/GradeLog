@@ -54,45 +54,38 @@ function openDatabase(): Promise<IDBDatabase> {
   return databasePromise;
 }
 
-function withStore<T>(
+async function withStore<T>(
   mode: IDBTransactionMode,
   run: (store: IDBObjectStore) => IDBRequest<T>,
 ): Promise<T> {
-  return openDatabase().then(
-    (database) =>
-      new Promise<T>((resolve, reject) => {
-        const transaction = database.transaction(STORE_NAME, mode);
-        const store = transaction.objectStore(STORE_NAME);
-        const request = run(store);
+  const database = await openDatabase();
+  return await new Promise<T>((resolve, reject) => {
+    const transaction = database.transaction(STORE_NAME, mode);
+    const store_1 = transaction.objectStore(STORE_NAME);
+    const request = run(store_1);
 
-        request.onsuccess = () => {
-          resolve(request.result);
-        };
+    request.onsuccess = () => {
+      resolve(request.result);
+    };
 
-        request.onerror = () => {
-          reject(
-            request.error ??
-              new Error(
-                "IndexedDB request failed while accessing Gradeflow state.",
-              ),
-          );
-        };
+    request.onerror = () => {
+      reject(
+        request.error ??
+          new Error(
+            "IndexedDB request failed while accessing Gradeflow state.",
+          ),
+      );
+    };
 
-        transaction.onabort = () => {
-          reject(
-            transaction.error ??
-              new Error(
-                "IndexedDB transaction was aborted while accessing Gradeflow state.",
-              ),
-          );
-        };
-      }),
-  );
-}
-
-export async function loadAppState(): Promise<AppState> {
-  const { state } = await loadAppStateRecord();
-  return state;
+    transaction.onabort = () => {
+      reject(
+        transaction.error ??
+          new Error(
+            "IndexedDB transaction was aborted while accessing Gradeflow state.",
+          ),
+      );
+    };
+  });
 }
 
 export async function loadAppStateMetadata(): Promise<PersistedAppStateMetadata | null> {

@@ -25,14 +25,14 @@ export function SemesterSummaryStrip({
   onSaveSemester,
 }: SemesterSummaryStripProps) {
   return (
-    <div className="grid gap-4 lg:grid-cols-[1fr_auto] lg:items-center">
-      <div>
+    <div className="grid gap-3 lg:grid-cols-[1fr_auto] lg:items-center">
+      <div className="min-w-0">
         <p className="text-[0.7rem] font-semibold uppercase tracking-[0.24em] text-stone-500">
           Semester
         </p>
-        <div className="mt-2">
-          <div className="flex items-center gap-2">
-            <p className="text-xl font-semibold tracking-tight text-stone-950">
+        <div className="mt-1.5">
+          <div className="flex items-center gap-1.5 sm:gap-2">
+            <p className="min-w-0 text-xl font-semibold tracking-tight text-stone-950 sm:text-2xl">
               {semesterName}
             </p>
             <SemesterDialog
@@ -42,13 +42,13 @@ export function SemesterSummaryStrip({
               triggerChildren={
                 <Button
                   aria-label="Edit semester"
-                  className="group h-auto w-auto rounded-none border-0 bg-transparent p-0 text-stone-500 shadow-none hover:bg-transparent hover:text-stone-800"
+                  className="group h-auto w-auto shrink-0 rounded-none border-0 bg-transparent p-0 text-stone-500 shadow-none hover:bg-transparent hover:text-stone-800"
                   size="icon"
                   title="Edit semester"
                   type="button"
                   variant="ghost"
                 >
-                  <Cog className="h-5 w-5 transition-transform duration-300 group-hover:rotate-90" />
+                  <Cog className="h-4.5 w-4.5 transition-transform duration-300 group-hover:rotate-90 sm:h-5 sm:w-5" />
                 </Button>
               }
             />
@@ -57,28 +57,30 @@ export function SemesterSummaryStrip({
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-x-6 gap-y-3 sm:grid-cols-3">
-        <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-stone-500">
+      <div className="grid grid-cols-3 gap-2 rounded-[22px] border border-stone-200 bg-white/80 px-3 py-2.5 sm:gap-4 sm:border-0 sm:bg-transparent sm:px-0 sm:py-0">
+        <div className="min-w-0">
+          <p className="text-[0.62rem] font-semibold uppercase tracking-[0.18em] text-stone-500 sm:text-xs sm:tracking-[0.2em]">
             Grade average
           </p>
-          <p className="mt-1 text-lg font-semibold text-stone-950">
+          <p className="mt-1 text-base font-semibold text-stone-950 sm:text-lg">
             {formatPercent(average)}
           </p>
         </div>
-        <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-stone-500">
+        <div className="min-w-0">
+          <p className="text-[0.62rem] font-semibold uppercase tracking-[0.18em] text-stone-500 sm:text-xs sm:tracking-[0.2em]">
             GPA
           </p>
-          <p className="mt-1 text-lg font-semibold text-stone-950">
+          <p className="mt-1 text-base font-semibold text-stone-950 sm:text-lg">
             {gpa.toFixed(2)}
           </p>
         </div>
-        <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-stone-500">
+        <div className="min-w-0">
+          <p className="text-[0.62rem] font-semibold uppercase tracking-[0.18em] text-stone-500 sm:text-xs sm:tracking-[0.2em]">
             Total credits
           </p>
-          <p className="mt-1 text-lg font-semibold text-stone-950">{credits}</p>
+          <p className="mt-1 text-base font-semibold text-stone-950 sm:text-lg">
+            {credits}
+          </p>
         </div>
       </div>
     </div>

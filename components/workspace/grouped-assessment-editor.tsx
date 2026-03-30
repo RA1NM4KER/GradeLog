@@ -65,12 +65,12 @@ export function GroupedAssessmentEditor({
   }
 
   return (
-    <div className="grid max-w-[760px] gap-6">
-      <div className="grid gap-4 sm:grid-cols-4">
+    <div className="grid max-w-[760px] gap-5 sm:gap-6">
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 sm:gap-4">
         <div className="space-y-2">
           <Label htmlFor={`${category}-name`}>Category name</Label>
           <Input
-            className="text-center"
+            className="h-11 text-center"
             id={`${category}-name`}
             onChange={(event) => update({ name: event.target.value })}
             value={value.name}
@@ -79,7 +79,7 @@ export function GroupedAssessmentEditor({
         <div className="space-y-2">
           <Label htmlFor={`${category}-weight`}>Total weight (%)</Label>
           <Input
-            className="text-center"
+            className="h-11 text-center"
             id={`${category}-weight`}
             max={100}
             min={0}
@@ -91,7 +91,7 @@ export function GroupedAssessmentEditor({
         <div className="space-y-2">
           <Label htmlFor={`${category}-count`}>Number of items</Label>
           <Input
-            className="text-center"
+            className="h-11 text-center"
             id={`${category}-count`}
             max={20}
             min={1}
@@ -119,7 +119,7 @@ export function GroupedAssessmentEditor({
         <div className="space-y-2">
           <Label htmlFor={`${category}-drop`}>Drop lowest</Label>
           <Input
-            className="text-center"
+            className="h-11 text-center"
             id={`${category}-drop`}
             max={Math.max(value.itemCount - 1, 0)}
             min={0}
@@ -147,7 +147,50 @@ export function GroupedAssessmentEditor({
           </p>
         </div>
 
-        <WorkspaceTableFrame className="mx-auto inline-block max-h-[48vh] w-fit max-w-full rounded-[20px]">
+        <div className="space-y-3 sm:hidden">
+          {value.items.map((item, index) => (
+            <div
+              className="rounded-[20px] border border-stone-200 bg-white/85 p-3"
+              key={item.id}
+            >
+              <p className="mb-3 text-xs font-semibold uppercase tracking-[0.16em] text-stone-400">
+                {definition.itemPrefix} {index + 1}
+              </p>
+              <div className="grid gap-3">
+                <div className="space-y-2">
+                  <Label htmlFor={`${category}-label-mobile-${item.id}`}>
+                    Title
+                  </Label>
+                  <Input
+                    className="h-11"
+                    id={`${category}-label-mobile-${item.id}`}
+                    onChange={(event) =>
+                      updateItem(item.id, { label: event.target.value })
+                    }
+                    value={item.label}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor={`${category}-score-mobile-${item.id}`}>
+                    Mark
+                  </Label>
+                  <GroupedScoreInput
+                    id={`${category}-score-mobile-${item.id}`}
+                    onCommit={(scoreAchieved) =>
+                      updateItem(item.id, {
+                        scoreAchieved,
+                        totalPossible: 100,
+                      })
+                    }
+                    value={item.scoreAchieved}
+                  />
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <WorkspaceTableFrame className="mx-auto hidden max-h-[48vh] w-fit max-w-full rounded-[20px] sm:inline-block">
           <WorkspaceTable className="w-auto min-w-[440px] table-auto">
             <WorkspaceTableHeader className="text-[11px] tracking-[0.14em]">
               <tr>
@@ -220,9 +263,9 @@ function GroupedScoreInput({
   }, [value]);
 
   return (
-    <div className="relative mx-auto w-[88px]">
+    <div className="relative mx-auto w-full max-w-[96px] sm:w-[88px]">
       <Input
-        className={`${inlineGroupedNumberInputClassName} pr-5 text-center`}
+        className={`${inlineGroupedNumberInputClassName} h-11 pr-5 text-center`}
         id={id}
         inputMode="decimal"
         onBlur={() => {

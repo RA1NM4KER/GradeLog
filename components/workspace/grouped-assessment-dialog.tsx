@@ -107,7 +107,7 @@ export function GroupedAssessmentDialog({
           <Button variant={triggerVariant}>{triggerLabel}</Button>
         </DialogTrigger>
       )}
-      <DialogContent className="max-h-[90vh] overflow-auto sm:max-w-3xl">
+      <DialogContent className="max-h-[88vh] overflow-y-auto overflow-x-hidden sm:max-w-3xl">
         <DialogHeader>
           <DialogTitle>
             {assessment

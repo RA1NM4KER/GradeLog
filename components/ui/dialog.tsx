@@ -32,7 +32,7 @@ const DialogContent = React.forwardRef<
     <DialogPrimitive.Content
       ref={ref}
       className={cn(
-        "fixed left-[50%] top-[50%] z-50 grid w-[min(92vw,640px)] translate-x-[-50%] translate-y-[-50%] gap-4 rounded-[32px] border border-stone-200/80 bg-[#f7f4ee]/95 p-6 shadow-soft backdrop-blur-xl duration-200",
+        "fixed left-[50%] top-[50%] z-50 grid w-[calc(100vw-1rem)] max-w-[640px] translate-x-[-50%] translate-y-[-50%] gap-4 rounded-[28px] border border-stone-200/80 bg-[#f7f4ee]/95 p-4 shadow-soft backdrop-blur-xl duration-200 sm:w-[min(92vw,640px)] sm:rounded-[32px] sm:p-6",
         className,
       )}
       onClick={(event) => {
@@ -47,7 +47,7 @@ const DialogContent = React.forwardRef<
     >
       {children}
       <DialogPrimitive.Close
-        className="absolute right-5 top-5 z-10 rounded-full p-2 text-stone-500 transition hover:bg-stone-200/70 hover:text-stone-900"
+        className="absolute right-3 top-3 z-10 rounded-full p-2 text-stone-500 transition hover:bg-stone-200/70 hover:text-stone-900 sm:right-5 sm:top-5"
         type="button"
       >
         <X className="h-4 w-4" />

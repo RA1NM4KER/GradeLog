@@ -31,7 +31,7 @@ import {
 interface AssessmentTableProps {
   module: Module;
   isExperimenting: boolean;
-  onStartExperiment: () => void;
+  onToggleExperiment: () => void;
   onSaveAssessment: (moduleId: string, assessment: Assessment) => void;
   onReorderAssessments: (
     moduleId: string,
@@ -49,7 +49,7 @@ const inlineValueInputClassName =
 export function AssessmentTable({
   module,
   isExperimenting,
-  onStartExperiment,
+  onToggleExperiment,
   onSaveAssessment,
   onReorderAssessments,
 }: AssessmentTableProps) {
@@ -65,12 +65,23 @@ export function AssessmentTable({
                 <WorkspaceTableHeaderCell className="w-7 px-1 text-center align-middle lg:w-8 lg:px-2 min-[1024px]:max-[1120px]:w-6 min-[1024px]:max-[1120px]:px-0.5">
                   <div className="flex justify-center">
                     <Button
-                      aria-label="Start experiment mode"
-                      className="group relative h-auto w-auto rounded-none border-0 bg-transparent p-0 text-stone-400 shadow-none hover:bg-transparent hover:text-sky-600"
-                      disabled={isExperimenting}
-                      onClick={onStartExperiment}
+                      aria-label={
+                        isExperimenting
+                          ? "Stop experiment mode"
+                          : "Start experiment mode"
+                      }
+                      className={`group relative h-auto w-auto rounded-none border-0 bg-transparent p-0 shadow-none hover:bg-transparent ${
+                        isExperimenting
+                          ? "text-sky-600"
+                          : "text-stone-400 hover:text-sky-600"
+                      }`}
+                      onClick={onToggleExperiment}
                       size="icon"
-                      title="Experiment mode"
+                      title={
+                        isExperimenting
+                          ? "Stop experiment mode"
+                          : "Experiment mode"
+                      }
                       type="button"
                       variant="ghost"
                     >
@@ -138,37 +149,96 @@ export function AssessmentTable({
       </div>
 
       <div className="grid max-h-full gap-3 overflow-auto md:hidden">
-        <AssessmentComposerDialog
-          module={module}
-          onSaveAssessment={onSaveAssessment}
-          triggerAsChild
-          triggerChildren={
-            <button
-              className="inline-flex h-10 items-center justify-center gap-2 rounded-full border border-stone-200 bg-white/88 px-4 text-sm font-semibold text-stone-900 shadow-card transition hover:bg-white"
-              type="button"
-            >
-              <Plus className="h-4 w-4" />
-              Add assignment
-            </button>
-          }
-        />
-        {module.assessments.map((assessment) =>
-          isSingleAssessment(assessment) ? (
-            <SingleAssessmentCard
-              assessment={assessment}
-              key={assessment.id}
+        <WorkspaceTableFrame className="overflow-hidden">
+          <div className="flex items-center justify-between border-b border-stone-200 bg-stone-100/90 px-4 py-3">
+            <div className="flex items-center gap-2">
+              <Button
+                aria-label="Start experiment mode"
+                className={`h-8 w-8 rounded-full border bg-white/90 p-0 shadow-none hover:bg-white hover:text-sky-600 ${
+                  isExperimenting
+                    ? "border-sky-200 text-sky-600"
+                    : "border-stone-200 text-stone-500"
+                }`}
+                onClick={onToggleExperiment}
+                size="icon"
+                type="button"
+                variant="ghost"
+              >
+                <FlaskConical className="h-4 w-4" />
+              </Button>
+              <p className="text-sm font-semibold uppercase tracking-[0.18em] text-stone-600">
+                Assignments
+              </p>
+            </div>
+            <AssessmentComposerDialog
+              module={module}
               onSaveAssessment={onSaveAssessment}
-              moduleId={module.id}
+              triggerAsChild
+              triggerChildren={
+                <button
+                  className="inline-flex h-9 items-center justify-center gap-2 rounded-full border border-stone-200 bg-white/90 px-3.5 text-sm font-semibold text-stone-900 transition hover:bg-white"
+                  type="button"
+                >
+                  <Plus className="h-4 w-4" />
+                  Add
+                </button>
+              }
             />
-          ) : (
-            <GroupedAssessmentCard
-              assessment={assessment}
-              key={assessment.id}
-              onSaveAssessment={onSaveAssessment}
-              moduleId={module.id}
-            />
-          ),
-        )}
+          </div>
+
+          <WorkspaceTable className="table-auto">
+            <WorkspaceTableHeader>
+              <tr>
+                <WorkspaceTableHeaderCell className="w-[48%] px-4 py-2.5 text-[0.65rem]">
+                  Name
+                </WorkspaceTableHeaderCell>
+                <WorkspaceTableHeaderCell className="w-[22%] px-3 py-2.5 text-[0.65rem]">
+                  Weight
+                </WorkspaceTableHeaderCell>
+                <WorkspaceTableHeaderCell className="w-[30%] px-4 py-2.5 text-[0.65rem] text-right">
+                  Grade
+                </WorkspaceTableHeaderCell>
+              </tr>
+            </WorkspaceTableHeader>
+            <tbody>
+              {module.assessments.map((assessment) =>
+                isSingleAssessment(assessment) ? (
+                  <MobileSingleAssessmentRow
+                    assessment={assessment}
+                    key={assessment.id}
+                    moduleId={module.id}
+                    onSaveAssessment={onSaveAssessment}
+                  />
+                ) : (
+                  <MobileGroupedAssessmentRow
+                    assessment={assessment}
+                    key={assessment.id}
+                    moduleId={module.id}
+                    onSaveAssessment={onSaveAssessment}
+                  />
+                ),
+              )}
+              <tr className="border-t border-stone-200/80 bg-white/80">
+                <td className="px-4 py-3" colSpan={3}>
+                  <AssessmentComposerDialog
+                    module={module}
+                    onSaveAssessment={onSaveAssessment}
+                    triggerAsChild
+                    triggerChildren={
+                      <button
+                        className="flex w-full items-center justify-center gap-2 rounded-2xl border border-dashed border-stone-300 px-4 py-3 text-sm font-medium text-stone-600 transition hover:border-stone-500 hover:text-stone-900"
+                        type="button"
+                      >
+                        <Plus className="h-4 w-4" />
+                        New assignment
+                      </button>
+                    }
+                  />
+                </td>
+              </tr>
+            </tbody>
+          </WorkspaceTable>
+        </WorkspaceTableFrame>
       </div>
     </div>
   );
@@ -388,7 +458,7 @@ function GroupedAssessmentRow({
   );
 }
 
-function SingleAssessmentCard({
+function MobileSingleAssessmentRow({
   moduleId,
   assessment,
   onSaveAssessment,
@@ -398,33 +468,49 @@ function SingleAssessmentCard({
   onSaveAssessment: (moduleId: string, assessment: Assessment) => void;
 }) {
   return (
-    <div className="rounded-[22px] border border-stone-200 bg-white/80 p-4">
-      <p className="font-medium text-stone-950">{assessment.name}</p>
-      <div className="mt-4 grid grid-cols-2 gap-3 text-sm text-stone-600">
-        <InfoCell label="Weight" value={String(assessment.weight)} />
-        <InfoCell
-          label="Grade"
-          value={
-            assessment.scoreAchieved === null
-              ? "Pending"
-              : formatPercent(getAssessmentPercent(assessment) ?? 0)
-          }
-        />
-      </div>
-      <div className="mt-4 grid gap-2">
+    <WorkspaceTableRow>
+      <WorkspaceTableCell className="px-4 py-2.5 align-top">
         <InlineText
-          display={<span className="text-sm text-stone-500">Rename</span>}
+          display={
+            <span className="block text-sm font-medium text-stone-950">
+              {assessment.name}
+            </span>
+          }
           onCommit={(name) =>
             onSaveAssessment(moduleId, { ...assessment, name })
           }
           value={assessment.name}
         />
-      </div>
-    </div>
+      </WorkspaceTableCell>
+      <WorkspaceTableCell className="px-3 py-2.5 align-top text-sm text-stone-600">
+        <InlineNumber
+          align="left"
+          display={String(assessment.weight)}
+          onCommit={(weight) =>
+            onSaveAssessment(moduleId, { ...assessment, weight })
+          }
+          value={assessment.weight}
+        />
+      </WorkspaceTableCell>
+      <WorkspaceTableCell className="px-4 py-2.5 align-top text-right text-sm text-stone-600">
+        <InlineAssessmentResult
+          align="right"
+          assessment={assessment}
+          onCommit={(scoreAchieved) =>
+            onSaveAssessment(moduleId, {
+              ...assessment,
+              scoreAchieved,
+              totalPossible: 100,
+              status: scoreAchieved === null ? "ongoing" : "completed",
+            })
+          }
+        />
+      </WorkspaceTableCell>
+    </WorkspaceTableRow>
   );
 }
 
-function GroupedAssessmentCard({
+function MobileGroupedAssessmentRow({
   moduleId,
   assessment,
   onSaveAssessment,
@@ -437,22 +523,32 @@ function GroupedAssessmentCard({
   const metrics = getGroupedAssessmentMetrics(assessment);
 
   return (
-    <div
-      className="rounded-[22px] border border-stone-200 bg-white/80 p-4"
+    <WorkspaceTableRow
+      className="cursor-pointer transition hover:bg-stone-50/70"
       onClick={() => setOpen(true)}
     >
-      <p className="font-medium text-stone-950">{assessment.name}</p>
-      <div className="mt-4 grid grid-cols-2 gap-3 text-sm text-stone-600">
-        <InfoCell label="Weight" value={String(assessment.weight)} />
-        <InfoCell
-          label="Grade"
-          value={
-            metrics.currentPercent === null
-              ? "Pending"
-              : formatPercent(metrics.currentPercent)
-          }
-        />
-      </div>
+      <WorkspaceTableCell className="px-4 py-2.5 align-top">
+        <div className="min-w-0">
+          <p className="text-sm font-medium text-stone-950">
+            {assessment.name}
+          </p>
+          <p className="mt-0.5 text-xs text-stone-400">
+            {metrics.gradedCount}/{metrics.totalCount} graded
+          </p>
+        </div>
+      </WorkspaceTableCell>
+      <WorkspaceTableCell className="px-3 py-2.5 align-top text-sm font-medium text-stone-700">
+        {assessment.weight}
+      </WorkspaceTableCell>
+      <WorkspaceTableCell className="px-4 py-2.5 align-top text-right text-sm">
+        {metrics.currentPercent === null ? (
+          <span className="text-stone-400">Pending</span>
+        ) : (
+          <span className="font-medium text-stone-950">
+            {formatPercent(metrics.currentPercent)}
+          </span>
+        )}
+      </WorkspaceTableCell>
       <GroupedAssessmentDialog
         assessment={assessment}
         moduleId={moduleId}
@@ -462,7 +558,7 @@ function GroupedAssessmentCard({
         triggerChildren={<span className="hidden" />}
         triggerAsChild
       />
-    </div>
+    </WorkspaceTableRow>
   );
 }
 
@@ -475,7 +571,7 @@ function InlineText({
   value: string;
   display: ReactNode;
   onCommit: (value: string) => void;
-  align?: "left" | "center";
+  align?: "left" | "center" | "right";
 }) {
   const [editing, setEditing] = useState(false);
   const [draft, setDraft] = useState(value);
@@ -495,7 +591,13 @@ function InlineText({
   if (!editing) {
     return (
       <button
-        className={`block w-full px-2 py-3 -mx-2 -my-3 ${align === "center" ? "text-center" : "text-left"}`}
+        className={`-mx-2 -my-3 block w-full px-2 py-3 ${
+          align === "center"
+            ? "text-center"
+            : align === "right"
+              ? "text-right"
+              : "text-left"
+        }`}
         onClick={() => setEditing(true)}
         type="button"
       >
@@ -506,7 +608,13 @@ function InlineText({
 
   return (
     <Input
-      className={`${inlineTextInputClassName} ${align === "center" ? "text-center" : "text-left"}`}
+      className={`${inlineTextInputClassName} ${
+        align === "center"
+          ? "text-center"
+          : align === "right"
+            ? "text-right"
+            : "text-left"
+      }`}
       onBlur={() => {
         setEditing(false);
         if (draft !== value) {
@@ -538,7 +646,7 @@ function InlineNumber({
   value: number;
   display: string;
   onCommit: (value: number) => void;
-  align?: "left" | "center";
+  align?: "left" | "center" | "right";
 }) {
   const [editing, setEditing] = useState(false);
   const [draft, setDraft] = useState(String(value));
@@ -558,7 +666,13 @@ function InlineNumber({
   if (!editing) {
     return (
       <button
-        className={`block w-full cursor-text px-2 py-3 -mx-2 -my-3 ${align === "center" ? "text-center" : "text-left"}`}
+        className={`-mx-2 -my-3 block w-full cursor-text px-2 py-3 ${
+          align === "center"
+            ? "text-center"
+            : align === "right"
+              ? "text-right"
+              : "text-left"
+        }`}
         onClick={() => setEditing(true)}
         type="button"
       >
@@ -569,7 +683,13 @@ function InlineNumber({
 
   return (
     <Input
-      className={`${inlineValueInputClassName} w-full ${align === "center" ? "text-center" : "text-left"}`}
+      className={`${inlineValueInputClassName} w-full ${
+        align === "center"
+          ? "text-center"
+          : align === "right"
+            ? "text-right"
+            : "text-left"
+      }`}
       inputMode="decimal"
       onBlur={() => {
         setEditing(false);
@@ -593,7 +713,7 @@ function InlineAssessmentResult({
 }: {
   assessment: SingleAssessment;
   onCommit: (scoreAchieved: number | null) => void;
-  align?: "left" | "center";
+  align?: "left" | "center" | "right";
 }) {
   const [editing, setEditing] = useState(false);
   const [draft, setDraft] = useState(
@@ -627,7 +747,13 @@ function InlineAssessmentResult({
   if (!editing) {
     return (
       <button
-        className={`block w-full cursor-text px-2 py-3 -mx-2 -my-3 ${align === "center" ? "text-center" : "text-left"}`}
+        className={`-mx-2 -my-3 block w-full cursor-text px-2 py-3 ${
+          align === "center"
+            ? "text-center"
+            : align === "right"
+              ? "text-right"
+              : "text-left"
+        }`}
         onClick={() => setEditing(true)}
         type="button"
       >
@@ -644,7 +770,13 @@ function InlineAssessmentResult({
 
   return (
     <Input
-      className={`${inlineValueInputClassName} w-full ${align === "center" ? "text-center" : "text-left"}`}
+      className={`${inlineValueInputClassName} w-full ${
+        align === "center"
+          ? "text-center"
+          : align === "right"
+            ? "text-right"
+            : "text-left"
+      }`}
       onBlur={() => {
         setEditing(false);
         onCommit(parseGradeInput(draft));
@@ -688,17 +820,6 @@ function handleInlineNumberKeyDown(
     setDraft(String(value));
     setEditing(false);
   }
-}
-
-function InfoCell({ label, value }: { label: string; value: string }) {
-  return (
-    <div>
-      <p className="text-xs uppercase tracking-[0.18em] text-stone-400">
-        {label}
-      </p>
-      <p className="mt-1">{value}</p>
-    </div>
-  );
 }
 
 function parseGradeInput(value: string) {

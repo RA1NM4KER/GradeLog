@@ -8,10 +8,13 @@ interface BeforeInstallPromptEvent extends Event {
 }
 
 function isStandaloneMode() {
-  return (
+  return Boolean(
     window.matchMedia("(display-mode: standalone)").matches ||
-    (window.navigator as Navigator & { standalone?: boolean }).standalone ===
-      true
+    (
+      window.navigator as Navigator & {
+        standalone?: boolean;
+      }
+    ).standalone,
   );
 }
 

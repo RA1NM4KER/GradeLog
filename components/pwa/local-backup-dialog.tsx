@@ -21,10 +21,10 @@ import { AppState } from "@/lib/app-state";
 
 export function LocalBackupDialog({
   appState,
-  onRestoreAppState,
+  onRestoreAppStateAction,
 }: {
   appState: AppState;
-  onRestoreAppState: (state: AppState) => void;
+  onRestoreAppStateAction: (state: AppState) => void;
 }) {
   const [open, setOpen] = useState(false);
   const inputRef = useRef<HTMLInputElement | null>(null);
@@ -87,7 +87,7 @@ export function LocalBackupDialog({
       return;
     }
 
-    onRestoreAppState(pendingImport.state);
+    onRestoreAppStateAction(pendingImport.state);
     setPendingImport(null);
     setImportError(null);
     setOpen(false);
