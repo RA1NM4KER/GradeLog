@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 import { BookMarked, Plus } from "lucide-react";
 
 import { ModuleDialog } from "@/components/dashboard/module-dialog";
@@ -22,10 +21,13 @@ import {
   getSemesterAverage,
   getSemesterGpa,
 } from "@/lib/grade-utils";
+import {
+  addWorkspaceNavigationListener,
+  navigateWorkspace,
+} from "@/lib/workspace-navigation";
 import { Module } from "@/lib/types";
 
 export function SemesterScreen() {
-  const router = useRouter();
   const [semesterIdFromUrl, setSemesterIdFromUrl] = useState<
     string | undefined
   >(undefined);
@@ -52,7 +54,7 @@ export function SemesterScreen() {
 
   function handleSaveModule(module: Module) {
     addModule(module);
-    router.push(`/workspace/modules/${module.id}`);
+    navigateWorkspace(`/workspace/modules/${module.id}`);
   }
 
   useEffect(() => {
@@ -69,11 +71,7 @@ export function SemesterScreen() {
     }
 
     readSemesterIdFromLocation();
-    window.addEventListener("popstate", readSemesterIdFromLocation);
-
-    return () => {
-      window.removeEventListener("popstate", readSemesterIdFromLocation);
-    };
+    return addWorkspaceNavigationListener(readSemesterIdFromLocation);
   }, []);
 
   useEffect(() => {
@@ -148,7 +146,7 @@ export function SemesterScreen() {
                   isActive={false}
                   key={module.id}
                   onSelect={() =>
-                    router.push(`/workspace/modules/${module.id}`)
+                    navigateWorkspace(`/workspace/modules/${module.id}`)
                   }
                 />
               ))}

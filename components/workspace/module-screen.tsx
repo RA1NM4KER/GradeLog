@@ -1,7 +1,5 @@
 "use client";
 
-import Link from "next/link";
-import { useParams } from "next/navigation";
 import { Calculator } from "lucide-react";
 
 import { EmptyState } from "@/components/dashboard/empty-state";
@@ -10,11 +8,10 @@ import { ExperimentModePill } from "@/components/workspace/experiment-mode-pill"
 import { GradeBandPanel } from "@/components/workspace/grade-band-panel";
 import { ModuleHeader } from "@/components/workspace/module-header";
 import { useWorkspace } from "@/components/workspace/workspace-provider";
+import { navigateWorkspace } from "@/lib/workspace-navigation";
 import { Assessment } from "@/lib/types";
 
-export function ModuleScreen() {
-  const params = useParams<{ moduleId: string }>();
-  const moduleId = params.moduleId;
+export function ModuleScreen({ moduleId }: { moduleId?: string }) {
   const {
     semester,
     addAssessment,
@@ -59,12 +56,13 @@ export function ModuleScreen() {
       <div className="mx-auto max-w-5xl px-5 pb-10 pt-6 sm:px-8">
         <EmptyState
           action={
-            <Link
+            <button
               className="inline-flex h-11 items-center rounded-full bg-stone-950 px-5 text-sm font-semibold text-stone-50"
-              href="/workspace"
+              onClick={() => navigateWorkspace("/workspace")}
+              type="button"
             >
               Back to semester
-            </Link>
+            </button>
           }
           description="The selected module could not be found."
           icon={<Calculator className="h-5 w-5" />}

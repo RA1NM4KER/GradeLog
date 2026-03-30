@@ -1,8 +1,8 @@
-import Link from "next/link";
 import { ArrowLeft, Cog } from "lucide-react";
 
 import { ModuleDialog } from "@/components/dashboard/module-dialog";
 import { Button } from "@/components/ui/button";
+import { navigateWorkspace } from "@/lib/workspace-navigation";
 import { Module } from "@/lib/types";
 
 export function ModuleHeader({
@@ -15,14 +15,14 @@ export function ModuleHeader({
   return (
     <div className="flex items-center justify-between gap-4">
       <div>
-        <Link
+        <button
           className="inline-flex items-center gap-2 text-sm text-stone-500 transition hover:text-stone-950"
-          href="/workspace"
-          prefetch={false}
+          onClick={() => navigateWorkspace("/workspace")}
+          type="button"
         >
           <ArrowLeft className="h-4 w-4" />
           Semester
-        </Link>
+        </button>
         <div className="mt-2 flex items-center gap-2">
           <h1 className="text-2xl font-semibold tracking-tight text-stone-950">
             {module.name}
