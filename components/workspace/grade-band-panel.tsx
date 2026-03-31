@@ -3,6 +3,7 @@
 import React, { KeyboardEvent, useEffect, useRef, useState } from "react";
 
 import { Input } from "@/components/ui/input";
+import { sanitizePlainNumberInput } from "@/lib/numeric-input";
 import {
   calculateRequiredScore,
   formatPercent,
@@ -21,11 +22,13 @@ const inlineInputClassName =
 
 interface GradeBandPanelProps {
   module: Module;
+  isExperimenting?: boolean;
   onUpdateGradeBand: (bandId: string, threshold: number) => void;
 }
 
 export function GradeBandPanel({
   module,
+  isExperimenting = false,
   onUpdateGradeBand,
 }: GradeBandPanelProps) {
   const hasAssessments = module.assessments.length > 0;
@@ -39,12 +42,12 @@ export function GradeBandPanel({
   const bands = getSortedGradeBands(module);
 
   return (
-    <div className="grid gap-4 min-[900px]:grid-cols-[280px_minmax(0,1fr)] min-[900px]:items-start">
+    <div className="grid gap-3 sm:gap-4 min-[900px]:grid-cols-[280px_minmax(0,1fr)] min-[900px]:items-start">
       <div className="min-w-0">
-        <p className="mb-3 text-center text-sm text-stone-500">
+        <p className="mb-2.5 text-center text-[0.82rem] text-stone-500 sm:mb-3 sm:text-sm">
           Current standing
         </p>
-        <div className="relative h-[500px] overflow-hidden rounded-[24px] border border-stone-200 bg-white/90">
+        <div className="relative h-[320px] overflow-hidden rounded-[20px] border border-stone-200 bg-white/90 sm:h-[500px] sm:rounded-[24px]">
           {hasAssessments ? (
             <>
               <div
@@ -73,13 +76,19 @@ export function GradeBandPanel({
             : null}
 
           {hasRecordedGrade ? (
-            <CurrentLine value={animatedCurrentGrade} />
+            <CurrentLine
+              isExperimenting={isExperimenting}
+              value={animatedCurrentGrade}
+            />
           ) : null}
           {hasRecordedGrade ? (
-            <CurrentPill value={animatedCurrentGrade} />
+            <CurrentPill
+              isExperimenting={isExperimenting}
+              value={animatedCurrentGrade}
+            />
           ) : null}
 
-          <p className="absolute inset-x-0 bottom-4 text-center text-sm text-stone-600">
+          <p className="absolute inset-x-0 bottom-3 text-center text-[0.8rem] text-stone-600 sm:bottom-4 sm:text-sm">
             {hasRecordedGrade
               ? `${formatPercent(completion)} complete`
               : hasAssessments
@@ -90,10 +99,10 @@ export function GradeBandPanel({
       </div>
 
       <div className="min-w-0">
-        <p className="mb-3 text-center text-sm text-stone-500">
+        <p className="mb-2.5 text-center text-[0.82rem] text-stone-500 sm:mb-3 sm:text-sm">
           Remainder of grades must average:
         </p>
-        <div className="overflow-hidden rounded-[24px] border border-stone-200 bg-white/90">
+        <div className="overflow-hidden rounded-[20px] border border-stone-200 bg-white/90 sm:rounded-[24px]">
           {bands.map((band) => {
             const result = calculateRequiredScore(module, band.threshold);
             const state = hasAssessments
@@ -109,17 +118,17 @@ export function GradeBandPanel({
 
             return (
               <div
-                className={`grid gap-1.5 border-t border-stone-200 px-4 py-3 first:border-t-0 ${
+                className={`grid gap-1.5 border-t border-stone-200 px-3 py-2.5 first:border-t-0 sm:px-4 sm:py-3 ${
                   state === "unreachable" ? "text-stone-400" : "text-stone-700"
                 }`}
                 key={band.id}
               >
                 <div className="flex items-baseline justify-between gap-4">
                   <div className="flex min-w-0 flex-wrap items-baseline gap-x-2 gap-y-1">
-                    <p className="text-[1.7rem] font-semibold leading-none tracking-tight">
+                    <p className="text-[1.35rem] font-semibold leading-none tracking-tight sm:text-[1.7rem]">
                       {renderNeededValue(needed)}
                     </p>
-                    <p className="text-base leading-none">
+                    <p className="text-[0.88rem] leading-none sm:text-base">
                       <span className="font-medium text-stone-500">for a </span>
                       <span className="font-semibold text-stone-950">
                         {band.label}
@@ -206,23 +215,45 @@ function BandLine({
   );
 }
 
-function CurrentLine({ value }: { value: number }) {
+function CurrentLine({
+  value,
+  isExperimenting = false,
+}: {
+  value: number;
+  isExperimenting?: boolean;
+}) {
   return (
     <div
-      className="absolute inset-x-0 border-t-2 border-stone-500 transition-[bottom] duration-500 ease-out"
+      className={`absolute inset-x-0 border-t-2 transition-[bottom] duration-500 ease-out ${
+        isExperimenting ? "border-sky-600" : "border-stone-500"
+      }`}
       style={{ bottom: `${getLinePosition(value)}%` }}
     />
   );
 }
 
-function CurrentPill({ value }: { value: number }) {
+function CurrentPill({
+  value,
+  isExperimenting = false,
+}: {
+  value: number;
+  isExperimenting?: boolean;
+}) {
   return (
     <div
       className="absolute left-1/2 -translate-x-1/2 transition-[bottom] duration-500 ease-out"
       style={{ bottom: `calc(${getLinePosition(value)}% - 20px)` }}
     >
-      <div className="rounded-full border border-stone-500 bg-white px-6 py-2 shadow-sm transition-shadow duration-300">
-        <p className="text-[1.75rem] font-semibold leading-none tracking-tight text-stone-700">
+      <div
+        className={`rounded-full border bg-white px-6 py-2 shadow-sm transition-shadow duration-300 ${
+          isExperimenting ? "border-sky-200" : "border-stone-500"
+        }`}
+      >
+        <p
+          className={`text-[1.75rem] font-semibold leading-none tracking-tight ${
+            isExperimenting ? "text-sky-700" : "text-stone-700"
+          }`}
+        >
           {formatPercent(value)}
         </p>
       </div>
@@ -277,7 +308,9 @@ function InlineBandThreshold({
           setEditing(false);
           onCommit(Math.max(Math.min(Number(draft || 0), 100), 0));
         }}
-        onChange={(event) => setDraft(event.target.value)}
+        onChange={(event) =>
+          setDraft(sanitizePlainNumberInput(event.target.value))
+        }
         onKeyDown={(event) =>
           handleInlineNumberKeyDown(
             event,
@@ -288,7 +321,8 @@ function InlineBandThreshold({
           )
         }
         ref={inputRef}
-        type="number"
+        inputMode="decimal"
+        type="text"
         value={draft}
       />
       <span className="text-stone-500">%</span>

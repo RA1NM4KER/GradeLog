@@ -18,6 +18,11 @@ import {
   resizeGroupedAssessmentItems,
 } from "@/lib/grouped-assessment-utils";
 import {
+  sanitizeIntegerInput,
+  sanitizePlainNumberInput,
+  sanitizeScoreExpressionInput,
+} from "@/lib/numeric-input";
+import {
   GroupedAssessment,
   GroupedAssessmentCategory,
   GroupedAssessmentItem,
@@ -48,6 +53,16 @@ export function GroupedAssessmentEditor({
 }: GroupedAssessmentEditorProps) {
   const definition = getGroupedAssessmentDefinition(category);
   const dropLowest = normalizeDropLowest(value.dropLowest, value.itemCount);
+  const [itemCountDraft, setItemCountDraft] = useState(String(value.itemCount));
+  const [dropLowestDraft, setDropLowestDraft] = useState(String(dropLowest));
+
+  useEffect(() => {
+    setItemCountDraft(String(value.itemCount));
+  }, [value.itemCount]);
+
+  useEffect(() => {
+    setDropLowestDraft(String(dropLowest));
+  }, [dropLowest]);
 
   function update(updates: Partial<GroupedAssessmentEditorProps["value"]>) {
     onChange({
@@ -64,9 +79,42 @@ export function GroupedAssessmentEditor({
     });
   }
 
+  function commitItemCount(rawValue: string) {
+    const nextCount = Math.max(Number(rawValue) || 1, 1);
+    const nextItems = resizeGroupedAssessmentItems(
+      category,
+      nextCount,
+      value.items,
+    );
+    const nextDropLowest = normalizeDropLowest(
+      value.dropLowest,
+      nextItems.length,
+    );
+
+    update({
+      itemCount: nextItems.length,
+      items: nextItems,
+      dropLowest: nextDropLowest,
+    });
+
+    setItemCountDraft(String(nextItems.length));
+    setDropLowestDraft(String(nextDropLowest));
+  }
+
+  function commitDropLowest(rawValue: string) {
+    const nextDropLowest = normalizeDropLowest(
+      Number(rawValue),
+      value.itemCount,
+    );
+    update({
+      dropLowest: nextDropLowest,
+    });
+    setDropLowestDraft(String(nextDropLowest));
+  }
+
   return (
-    <div className="grid max-w-[760px] gap-6">
-      <div className="grid gap-4 sm:grid-cols-4">
+    <div className="flex min-h-0 max-w-[760px] flex-1 flex-col gap-5 sm:gap-6">
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 sm:gap-4">
         <div className="space-y-2">
           <Label htmlFor={`${category}-name`}>Category name</Label>
           <Input
@@ -83,8 +131,11 @@ export function GroupedAssessmentEditor({
             id={`${category}-weight`}
             max={100}
             min={0}
-            onChange={(event) => update({ weight: event.target.value })}
-            type="number"
+            onChange={(event) =>
+              update({ weight: sanitizePlainNumberInput(event.target.value) })
+            }
+            inputMode="decimal"
+            type="text"
             value={value.weight}
           />
         </div>
@@ -93,27 +144,22 @@ export function GroupedAssessmentEditor({
           <Input
             className="text-center"
             id={`${category}-count`}
-            max={20}
-            min={1}
-            onChange={(event) => {
-              const nextCount = Math.max(Number(event.target.value) || 1, 1);
-              const nextItems = resizeGroupedAssessmentItems(
-                category,
-                nextCount,
-                value.items,
-              );
-
-              update({
-                itemCount: nextItems.length,
-                items: nextItems,
-                dropLowest: normalizeDropLowest(
-                  value.dropLowest,
-                  nextItems.length,
-                ),
-              });
+            inputMode="numeric"
+            onBlur={() => commitItemCount(itemCountDraft)}
+            onChange={(event) =>
+              setItemCountDraft(sanitizeIntegerInput(event.target.value))
+            }
+            onKeyDown={(event) => {
+              if (event.key === "Enter") {
+                event.currentTarget.blur();
+              }
+              if (event.key === "Escape") {
+                setItemCountDraft(String(value.itemCount));
+                event.currentTarget.blur();
+              }
             }}
-            type="number"
-            value={value.itemCount}
+            type="text"
+            value={itemCountDraft}
           />
         </div>
         <div className="space-y-2">
@@ -121,23 +167,27 @@ export function GroupedAssessmentEditor({
           <Input
             className="text-center"
             id={`${category}-drop`}
-            max={Math.max(value.itemCount - 1, 0)}
-            min={0}
+            inputMode="numeric"
+            onBlur={() => commitDropLowest(dropLowestDraft)}
             onChange={(event) =>
-              update({
-                dropLowest: normalizeDropLowest(
-                  Number(event.target.value),
-                  value.itemCount,
-                ),
-              })
+              setDropLowestDraft(sanitizeIntegerInput(event.target.value))
             }
-            type="number"
-            value={dropLowest}
+            onKeyDown={(event) => {
+              if (event.key === "Enter") {
+                event.currentTarget.blur();
+              }
+              if (event.key === "Escape") {
+                setDropLowestDraft(String(dropLowest));
+                event.currentTarget.blur();
+              }
+            }}
+            type="text"
+            value={dropLowestDraft}
           />
         </div>
       </div>
 
-      <div className="space-y-3">
+      <div className="flex min-h-0 flex-1 flex-col space-y-3">
         <div className="text-center">
           <p className="text-sm font-semibold text-stone-950">
             {definition.label} items
@@ -147,7 +197,41 @@ export function GroupedAssessmentEditor({
           </p>
         </div>
 
-        <WorkspaceTableFrame className="mx-auto inline-block max-h-[48vh] w-fit max-w-full rounded-[20px]">
+        <div className="min-h-0 sm:hidden">
+          <div className="max-h-[34vh] overflow-auto rounded-[18px] border border-stone-200 bg-white">
+            <div className="grid grid-cols-[minmax(0,1fr)_92px] border-b border-stone-200 bg-stone-50 px-4 py-3 text-[11px] font-semibold uppercase tracking-[0.16em] text-stone-500">
+              <span>Assignment</span>
+              <span className="text-right">Grade</span>
+            </div>
+            {value.items.map((item) => (
+              <div
+                className="grid grid-cols-[minmax(0,1fr)_92px] items-center gap-3 border-t border-stone-200 px-4 py-3 first:border-t-0"
+                key={item.id}
+              >
+                <Input
+                  className="h-auto rounded-none border-0 bg-transparent px-0 py-0 text-left text-base font-medium text-stone-950 shadow-none focus-visible:ring-0"
+                  id={`${category}-label-${item.id}`}
+                  onChange={(event) =>
+                    updateItem(item.id, { label: event.target.value })
+                  }
+                  value={item.label}
+                />
+                <GroupedScoreInput
+                  id={`${category}-score-${item.id}`}
+                  onCommit={(scoreAchieved) =>
+                    updateItem(item.id, {
+                      scoreAchieved,
+                      totalPossible: 100,
+                    })
+                  }
+                  value={item.scoreAchieved}
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <WorkspaceTableFrame className="mx-auto hidden max-h-[48vh] w-fit max-w-full rounded-[20px] sm:inline-block">
           <WorkspaceTable className="w-auto min-w-[440px] table-auto">
             <WorkspaceTableHeader className="text-[11px] tracking-[0.14em]">
               <tr>
@@ -220,7 +304,7 @@ function GroupedScoreInput({
   }, [value]);
 
   return (
-    <div className="relative mx-auto w-[88px]">
+    <div className="relative ml-auto w-[88px] sm:mx-auto">
       <Input
         className={`${inlineGroupedNumberInputClassName} pr-5 text-center`}
         id={id}
@@ -230,7 +314,9 @@ function GroupedScoreInput({
           setDraft(formatGroupedScoreInput(parsed));
           onCommit(parsed);
         }}
-        onChange={(event) => setDraft(event.target.value)}
+        onChange={(event) =>
+          setDraft(sanitizeScoreExpressionInput(event.target.value))
+        }
         onKeyDown={(event) => {
           if (event.key === "Enter") {
             event.currentTarget.blur();

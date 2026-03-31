@@ -1,12 +1,20 @@
 "use client";
 
-import { KeyboardEvent, ReactNode, useEffect, useRef, useState } from "react";
-import { FlaskConical, GripVertical, Plus } from "lucide-react";
+import {
+  KeyboardEvent,
+  MouseEvent,
+  ReactNode,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
+import { FlaskConical, GripVertical, Pencil, Plus } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { AssessmentComposerDialog } from "@/components/workspace/assessment-composer-dialog";
 import { GroupedAssessmentDialog } from "@/components/workspace/grouped-assessment-dialog";
+import { SingleAssessmentDialog } from "@/components/workspace/single-assessment-dialog";
 import {
   WorkspaceTable,
   WorkspaceTableCell,
@@ -22,6 +30,10 @@ import {
   isSingleAssessment,
 } from "@/lib/grade-utils";
 import {
+  sanitizePlainNumberInput,
+  sanitizeScoreExpressionInput,
+} from "@/lib/numeric-input";
+import {
   Assessment,
   Module,
   GroupedAssessment,
@@ -32,6 +44,7 @@ interface AssessmentTableProps {
   module: Module;
   isExperimenting: boolean;
   onStartExperiment: () => void;
+  onDeleteAssessment: (courseId: string, assessmentId: string) => void;
   onSaveAssessment: (moduleId: string, assessment: Assessment) => void;
   onReorderAssessments: (
     moduleId: string,
@@ -50,6 +63,7 @@ export function AssessmentTable({
   module,
   isExperimenting,
   onStartExperiment,
+  onDeleteAssessment,
   onSaveAssessment,
   onReorderAssessments,
 }: AssessmentTableProps) {
@@ -87,14 +101,20 @@ export function AssessmentTable({
                     </Button>
                   </div>
                 </WorkspaceTableHeaderCell>
-                <WorkspaceTableHeaderCell className="w-[48%] min-[1024px]:max-[1120px]:px-2">
+                <WorkspaceTableHeaderCell className="w-[40%] min-[1024px]:max-[1120px]:px-2">
                   Assignment
                 </WorkspaceTableHeaderCell>
-                <WorkspaceTableHeaderCell className="w-[18%] min-[1024px]:max-[1120px]:px-2">
+                <WorkspaceTableHeaderCell className="w-[20%] min-[1024px]:max-[1120px]:px-2">
+                  Due date
+                </WorkspaceTableHeaderCell>
+                <WorkspaceTableHeaderCell className="w-[14%] min-[1024px]:max-[1120px]:px-2">
                   Weight
                 </WorkspaceTableHeaderCell>
-                <WorkspaceTableHeaderCell className="w-[22%] min-[1024px]:max-[1120px]:px-2">
+                <WorkspaceTableHeaderCell className="w-[18%] min-[1024px]:max-[1120px]:px-2">
                   Grade
+                </WorkspaceTableHeaderCell>
+                <WorkspaceTableHeaderCell className="w-9 px-1 lg:px-2 min-[1024px]:max-[1120px]:w-8 min-[1024px]:max-[1120px]:px-1">
+                  <span className="sr-only">Edit</span>
                 </WorkspaceTableHeaderCell>
               </tr>
             </WorkspaceTableHeader>
@@ -103,9 +123,11 @@ export function AssessmentTable({
                 isSingleAssessment(assessment) ? (
                   <SingleAssessmentRow
                     assessment={assessment}
+                    isExperimenting={isExperimenting}
                     module={module}
                     draggingId={draggingId}
                     key={assessment.id}
+                    onDeleteAssessment={onDeleteAssessment}
                     onDragEnd={() => setDraggingId(null)}
                     onDragStart={() => setDraggingId(assessment.id)}
                     onDropRow={(fromId, toId) =>
@@ -116,9 +138,11 @@ export function AssessmentTable({
                 ) : (
                   <GroupedAssessmentRow
                     assessment={assessment}
+                    isExperimenting={isExperimenting}
                     module={module}
                     draggingId={draggingId}
                     key={assessment.id}
+                    onDeleteAssessment={onDeleteAssessment}
                     onDragEnd={() => setDraggingId(null)}
                     onDragStart={() => setDraggingId(assessment.id)}
                     onDropRow={(fromId, toId) =>
@@ -138,39 +162,225 @@ export function AssessmentTable({
       </div>
 
       <div className="grid max-h-full gap-3 overflow-auto md:hidden">
-        <AssessmentComposerDialog
-          module={module}
-          onSaveAssessment={onSaveAssessment}
-          triggerAsChild
-          triggerChildren={
-            <button
-              className="inline-flex h-10 items-center justify-center gap-2 rounded-full border border-stone-200 bg-white/88 px-4 text-sm font-semibold text-stone-900 shadow-card transition hover:bg-white"
-              type="button"
-            >
-              <Plus className="h-4 w-4" />
-              Add assignment
-            </button>
-          }
-        />
-        {module.assessments.map((assessment) =>
-          isSingleAssessment(assessment) ? (
-            <SingleAssessmentCard
-              assessment={assessment}
-              key={assessment.id}
+        <div className="overflow-hidden rounded-[22px] border border-stone-200 bg-white shadow-card">
+          <div className="flex items-center justify-between gap-3 px-4 py-4">
+            <div className="flex items-center gap-2">
+              <Button
+                aria-label="Start experiment mode"
+                className="inline-flex h-9 items-center justify-center gap-1.5 rounded-full border border-stone-200 bg-white px-3 text-[0.78rem] font-medium text-stone-600 shadow-none transition hover:bg-stone-50 hover:text-sky-600"
+                disabled={isExperimenting}
+                onClick={onStartExperiment}
+                title="Experiment mode"
+                type="button"
+                variant="ghost"
+              >
+                <FlaskConical className="-scale-x-100 h-3.5 w-3.5" />
+                What-if
+              </Button>
+              <AssessmentComposerDialog
+                module={module}
+                onSaveAssessment={onSaveAssessment}
+                triggerAsChild
+                triggerChildren={
+                  <button
+                    className="inline-flex h-9 items-center justify-center gap-1.5 rounded-full border border-stone-200 bg-white px-3.5 text-[0.82rem] font-semibold text-stone-900 transition hover:bg-stone-50"
+                    type="button"
+                  >
+                    <Plus className="h-3.5 w-3.5" />
+                    Add
+                  </button>
+                }
+              />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-[minmax(0,1fr)_90px_90px] border-t border-stone-200 bg-stone-50/70 px-4 py-3 text-[0.68rem] font-semibold uppercase tracking-[0.18em] text-stone-500">
+            <span>Assignment</span>
+            <span className="text-center">Weight</span>
+            <span className="text-right">Grade</span>
+          </div>
+
+          <div>
+            {module.assessments.map((assessment) => (
+              <MobileAssessmentRow
+                assessment={assessment}
+                isExperimenting={isExperimenting}
+                key={assessment.id}
+                moduleId={module.id}
+                onDeleteAssessment={onDeleteAssessment}
+                onSaveAssessment={onSaveAssessment}
+              />
+            ))}
+          </div>
+
+          <div className="border-t border-stone-200 p-4">
+            <AssessmentComposerDialog
+              module={module}
               onSaveAssessment={onSaveAssessment}
-              moduleId={module.id}
+              triggerAsChild
+              triggerChildren={
+                <button
+                  className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-full border border-dashed border-stone-300 bg-white text-sm font-medium text-stone-600 transition hover:border-stone-400 hover:text-stone-900"
+                  type="button"
+                >
+                  <Plus className="h-4 w-4" />
+                  New assignment
+                </button>
+              }
             />
-          ) : (
-            <GroupedAssessmentCard
-              assessment={assessment}
-              key={assessment.id}
-              onSaveAssessment={onSaveAssessment}
-              moduleId={module.id}
-            />
-          ),
-        )}
+          </div>
+        </div>
       </div>
     </div>
+  );
+}
+
+function MobileAssessmentRow({
+  moduleId,
+  assessment,
+  isExperimenting,
+  onDeleteAssessment,
+  onSaveAssessment,
+}: {
+  moduleId: string;
+  assessment: Assessment;
+  isExperimenting: boolean;
+  onDeleteAssessment: (courseId: string, assessmentId: string) => void;
+  onSaveAssessment: (moduleId: string, assessment: Assessment) => void;
+}) {
+  if (isSingleAssessment(assessment)) {
+    return (
+      <div className="grid grid-cols-[minmax(0,1fr)_90px_90px] items-center gap-3 border-t border-stone-200 px-4 py-3 text-sm text-stone-700 first:border-t-0">
+        <div className="flex min-w-0 items-center gap-2">
+          <div className="min-w-0 flex-1">
+            <InlineText
+              display={
+                <span className="block truncate font-medium text-stone-950">
+                  {assessment.name}
+                </span>
+              }
+              onCommit={(name) =>
+                onSaveAssessment(moduleId, { ...assessment, name })
+              }
+              value={assessment.name}
+            />
+          </div>
+          <SingleAssessmentDialog
+            assessment={assessment}
+            moduleId={moduleId}
+            onDeleteAssessment={onDeleteAssessment}
+            onSaveAssessment={onSaveAssessment}
+            triggerAsChild
+            triggerChildren={<EditAssessmentButton label={assessment.name} />}
+          />
+        </div>
+        <InlineNumber
+          align="center"
+          display={String(assessment.weight)}
+          isExperimenting={isExperimenting}
+          onCommit={(weight) =>
+            onSaveAssessment(moduleId, { ...assessment, weight })
+          }
+          value={assessment.weight}
+        />
+        <InlineAssessmentResult
+          align="center"
+          assessment={assessment}
+          isExperimenting={isExperimenting}
+          onCommit={(scoreAchieved) =>
+            onSaveAssessment(moduleId, {
+              ...assessment,
+              scoreAchieved,
+              totalPossible: 100,
+              status: scoreAchieved === null ? "ongoing" : "completed",
+            })
+          }
+        />
+      </div>
+    );
+  }
+
+  return (
+    <MobileGroupedAssessmentRow
+      assessment={assessment}
+      isExperimenting={isExperimenting}
+      moduleId={moduleId}
+      onDeleteAssessment={onDeleteAssessment}
+      onSaveAssessment={onSaveAssessment}
+    />
+  );
+}
+
+function MobileGroupedAssessmentRow({
+  moduleId,
+  assessment,
+  isExperimenting,
+  onDeleteAssessment,
+  onSaveAssessment,
+}: {
+  moduleId: string;
+  assessment: GroupedAssessment;
+  isExperimenting: boolean;
+  onDeleteAssessment: (courseId: string, assessmentId: string) => void;
+  onSaveAssessment: (moduleId: string, assessment: Assessment) => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const metrics = getGroupedAssessmentMetrics(assessment);
+
+  return (
+    <>
+      <button
+        className="grid w-full grid-cols-[minmax(0,1fr)_90px_90px] items-center gap-3 border-t border-stone-200 px-4 py-3 text-left text-sm text-stone-700 transition hover:bg-stone-50/70"
+        onClick={() => setOpen(true)}
+        type="button"
+      >
+        <div className="flex min-w-0 items-center gap-2">
+          <span className="min-w-0 flex-1 truncate font-medium text-stone-950">
+            {assessment.name}
+          </span>
+          <EditAssessmentButton
+            label={assessment.name}
+            onClick={(event) => {
+              event.stopPropagation();
+              setOpen(true);
+            }}
+          />
+        </div>
+        <span className="block w-full px-2 py-3 -mx-2 -my-3 text-center">
+          <span
+            className={`font-medium ${
+              isExperimenting ? "text-sky-700" : "text-stone-950"
+            }`}
+          >
+            {assessment.weight}
+          </span>
+        </span>
+        <span className="block w-full px-2 py-3 -mx-2 -my-3 text-center">
+          {metrics.currentPercent === null ? (
+            <span className="text-stone-400">Pending</span>
+          ) : (
+            <span
+              className={`font-medium ${
+                isExperimenting ? "text-sky-700" : "text-stone-950"
+              }`}
+            >
+              <span className="mr-1 text-stone-400">Av:</span>
+              {formatPercent(metrics.currentPercent)}
+            </span>
+          )}
+        </span>
+      </button>
+      <GroupedAssessmentDialog
+        assessment={assessment}
+        moduleId={moduleId}
+        onDeleteAssessment={onDeleteAssessment}
+        onOpenChange={setOpen}
+        onSaveAssessment={onSaveAssessment}
+        open={open}
+        triggerChildren={<span className="hidden" />}
+        triggerAsChild
+      />
+    </>
   );
 }
 
@@ -188,7 +398,7 @@ function AddAssessmentRow({
       </WorkspaceTableCell>
       <WorkspaceTableCell
         className="px-3 py-2 lg:px-5 min-[1024px]:max-[1120px]:px-2"
-        colSpan={3}
+        colSpan={4}
       >
         <AssessmentComposerDialog
           module={module}
@@ -204,6 +414,7 @@ function AddAssessmentRow({
           }
         />
       </WorkspaceTableCell>
+      <WorkspaceTableCell />
     </WorkspaceTableRow>
   );
 }
@@ -211,6 +422,8 @@ function AddAssessmentRow({
 function SingleAssessmentRow({
   module,
   assessment,
+  isExperimenting = false,
+  onDeleteAssessment,
   onSaveAssessment,
   draggingId,
   onDragStart,
@@ -219,6 +432,8 @@ function SingleAssessmentRow({
 }: {
   module: Module;
   assessment: SingleAssessment;
+  isExperimenting?: boolean;
+  onDeleteAssessment: (courseId: string, assessmentId: string) => void;
   onSaveAssessment: (moduleId: string, assessment: Assessment) => void;
   draggingId: string | null;
   onDragStart: () => void;
@@ -227,6 +442,7 @@ function SingleAssessmentRow({
 }) {
   return (
     <WorkspaceTableRow
+      className="group/row"
       onDragOver={(event) => event.preventDefault()}
       onDrop={() => {
         if (draggingId) {
@@ -259,10 +475,14 @@ function SingleAssessmentRow({
           value={assessment.name}
         />
       </WorkspaceTableCell>
+      <WorkspaceTableCell className="px-3 py-3 text-sm text-stone-500 lg:px-5 lg:py-4 min-[1024px]:max-[1120px]:px-2">
+        {assessment.dueDate || "—"}
+      </WorkspaceTableCell>
       <WorkspaceTableCell className="px-3 py-3 text-sm text-stone-600 lg:px-5 lg:py-4 min-[1024px]:max-[1120px]:px-2">
         <InlineNumber
           align="left"
           display={String(assessment.weight)}
+          isExperimenting={isExperimenting}
           onCommit={(weight) =>
             onSaveAssessment(module.id, { ...assessment, weight })
           }
@@ -273,6 +493,7 @@ function SingleAssessmentRow({
         <InlineAssessmentResult
           align="left"
           assessment={assessment}
+          isExperimenting={isExperimenting}
           onCommit={(scoreAchieved) =>
             onSaveAssessment(module.id, {
               ...assessment,
@@ -283,6 +504,18 @@ function SingleAssessmentRow({
           }
         />
       </WorkspaceTableCell>
+      <WorkspaceTableCell className="px-1 py-3 text-center lg:px-2 lg:py-4 min-[1024px]:max-[1120px]:px-1">
+        <SingleAssessmentDialog
+          assessment={assessment}
+          moduleId={module.id}
+          onDeleteAssessment={onDeleteAssessment}
+          onSaveAssessment={onSaveAssessment}
+          triggerAsChild
+          triggerChildren={
+            <EditAssessmentButton label={assessment.name} subtle />
+          }
+        />
+      </WorkspaceTableCell>
     </WorkspaceTableRow>
   );
 }
@@ -290,6 +523,8 @@ function SingleAssessmentRow({
 function GroupedAssessmentRow({
   module,
   assessment,
+  isExperimenting = false,
+  onDeleteAssessment,
   onSaveAssessment,
   draggingId,
   onDragStart,
@@ -298,6 +533,8 @@ function GroupedAssessmentRow({
 }: {
   module: Module;
   assessment: GroupedAssessment;
+  isExperimenting?: boolean;
+  onDeleteAssessment: (courseId: string, assessmentId: string) => void;
   onSaveAssessment: (moduleId: string, assessment: Assessment) => void;
   draggingId: string | null;
   onDragStart: () => void;
@@ -309,7 +546,7 @@ function GroupedAssessmentRow({
 
   return (
     <WorkspaceTableRow
-      className="cursor-pointer transition hover:bg-stone-50/70"
+      className="group/row cursor-pointer transition hover:bg-stone-50/70"
       onClick={() => setOpen(true)}
       onDragOver={(event) => event.preventDefault()}
       onDrop={() => {
@@ -352,6 +589,9 @@ function GroupedAssessmentRow({
           value={assessment.name}
         />
       </WorkspaceTableCell>
+      <WorkspaceTableCell className="px-3 py-3 text-sm text-stone-500 lg:px-5 lg:py-4 min-[1024px]:max-[1120px]:px-2">
+        {assessment.dueDate || "—"}
+      </WorkspaceTableCell>
       <WorkspaceTableCell
         className="px-3 py-3 text-sm text-stone-600 lg:px-5 lg:py-4 min-[1024px]:max-[1120px]:px-2"
         onClick={(event) => event.stopPropagation()}
@@ -359,6 +599,7 @@ function GroupedAssessmentRow({
         <InlineNumber
           align="left"
           display={String(assessment.weight)}
+          isExperimenting={isExperimenting}
           onCommit={(weight) =>
             onSaveAssessment(module.id, { ...assessment, weight })
           }
@@ -369,15 +610,33 @@ function GroupedAssessmentRow({
         {metrics.currentPercent === null ? (
           <span className="text-stone-400">Pending</span>
         ) : (
-          <div className="font-medium text-stone-950">
+          <div
+            className={`font-medium ${
+              isExperimenting ? "text-sky-700" : "text-stone-950"
+            }`}
+          >
             <span className="text-stone-400">Av:</span>{" "}
             <span>{formatPercent(metrics.currentPercent)}</span>
           </div>
         )}
       </WorkspaceTableCell>
+      <WorkspaceTableCell
+        className="px-1 py-3 text-center lg:px-2 lg:py-4 min-[1024px]:max-[1120px]:px-1"
+        onClick={(event) => event.stopPropagation()}
+      >
+        <button
+          aria-label={`Edit ${assessment.name}`}
+          className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-stone-300 opacity-0 transition group-hover/row:opacity-100 hover:bg-stone-100 hover:text-stone-700 focus-visible:opacity-100"
+          onClick={() => setOpen(true)}
+          type="button"
+        >
+          <Pencil className="h-3.5 w-3.5" />
+        </button>
+      </WorkspaceTableCell>
       <GroupedAssessmentDialog
         assessment={assessment}
         moduleId={module.id}
+        onDeleteAssessment={onDeleteAssessment}
         onOpenChange={setOpen}
         onSaveAssessment={onSaveAssessment}
         open={open}
@@ -533,11 +792,13 @@ function InlineNumber({
   value,
   display,
   onCommit,
+  isExperimenting = false,
   align = "left",
 }: {
   value: number;
   display: string;
   onCommit: (value: number) => void;
+  isExperimenting?: boolean;
   align?: "left" | "center";
 }) {
   const [editing, setEditing] = useState(false);
@@ -562,7 +823,13 @@ function InlineNumber({
         onClick={() => setEditing(true)}
         type="button"
       >
-        <span className="font-medium text-stone-950">{display}</span>
+        <span
+          className={`font-medium ${
+            isExperimenting ? "text-sky-700" : "text-stone-950"
+          }`}
+        >
+          {display}
+        </span>
       </button>
     );
   }
@@ -575,7 +842,9 @@ function InlineNumber({
         setEditing(false);
         onCommit(parsePlainNumber(draft));
       }}
-      onChange={(event) => setDraft(event.target.value)}
+      onChange={(event) =>
+        setDraft(sanitizePlainNumberInput(event.target.value))
+      }
       onKeyDown={(event) =>
         handleInlineNumberKeyDown(event, inputRef, setEditing, setDraft, value)
       }
@@ -589,10 +858,12 @@ function InlineNumber({
 function InlineAssessmentResult({
   assessment,
   onCommit,
+  isExperimenting = false,
   align = "left",
 }: {
   assessment: SingleAssessment;
   onCommit: (scoreAchieved: number | null) => void;
+  isExperimenting?: boolean;
   align?: "left" | "center";
 }) {
   const [editing, setEditing] = useState(false);
@@ -634,7 +905,11 @@ function InlineAssessmentResult({
         {assessment.scoreAchieved === null ? (
           <span className="text-stone-400">Pending</span>
         ) : (
-          <p className="font-medium text-stone-950">
+          <p
+            className={`font-medium ${
+              isExperimenting ? "text-sky-700" : "text-stone-950"
+            }`}
+          >
             {formatPercent(getAssessmentPercent(assessment) ?? 0)}
           </p>
         )}
@@ -649,7 +924,9 @@ function InlineAssessmentResult({
         setEditing(false);
         onCommit(parseGradeInput(draft));
       }}
-      onChange={(event) => setDraft(event.target.value)}
+      onChange={(event) =>
+        setDraft(sanitizeScoreExpressionInput(event.target.value))
+      }
       onKeyDown={(event) => {
         if (event.key === "Enter") {
           inputRef.current?.blur();
@@ -740,6 +1017,31 @@ function parsePlainNumber(value: string) {
   }
 
   return numeric;
+}
+
+function EditAssessmentButton({
+  label,
+  onClick,
+  subtle = false,
+}: {
+  label: string;
+  onClick?: (event: MouseEvent<HTMLButtonElement>) => void;
+  subtle?: boolean;
+}) {
+  return (
+    <button
+      aria-label={`Edit ${label}`}
+      className={`inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full transition ${
+        subtle
+          ? "text-stone-300 opacity-0 hover:bg-stone-100 hover:text-stone-700 group-hover/row:opacity-100 focus-visible:opacity-100"
+          : "text-stone-400 hover:bg-stone-100 hover:text-stone-700"
+      }`}
+      onClick={onClick}
+      type="button"
+    >
+      <Pencil className="h-3.5 w-3.5" />
+    </button>
+  );
 }
 
 function placeCaretAtEnd(input: HTMLInputElement | null) {
