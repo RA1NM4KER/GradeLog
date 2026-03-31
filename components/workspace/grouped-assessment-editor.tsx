@@ -48,6 +48,21 @@ export function GroupedAssessmentEditor({
 }: GroupedAssessmentEditorProps) {
   const definition = getGroupedAssessmentDefinition(category);
   const dropLowest = normalizeDropLowest(value.dropLowest, value.itemCount);
+  const [weightDraft, setWeightDraft] = useState(value.weight);
+  const [itemCountDraft, setItemCountDraft] = useState(String(value.itemCount));
+  const [dropLowestDraft, setDropLowestDraft] = useState(String(dropLowest));
+
+  useEffect(() => {
+    setWeightDraft(value.weight);
+  }, [value.weight]);
+
+  useEffect(() => {
+    setItemCountDraft(String(value.itemCount));
+  }, [value.itemCount]);
+
+  useEffect(() => {
+    setDropLowestDraft(String(dropLowest));
+  }, [dropLowest]);
 
   function update(updates: Partial<GroupedAssessmentEditorProps["value"]>) {
     onChange({
@@ -61,6 +76,46 @@ export function GroupedAssessmentEditor({
       items: value.items.map((item) =>
         item.id === itemId ? { ...item, ...updates } : item,
       ),
+    });
+  }
+
+  function commitWeight() {
+    const nextWeight = parseWholeNumber(weightDraft, 0);
+    const normalizedWeight = String(Math.min(Math.max(nextWeight, 0), 100));
+    setWeightDraft(normalizedWeight);
+    update({ weight: normalizedWeight });
+  }
+
+  function commitItemCount() {
+    const nextCount = clampWholeNumber(itemCountDraft, 1, 20, value.itemCount);
+    const nextItems = resizeGroupedAssessmentItems(
+      category,
+      nextCount,
+      value.items,
+    );
+
+    setItemCountDraft(String(nextCount));
+    setDropLowestDraft(
+      String(normalizeDropLowest(value.dropLowest, nextItems.length)),
+    );
+    update({
+      itemCount: nextItems.length,
+      items: nextItems,
+      dropLowest: normalizeDropLowest(value.dropLowest, nextItems.length),
+    });
+  }
+
+  function commitDropLowest() {
+    const nextDropLowest = clampWholeNumber(
+      dropLowestDraft,
+      0,
+      Math.max(value.itemCount - 1, 0),
+      value.dropLowest,
+    );
+
+    setDropLowestDraft(String(nextDropLowest));
+    update({
+      dropLowest: normalizeDropLowest(nextDropLowest, value.itemCount),
     });
   }
 
@@ -83,9 +138,20 @@ export function GroupedAssessmentEditor({
             id={`${category}-weight`}
             max={100}
             min={0}
-            onChange={(event) => update({ weight: event.target.value })}
-            type="number"
-            value={value.weight}
+            inputMode="numeric"
+            onBlur={commitWeight}
+            onChange={(event) => setWeightDraft(event.target.value)}
+            onKeyDown={(event) => {
+              if (event.key === "Enter") {
+                event.currentTarget.blur();
+              }
+              if (event.key === "Escape") {
+                setWeightDraft(value.weight);
+                event.currentTarget.blur();
+              }
+            }}
+            type="text"
+            value={weightDraft}
           />
         </div>
         <div className="space-y-2">
@@ -95,25 +161,20 @@ export function GroupedAssessmentEditor({
             id={`${category}-count`}
             max={20}
             min={1}
-            onChange={(event) => {
-              const nextCount = Math.max(Number(event.target.value) || 1, 1);
-              const nextItems = resizeGroupedAssessmentItems(
-                category,
-                nextCount,
-                value.items,
-              );
-
-              update({
-                itemCount: nextItems.length,
-                items: nextItems,
-                dropLowest: normalizeDropLowest(
-                  value.dropLowest,
-                  nextItems.length,
-                ),
-              });
+            inputMode="numeric"
+            onBlur={commitItemCount}
+            onChange={(event) => setItemCountDraft(event.target.value)}
+            onKeyDown={(event) => {
+              if (event.key === "Enter") {
+                event.currentTarget.blur();
+              }
+              if (event.key === "Escape") {
+                setItemCountDraft(String(value.itemCount));
+                event.currentTarget.blur();
+              }
             }}
-            type="number"
-            value={value.itemCount}
+            type="text"
+            value={itemCountDraft}
           />
         </div>
         <div className="space-y-2">
@@ -123,16 +184,20 @@ export function GroupedAssessmentEditor({
             id={`${category}-drop`}
             max={Math.max(value.itemCount - 1, 0)}
             min={0}
-            onChange={(event) =>
-              update({
-                dropLowest: normalizeDropLowest(
-                  Number(event.target.value),
-                  value.itemCount,
-                ),
-              })
-            }
-            type="number"
-            value={dropLowest}
+            inputMode="numeric"
+            onBlur={commitDropLowest}
+            onChange={(event) => setDropLowestDraft(event.target.value)}
+            onKeyDown={(event) => {
+              if (event.key === "Enter") {
+                event.currentTarget.blur();
+              }
+              if (event.key === "Escape") {
+                setDropLowestDraft(String(dropLowest));
+                event.currentTarget.blur();
+              }
+            }}
+            type="text"
+            value={dropLowestDraft}
           />
         </div>
       </div>
@@ -147,47 +212,44 @@ export function GroupedAssessmentEditor({
           </p>
         </div>
 
-        <div className="space-y-3 sm:hidden">
-          {value.items.map((item, index) => (
-            <div
-              className="rounded-[20px] border border-stone-200 bg-white/85 p-3"
-              key={item.id}
-            >
-              <p className="mb-3 text-xs font-semibold uppercase tracking-[0.16em] text-stone-400">
-                {definition.itemPrefix} {index + 1}
-              </p>
-              <div className="grid gap-3">
-                <div className="space-y-2">
-                  <Label htmlFor={`${category}-label-mobile-${item.id}`}>
-                    Title
-                  </Label>
-                  <Input
-                    className="h-11"
-                    id={`${category}-label-mobile-${item.id}`}
-                    onChange={(event) =>
-                      updateItem(item.id, { label: event.target.value })
-                    }
-                    value={item.label}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor={`${category}-score-mobile-${item.id}`}>
-                    Mark
-                  </Label>
-                  <GroupedScoreInput
-                    id={`${category}-score-mobile-${item.id}`}
-                    onCommit={(scoreAchieved) =>
-                      updateItem(item.id, {
-                        scoreAchieved,
-                        totalPossible: 100,
-                      })
-                    }
-                    value={item.scoreAchieved}
-                  />
-                </div>
+        <div className="overflow-hidden rounded-[20px] border border-stone-200 bg-white/90 sm:hidden">
+          <div className="grid grid-cols-[minmax(0,1fr)_96px] border-b border-stone-200 bg-stone-100/90 px-4 py-2.5 text-[0.68rem] font-semibold uppercase tracking-[0.18em] text-stone-500">
+            <p>Assignment</p>
+            <p className="text-right">Grade</p>
+          </div>
+          <div>
+            {value.items.map((item, index) => (
+              <div
+                className="grid grid-cols-[minmax(0,1fr)_96px] items-center gap-3 border-t border-stone-200/80 px-4 py-2.5 first:border-t-0"
+                key={item.id}
+              >
+                <Label
+                  className="sr-only"
+                  htmlFor={`${category}-label-mobile-${item.id}`}
+                >
+                  {definition.itemPrefix} {index + 1} label
+                </Label>
+                <Input
+                  className="h-9 rounded-xl border-0 bg-transparent px-0 py-0 text-base font-medium shadow-none focus-visible:ring-0"
+                  id={`${category}-label-mobile-${item.id}`}
+                  onChange={(event) =>
+                    updateItem(item.id, { label: event.target.value })
+                  }
+                  value={item.label}
+                />
+                <GroupedScoreInput
+                  id={`${category}-score-mobile-${item.id}`}
+                  onCommit={(scoreAchieved) =>
+                    updateItem(item.id, {
+                      scoreAchieved,
+                      totalPossible: 100,
+                    })
+                  }
+                  value={item.scoreAchieved}
+                />
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
 
         <WorkspaceTableFrame className="mx-auto hidden max-h-[48vh] w-fit max-w-full rounded-[20px] sm:inline-block">
@@ -265,7 +327,7 @@ function GroupedScoreInput({
   return (
     <div className="relative mx-auto w-full max-w-[96px] sm:w-[88px]">
       <Input
-        className={`${inlineGroupedNumberInputClassName} h-11 pr-5 text-center`}
+        className={`${inlineGroupedNumberInputClassName} h-9 rounded-xl border-0 bg-transparent pr-5 text-right sm:h-11 sm:rounded-2xl sm:border sm:border-stone-200 sm:bg-white/90 sm:text-center`}
         id={id}
         inputMode="decimal"
         onBlur={() => {
@@ -334,4 +396,28 @@ function formatGroupedScoreInput(value: number | null) {
 function roundGroupedScore(value: number) {
   const clamped = Math.min(Math.max(value, 0), 100);
   return Math.round(clamped * 10) / 10;
+}
+
+function parseWholeNumber(value: string, fallback: number) {
+  const normalized = value.trim();
+  if (normalized === "") {
+    return fallback;
+  }
+
+  const numeric = Number(normalized);
+  if (!Number.isFinite(numeric)) {
+    return fallback;
+  }
+
+  return Math.round(numeric);
+}
+
+function clampWholeNumber(
+  value: string,
+  min: number,
+  max: number,
+  fallback: number,
+) {
+  const numeric = parseWholeNumber(value, fallback);
+  return Math.min(Math.max(numeric, min), max);
 }

@@ -469,7 +469,7 @@ function MobileSingleAssessmentRow({
 }) {
   return (
     <WorkspaceTableRow>
-      <WorkspaceTableCell className="px-4 py-2.5 align-top">
+      <WorkspaceTableCell className="px-4 py-2.5 align-middle">
         <InlineText
           display={
             <span className="block text-sm font-medium text-stone-950">
@@ -482,7 +482,7 @@ function MobileSingleAssessmentRow({
           value={assessment.name}
         />
       </WorkspaceTableCell>
-      <WorkspaceTableCell className="px-3 py-2.5 align-top text-sm text-stone-600">
+      <WorkspaceTableCell className="px-3 py-2.5 align-middle text-sm text-stone-600">
         <InlineNumber
           align="left"
           display={String(assessment.weight)}
@@ -492,9 +492,10 @@ function MobileSingleAssessmentRow({
           value={assessment.weight}
         />
       </WorkspaceTableCell>
-      <WorkspaceTableCell className="px-4 py-2.5 align-top text-right text-sm text-stone-600">
+      <WorkspaceTableCell className="px-4 py-2.5 align-middle text-right text-sm text-stone-600">
         <InlineAssessmentResult
           align="right"
+          className="tabular-nums"
           assessment={assessment}
           onCommit={(scoreAchieved) =>
             onSaveAssessment(moduleId, {
@@ -527,7 +528,7 @@ function MobileGroupedAssessmentRow({
       className="cursor-pointer transition hover:bg-stone-50/70"
       onClick={() => setOpen(true)}
     >
-      <WorkspaceTableCell className="px-4 py-2.5 align-top">
+      <WorkspaceTableCell className="px-4 py-2.5 align-middle">
         <div className="min-w-0">
           <p className="text-sm font-medium text-stone-950">
             {assessment.name}
@@ -537,16 +538,20 @@ function MobileGroupedAssessmentRow({
           </p>
         </div>
       </WorkspaceTableCell>
-      <WorkspaceTableCell className="px-3 py-2.5 align-top text-sm font-medium text-stone-700">
-        {assessment.weight}
+      <WorkspaceTableCell className="px-3 py-2.5 align-middle text-sm font-medium text-stone-700">
+        <div className="-mx-2 block w-full px-2 py-3 text-left">
+          {assessment.weight}
+        </div>
       </WorkspaceTableCell>
-      <WorkspaceTableCell className="px-4 py-2.5 align-top text-right text-sm">
+      <WorkspaceTableCell className="px-4 py-2.5 align-middle text-right text-sm">
         {metrics.currentPercent === null ? (
-          <span className="text-stone-400">Pending</span>
+          <div className="-mx-2 block w-full px-2 py-3 text-right tabular-nums text-stone-400">
+            Pending
+          </div>
         ) : (
-          <span className="font-medium text-stone-950">
+          <div className="-mx-2 block w-full px-2 py-3 text-right font-medium tabular-nums text-stone-950">
             {formatPercent(metrics.currentPercent)}
-          </span>
+          </div>
         )}
       </WorkspaceTableCell>
       <GroupedAssessmentDialog
@@ -710,10 +715,12 @@ function InlineAssessmentResult({
   assessment,
   onCommit,
   align = "left",
+  className,
 }: {
   assessment: SingleAssessment;
   onCommit: (scoreAchieved: number | null) => void;
   align?: "left" | "center" | "right";
+  className?: string;
 }) {
   const [editing, setEditing] = useState(false);
   const [draft, setDraft] = useState(
@@ -753,7 +760,7 @@ function InlineAssessmentResult({
             : align === "right"
               ? "text-right"
               : "text-left"
-        }`}
+        } ${className ?? ""}`}
         onClick={() => setEditing(true)}
         type="button"
       >
@@ -776,7 +783,7 @@ function InlineAssessmentResult({
           : align === "right"
             ? "text-right"
             : "text-left"
-      }`}
+      } ${className ?? ""}`}
       onBlur={() => {
         setEditing(false);
         onCommit(parseGradeInput(draft));
