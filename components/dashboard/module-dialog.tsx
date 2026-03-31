@@ -1,6 +1,7 @@
 "use client";
 
 import { ReactNode, SyntheticEvent, useEffect, useMemo, useState } from "react";
+import { Check } from "lucide-react";
 
 import {
   Dialog,
@@ -244,9 +245,9 @@ export function CourseDialog({
                     return (
                       <button
                         className={cn(
-                          "rounded-full border bg-white p-1 transition",
+                          "relative rounded-full border bg-white p-1 transition",
                           isSelected
-                            ? "border-stone-300 shadow-[0_10px_24px_rgba(28,25,23,0.08)]"
+                            ? "border-stone-400 shadow-[0_10px_24px_rgba(28,25,23,0.12)]"
                             : "border-stone-200 hover:border-stone-300 hover:bg-stone-50/70",
                         )}
                         aria-label={`${theme.name} course color`}
@@ -265,6 +266,11 @@ export function CourseDialog({
                             theme.band,
                           )}
                         />
+                        {isSelected ? (
+                          <span className="absolute -right-1 -top-1 inline-flex h-5 w-5 items-center justify-center rounded-full bg-stone-950 text-white shadow-sm">
+                            <Check className="h-3 w-3" />
+                          </span>
+                        ) : null}
                       </button>
                     );
                   })}

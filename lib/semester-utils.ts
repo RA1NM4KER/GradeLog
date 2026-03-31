@@ -25,6 +25,14 @@ export function getSuggestedSemesters(date = new Date()): SemesterSuggestion[] {
 
   return [
     {
+      name: `Spring ${year}`,
+      periodLabel: "January to May",
+    },
+    {
+      name: `Fall ${year}`,
+      periodLabel: "August to December",
+    },
+    {
       name: `Semester 1 ${year}`,
       periodLabel: "January to June",
     },

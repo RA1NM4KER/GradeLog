@@ -53,11 +53,20 @@ export function MinimalLanding() {
     <div className="mx-auto max-w-5xl px-5 pb-16 pt-12 sm:px-8">
       <div>
         <p className="text-xs font-semibold uppercase tracking-[0.14em] text-stone-500">
-          Semesters
+          Gradeflow
         </p>
-        <h1 className="mt-2 text-4xl font-semibold tracking-[-0.04em] text-stone-950">
+        <h1 className="mt-2 text-3xl font-semibold tracking-[-0.04em] text-stone-950 sm:text-[2.2rem]">
           Your semesters
         </h1>
+        <p className="mt-2 max-w-2xl text-sm leading-6 text-stone-600 sm:text-[0.98rem]">
+          Create a semester, add your courses, and track grades without guessing
+          what you still need.
+        </p>
+        <div className="mt-4 inline-flex max-w-full items-center gap-2 rounded-full border border-stone-200 bg-white px-3.5 py-2 text-[0.78rem] font-medium text-stone-600 shadow-card">
+          <span className="h-2 w-2 rounded-full bg-[#41b3a2]" />
+          Privacy-first and local-first. Your data stays on this device unless
+          you export it.
+        </div>
       </div>
 
       {suggestions.length > 0 ? (
@@ -82,7 +91,7 @@ export function MinimalLanding() {
           <div className="flex items-center gap-3" key={semester.id}>
             <button
               className={cn(
-                "flex w-full items-center justify-between rounded-[18px] px-5 py-4 text-left transition",
+                "grid w-full grid-cols-[minmax(0,1fr)_auto_20px] items-start gap-2.5 rounded-[18px] px-5 py-3.5 text-left transition",
                 semester.id === selectedSemester.id
                   ? "bg-white shadow-soft"
                   : "bg-[#fbfbfa] shadow-card hover:bg-white",
@@ -91,21 +100,22 @@ export function MinimalLanding() {
               type="button"
             >
               <div className="min-w-0">
-                <p className="text-lg font-semibold text-stone-950">
+                <p className="text-[1.02rem] font-semibold leading-tight text-stone-950">
                   {semester.name}
                 </p>
                 <p className="mt-1 text-sm text-stone-500">
                   {semester.periodLabel}
                 </p>
               </div>
-              <div className="ml-4 flex shrink-0 items-center gap-3">
-                {semester.id === selectedSemester.id ? (
-                  <span className="rounded-lg bg-stone-950 px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-[0.14em] text-stone-50">
-                    Current
-                  </span>
-                ) : null}
-                <ArrowRight className="h-5 w-5 text-stone-400" />
-              </div>
+              {semester.id === selectedSemester.id ? (
+                <span className="mt-0.5 inline-flex items-center gap-1 self-start rounded-full border border-emerald-200 bg-emerald-50 px-2 py-0.5 text-[0.58rem] font-semibold uppercase tracking-[0.12em] text-emerald-700">
+                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+                  Current
+                </span>
+              ) : (
+                <span />
+              )}
+              <ArrowRight className="h-5 w-5 text-stone-400" />
             </button>
             <button
               aria-label={`Delete ${semester.name}`}
@@ -122,12 +132,12 @@ export function MinimalLanding() {
           triggerAsChild
           triggerChildren={
             <button
-              className="flex min-h-[108px] w-full items-center justify-center rounded-[18px] bg-[#fafaf8] px-5 py-4 text-stone-500 shadow-card transition hover:bg-white hover:text-stone-900"
+              className="flex min-h-[82px] w-full items-center justify-center rounded-[18px] bg-[#fafaf8] px-5 py-3.5 text-stone-500 shadow-card transition hover:bg-white hover:text-stone-900"
               type="button"
             >
               <div className="flex flex-col items-center text-center">
-                <Plus className="h-8 w-8" />
-                <span className="mt-3 text-sm font-semibold uppercase tracking-[0.14em]">
+                <Plus className="h-7 w-7" />
+                <span className="mt-2 text-[0.82rem] font-semibold uppercase tracking-[0.14em]">
                   Create semester
                 </span>
               </div>

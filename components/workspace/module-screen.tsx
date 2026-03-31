@@ -87,7 +87,7 @@ export function CourseScreen({ moduleId }: { moduleId?: string }) {
   }
 
   return (
-    <div className="mx-auto max-w-7xl overflow-auto px-4 py-3 pb-24 sm:h-[calc(100vh-5.5rem)] sm:overflow-hidden sm:px-8 sm:py-4 sm:pb-4">
+    <div className="mx-auto max-w-7xl overflow-auto px-4 py-3 pb-24 sm:h-[calc(100vh-5.5rem)] sm:overflow-hidden sm:px-8 sm:py-4 sm:pb-4 md:pb-6">
       <div className="mb-3 sm:mb-4">
         <CourseHeader
           module={module}
@@ -130,40 +130,15 @@ export function CourseScreen({ moduleId }: { moduleId?: string }) {
       </div>
 
       <div className="fixed inset-x-0 bottom-0 z-30 border-t border-stone-200/80 bg-[#f8f5ef]/88 backdrop-blur-xl md:hidden">
-        <div className="mx-auto flex max-w-7xl gap-2 overflow-x-auto px-4 py-3 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-          {semester.courses.map((course) => {
-            const isActive = course.id === module.id;
-            const courseTheme = getCourseTheme(course);
-
-            return (
-              <button
-                className={cn(
-                  "group relative shrink-0 overflow-hidden rounded-lg border px-3.5 py-2.5 text-left shadow-sm transition-all duration-200",
-                  isActive
-                    ? "border-stone-200/70 bg-white text-stone-950 shadow-[0_10px_24px_rgba(28,25,23,0.08)]"
-                    : "border-stone-200/70 bg-white/82 text-stone-700 hover:-translate-y-0.5 hover:border-stone-300 hover:bg-white",
-                )}
-                key={course.id}
-                onClick={() => navigateCourses(`/courses/${course.id}`)}
-                type="button"
-              >
-                <span
-                  className={cn(
-                    "absolute inset-x-0 bottom-0 h-1.5",
-                    courseTheme.band,
-                    !isActive && "opacity-65 group-hover:opacity-100",
-                  )}
-                />
-                <span className="block whitespace-nowrap text-sm font-semibold tracking-[-0.01em]">
-                  {course.code}
-                </span>
-              </button>
-            );
-          })}
+        <div className="mx-auto max-w-7xl px-4 py-3">
+          <CourseSwitcher
+            semesterCourses={semester.courses}
+            activeCourseId={module.id}
+          />
         </div>
       </div>
 
-      <div className="hidden min-h-0 gap-3 md:grid md:h-[calc(100%-5.5rem)] min-[900px]:grid-cols-[minmax(0,1fr)_560px] lg:gap-4">
+      <div className="hidden min-h-0 gap-3 md:grid md:h-[calc(100%-9.5rem)] min-[900px]:grid-cols-[minmax(0,1fr)_560px] lg:gap-4">
         <div className="grid min-h-0">
           <AssessmentTable
             onDeleteAssessment={deleteAssessment}
@@ -183,8 +158,73 @@ export function CourseScreen({ moduleId }: { moduleId?: string }) {
           />
         </div>
       </div>
+
+      <div className="hidden border-t border-stone-200/80 bg-[#f8f5ef]/88 pt-4 backdrop-blur-xl md:mt-4 md:block">
+        <CourseSwitcher
+          semesterCourses={semester.courses}
+          activeCourseId={module.id}
+          className="pb-1"
+          itemClassName="rounded-xl px-5 py-3.5 text-base"
+          indicatorClassName="h-2"
+        />
+      </div>
     </div>
   );
 }
 
 export const ModuleScreen = CourseScreen;
+
+function CourseSwitcher({
+  semesterCourses,
+  activeCourseId,
+  className,
+  itemClassName,
+  indicatorClassName,
+}: {
+  semesterCourses: Course[];
+  activeCourseId: string;
+  className?: string;
+  itemClassName?: string;
+  indicatorClassName?: string;
+}) {
+  return (
+    <div
+      className={cn(
+        "flex gap-2 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden",
+        className,
+      )}
+    >
+      {semesterCourses.map((course) => {
+        const isActive = course.id === activeCourseId;
+        const courseTheme = getCourseTheme(course);
+
+        return (
+          <button
+            className={cn(
+              "group relative shrink-0 overflow-hidden rounded-lg border px-3.5 py-2.5 text-left text-sm shadow-sm transition-all duration-200",
+              itemClassName,
+              isActive
+                ? "border-stone-200/70 bg-white text-stone-950 shadow-[0_10px_24px_rgba(28,25,23,0.08)]"
+                : "border-stone-200/70 bg-white/82 text-stone-700 hover:-translate-y-0.5 hover:border-stone-300 hover:bg-white",
+            )}
+            key={course.id}
+            onClick={() => navigateCourses(`/courses/${course.id}`)}
+            type="button"
+          >
+            <span
+              className={cn(
+                "absolute inset-x-0 bottom-0 h-1.5",
+                indicatorClassName,
+                courseTheme.band,
+                !isActive && "opacity-65 group-hover:opacity-100",
+              )}
+            />
+            <span className="block whitespace-nowrap font-semibold tracking-[-0.01em]">
+              {course.code}
+            </span>
+          </button>
+        );
+      })}
+    </div>
+  );
+}
