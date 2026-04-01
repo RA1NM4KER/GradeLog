@@ -14,7 +14,7 @@ export function TopNav() {
     <header className="sticky top-0 z-30 border-b border-line/60 bg-surface-overlay/96 backdrop-blur-sm">
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-3 sm:gap-6 sm:px-8 sm:py-4">
         <Link
-          className="flex min-w-0 shrink-0 items-center gap-2.5 sm:gap-3"
+          className="flex min-w-0 shrink-0 items-center sm:gap-3"
           href="/"
           prefetch={false}
         >
