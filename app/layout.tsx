@@ -11,14 +11,14 @@ import { CoursesProvider } from "@/components/workspace/courses-provider";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Gradeflow",
+  title: "GradeLog",
   description:
     "A calm, premium grade tracker for students who want clarity without clutter.",
   manifest: "/manifest.webmanifest",
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
-    title: "Gradeflow",
+    title: "GradeLog",
   },
   icons: {
     shortcut: "/favicon.ico",

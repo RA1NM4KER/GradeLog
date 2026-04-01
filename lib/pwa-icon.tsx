@@ -60,7 +60,7 @@ export function PwaIcon({ size }: { size: number }) {
           textTransform: "uppercase",
         }}
       >
-        Gradeflow
+        GradeLog
       </div>
     </div>
   );

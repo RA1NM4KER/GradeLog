@@ -2,8 +2,8 @@ import type { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "Gradeflow",
-    short_name: "Gradeflow",
+    name: "GradeLog",
+    short_name: "GradeLog",
     description:
       "A calm, private grade tracker that works offline after the first load.",
     start_url: "/",

@@ -74,7 +74,7 @@ export function LocalBackupDialog({
       setImportError(
         error instanceof Error
           ? error.message
-          : "This file could not be imported into Gradeflow.",
+          : "This file could not be imported into GradeLog.",
       );
     } finally {
       setIsImporting(false);
@@ -116,7 +116,7 @@ export function LocalBackupDialog({
         <DialogHeader>
           <DialogTitle>Local backup</DialogTitle>
           <DialogDescription>
-            Export your private Gradeflow data to JSON or restore a local backup
+            Export your private GradeLog data to JSON or restore a local backup
             on this device.
           </DialogDescription>
         </DialogHeader>

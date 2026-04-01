@@ -59,7 +59,7 @@ export function MinimalLanding() {
     <div className="mx-auto flex min-h-[calc(100vh-5.5rem)] max-w-5xl flex-col px-5 pt-12 sm:px-8">
       <div>
         <p className="text-xs font-semibold uppercase tracking-[0.14em] text-ink-muted">
-          Gradeflow
+          GradeLog
         </p>
         <h1 className="mt-2 text-3xl font-semibold tracking-[-0.04em] text-foreground sm:text-[2.2rem]">
           Your semesters
@@ -161,10 +161,10 @@ export function MinimalLanding() {
               </div>
               <div>
                 <p className="text-sm font-semibold text-foreground sm:text-[0.98rem]">
-                  Keep Gradeflow independent
+                  Keep GradeLog independent
                 </p>
                 <p className="mt-1 max-w-2xl text-sm leading-6 text-ink-soft">
-                  Gradeflow stays free, local-first, and account-free. If it has
+                  GradeLog stays free, local-first, and account-free. If it has
                   been useful to you, you can help support development.
                 </p>
               </div>

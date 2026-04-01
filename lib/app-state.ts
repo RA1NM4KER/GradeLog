@@ -254,7 +254,7 @@ export function migrateAppState(
   if (!isRecord(rawState)) {
     if (strict) {
       throw new Error(
-        "This backup file does not contain a valid Gradeflow state.",
+        "This backup file does not contain a valid GradeLog state.",
       );
     }
 
@@ -263,7 +263,7 @@ export function migrateAppState(
 
   if (strict && !Array.isArray(rawState.semesters)) {
     throw new Error(
-      "This backup file is missing the semesters data Gradeflow needs.",
+      "This backup file is missing the semesters data GradeLog needs.",
     );
   }
 
@@ -271,7 +271,7 @@ export function migrateAppState(
 
   if (rawVersion > APP_STATE_VERSION) {
     throw new Error(
-      `This backup was created by a newer Gradeflow version (${rawVersion}).`,
+      `This backup was created by a newer GradeLog version (${rawVersion}).`,
     );
   }
 
@@ -281,7 +281,7 @@ export function migrateAppState(
     case APP_STATE_VERSION:
       return migrateVersion2AppState(rawState);
     default:
-      throw new Error(`Unsupported Gradeflow state version: ${rawVersion}.`);
+      throw new Error(`Unsupported GradeLog state version: ${rawVersion}.`);
   }
 }
 

@@ -1,6 +1,6 @@
-# Gradeflow
+# GradeLog
 
-Gradeflow is a local-first grade tracker for people who want control over their academic data.
+GradeLog is a local-first grade tracker for people who want control over their academic data.
 
 The core idea is simple:
 
@@ -8,13 +8,13 @@ The core idea is simple:
 - a module contains assignments
 - assignments roll up into the grade view for that module and semester
 
-This project exists because grades feel more private than most student tools treat them. A lot of academic software assumes your marks should live in somebody else's database by default. Gradeflow takes the opposite stance: your grades should stay with you unless you explicitly choose otherwise.
+This project exists because grades feel more private than most student tools treat them. A lot of academic software assumes your marks should live in somebody else's database by default. GradeLog takes the opposite stance: your grades should stay with you unless you explicitly choose otherwise.
 
 Right now the app is built to run locally and persist inside the browser with IndexedDB. If this ever becomes a deployed product, grades should not just be "stored securely" in vague marketing terms. They should be end-to-end encrypted so the server is not casually trusted with the raw data.
 
 ## What the project is trying to be
 
-Gradeflow is not trying to be a campus LMS, a collaboration suite, or a social product.
+GradeLog is not trying to be a campus LMS, a collaboration suite, or a social product.
 
 It is trying to be:
 
@@ -49,7 +49,7 @@ Today the app supports:
 
 ## Privacy model
 
-Gradeflow is local-first by design.
+GradeLog is local-first by design.
 
 Current behavior:
 
@@ -97,7 +97,7 @@ Open [http://localhost:3000](http://localhost:3000).
 
 Local state lives in the browser via IndexedDB.
 
-On first launch, Gradeflow seeds from the app's default semester template. After that, all semester, module, and assessment changes are stored locally in the browser with no backend or cloud dependency.
+On first launch, GradeLog seeds from the app's default semester template. After that, all semester, module, and assessment changes are stored locally in the browser with no backend or cloud dependency.
 
 Persisted state includes an explicit version field and runs through a small migration path before the app uses it. That same migration path is used for backup import, so older local data can be upgraded intentionally instead of being trusted blindly.
 
@@ -105,7 +105,7 @@ The app also ships with a minimal service worker and web app manifest so it can 
 
 ## Local backup
 
-Gradeflow includes a lightweight local backup flow in the app chrome.
+GradeLog includes a lightweight local backup flow in the app chrome.
 
 - Export saves the full normalized app state to a JSON file on your device.
 - Import validates and migrates the JSON locally before it replaces current state.
@@ -145,7 +145,7 @@ This project is opinionated.
 
 ## Status
 
-Gradeflow is active and evolving. The current focus is product clarity, UI consistency, and preserving the local-first privacy model while the semester/module/assignment flow gets tighter.
+GradeLog is active and evolving. The current focus is product clarity, UI consistency, and preserving the local-first privacy model while the semester/module/assignment flow gets tighter.
 
 ## Support
 

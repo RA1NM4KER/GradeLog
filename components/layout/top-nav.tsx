@@ -22,7 +22,7 @@ export function TopNav() {
           </div>
           <div className="min-w-0">
             <p className="truncate text-[0.82rem] font-semibold text-foreground sm:text-sm">
-              Gradeflow
+              GradeLog
             </p>
             <p className="hidden text-xs text-ink-muted sm:block">
               Local-first grade tracking.

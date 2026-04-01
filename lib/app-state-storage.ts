@@ -45,7 +45,7 @@ function openDatabase(): Promise<IDBDatabase> {
 
       request.onerror = () => {
         reject(
-          request.error ?? new Error("Failed to open the Gradeflow database."),
+          request.error ?? new Error("Failed to open the GradeLog database."),
         );
       };
     });
@@ -71,9 +71,7 @@ async function withStore<T>(
     request.onerror = () => {
       reject(
         request.error ??
-          new Error(
-            "IndexedDB request failed while accessing Gradeflow state.",
-          ),
+          new Error("IndexedDB request failed while accessing GradeLog state."),
       );
     };
 
@@ -81,7 +79,7 @@ async function withStore<T>(
       reject(
         transaction.error ??
           new Error(
-            "IndexedDB transaction was aborted while accessing Gradeflow state.",
+            "IndexedDB transaction was aborted while accessing GradeLog state.",
           ),
       );
     };
@@ -130,7 +128,7 @@ export async function saveAppState(
       reject(
         transaction.error ??
           new Error(
-            "IndexedDB transaction was aborted while saving Gradeflow state.",
+            "IndexedDB transaction was aborted while saving GradeLog state.",
           ),
       );
     };
@@ -139,7 +137,7 @@ export async function saveAppState(
       reject(
         transaction.error ??
           new Error(
-            "IndexedDB transaction failed while saving Gradeflow state.",
+            "IndexedDB transaction failed while saving GradeLog state.",
           ),
       );
     };

@@ -15,7 +15,7 @@ export default function OfflinePage() {
         <CardHeader className="space-y-2">
           <CardTitle className="text-base">Offline for now</CardTitle>
           <CardDescription className="max-w-xl text-sm leading-6">
-            Gradeflow can reopen offline for pages you have already visited on
+            GradeLog can reopen offline for pages you have already visited on
             this device. Reconnect once to open this route, then it will be
             available offline after that.
           </CardDescription>

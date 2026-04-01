@@ -133,9 +133,9 @@ export function usePersistedAppState() {
           return;
         }
 
-        console.error("Failed to load Gradeflow state from IndexedDB.", error);
+        console.error("Failed to load GradeLog state from IndexedDB.", error);
         setBootError(
-          "Gradeflow could not access private browser storage. Check storage permissions or private browsing restrictions, then reload.",
+          "GradeLog could not access private browser storage. Check storage permissions or private browsing restrictions, then reload.",
         );
       }
     }
@@ -168,7 +168,7 @@ export function usePersistedAppState() {
         });
       })
       .catch((error) => {
-        console.error("Failed to save Gradeflow state to IndexedDB.", error);
+        console.error("Failed to save GradeLog state to IndexedDB.", error);
       });
   }, [appState, isHydrated]);
 
