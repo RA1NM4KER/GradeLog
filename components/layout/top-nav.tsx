@@ -2,13 +2,25 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { Menu } from "lucide-react";
+import { useState } from "react";
 
+import { InstallAppButton } from "@/components/pwa/install-app-button";
 import { LocalBackupDialog } from "@/components/pwa/local-backup-dialog";
-import { ThemeSelect } from "@/components/theme/theme-select";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { ThemeModePanel, ThemeSelect } from "@/components/theme/theme-select";
+import { Button } from "@/components/ui/button";
 import { useCourses } from "@/components/workspace/courses-provider";
 
 export function TopNav() {
   const { appState, replaceAppState } = useCourses();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
     <header className="sticky top-0 z-30 border-b border-line/60 bg-surface-overlay/96 backdrop-blur-sm">
@@ -32,7 +44,7 @@ export function TopNav() {
             <p className="truncate text-[0.88rem] font-semibold text-foreground sm:text-[0.95rem]">
               GradeLog
             </p>
-            <p className="hidden text-xs text-ink-muted sm:block">
+            <p className="text-xs hidden sm:block text-ink-muted">
               Local-first grade tracking.
             </p>
           </div>
@@ -40,11 +52,15 @@ export function TopNav() {
 
         <div className="flex min-w-0 flex-1 items-center justify-end">
           <nav className="flex items-center gap-1 sm:gap-2">
-            <ThemeSelect />
-            <LocalBackupDialog
-              appState={appState}
-              onRestoreAppStateAction={replaceAppState}
-            />
+            <div className="hidden sm:block">
+              <ThemeSelect />
+            </div>
+            <div className="hidden sm:block">
+              <LocalBackupDialog
+                appState={appState}
+                onRestoreAppStateAction={replaceAppState}
+              />
+            </div>
             <Link
               className="rounded-[10px] border border-white/28 bg-white/52 px-3 py-1.5 text-[13px] font-medium text-foreground shadow-[0_10px_24px_-18px_rgba(15,23,42,0.18)] backdrop-blur-sm transition hover:bg-white/72 sm:px-4 sm:py-2 sm:text-sm dark:border-white/10 dark:bg-white/10 dark:hover:bg-white/14"
               href="/"
@@ -52,9 +68,58 @@ export function TopNav() {
             >
               Semesters
             </Link>
+            <button
+              aria-expanded={mobileMenuOpen}
+              aria-haspopup="dialog"
+              aria-label="Open menu"
+              className="inline-flex h-9 w-9 items-center justify-center text-foreground  transition  sm:hidden"
+              onClick={() => setMobileMenuOpen(true)}
+              type="button"
+            >
+              <Menu className="h-4.5 w-4.5" />
+            </button>
           </nav>
         </div>
       </div>
+
+      <Dialog onOpenChange={setMobileMenuOpen} open={mobileMenuOpen}>
+        <DialogContent className="left-auto right-0 top-0 grid h-dvh w-[min(86vw,320px)] max-w-none grid-rows-[auto_1fr] translate-x-0 translate-y-0 rounded-none rounded-l-[28px] border-l border-r-0 border-t-0 border-white/18 p-5 before:hidden dark:border-white/10 sm:hidden">
+          <DialogHeader className="pr-10">
+            <DialogTitle className="text-lg">Menu</DialogTitle>
+            <DialogDescription>
+              Theme, backup, and install controls for this device.
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="grid auto-rows-min content-start items-start gap-5 self-start">
+            <InstallAppButton
+              className="w-full justify-start"
+              onInstalled={() => setMobileMenuOpen(false)}
+            />
+
+            <ThemeModePanel />
+
+            <section className="grid gap-3">
+              <p className="text-[0.72rem] font-semibold uppercase tracking-[0.14em] text-ink-muted">
+                Data
+              </p>
+              <LocalBackupDialog
+                appState={appState}
+                onRestoreAppStateAction={replaceAppState}
+                triggerAsChild
+                triggerChildren={
+                  <Button
+                    className="w-full justify-start rounded-[18px] border-white/24 bg-white/44 px-4 text-left shadow-card backdrop-blur-sm dark:border-white/10 dark:bg-white/6"
+                    variant="outline"
+                  >
+                    Backup and restore
+                  </Button>
+                }
+              />
+            </section>
+          </div>
+        </DialogContent>
+      </Dialog>
     </header>
   );
 }

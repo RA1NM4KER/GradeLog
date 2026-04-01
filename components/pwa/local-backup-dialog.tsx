@@ -1,6 +1,6 @@
 "use client";
 
-import { ChangeEvent, useMemo, useRef, useState } from "react";
+import { ChangeEvent, ReactNode, useMemo, useRef, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -22,9 +22,13 @@ import { AppState } from "@/lib/app-state";
 export function LocalBackupDialog({
   appState,
   onRestoreAppStateAction,
+  triggerAsChild = false,
+  triggerChildren,
 }: {
   appState: AppState;
   onRestoreAppStateAction: (state: AppState) => void;
+  triggerAsChild?: boolean;
+  triggerChildren?: ReactNode;
 }) {
   const [open, setOpen] = useState(false);
   const inputRef = useRef<HTMLInputElement | null>(null);
@@ -104,14 +108,20 @@ export function LocalBackupDialog({
       }}
       open={open}
     >
-      <DialogTrigger asChild>
-        <button
-          className="rounded-md px-3 py-2 text-sm font-medium text-ink-strong transition hover:bg-surface-muted hover:text-foreground"
-          type="button"
-        >
-          Backup
-        </button>
-      </DialogTrigger>
+      {triggerChildren ? (
+        <DialogTrigger asChild={triggerAsChild}>
+          {triggerChildren}
+        </DialogTrigger>
+      ) : (
+        <DialogTrigger asChild>
+          <button
+            className="rounded-md px-3 py-2 text-sm font-medium text-ink-strong transition hover:bg-surface-muted hover:text-foreground"
+            type="button"
+          >
+            Backup
+          </button>
+        </DialogTrigger>
+      )}
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Local backup</DialogTitle>
