@@ -1,7 +1,7 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
-import { BookOpenText } from "lucide-react";
 
 import { LocalBackupDialog } from "@/components/pwa/local-backup-dialog";
 import { ThemeSelect } from "@/components/theme/theme-select";
@@ -18,11 +18,18 @@ export function TopNav() {
           href="/"
           prefetch={false}
         >
-          <div className="flex h-8 w-8 items-center justify-center rounded-[10px] border-2 border-primary bg-surface text-surface-foreground shadow-[0_1px_0_rgba(255,255,255,0.7)] sm:h-9 sm:w-9">
-            <BookOpenText className="h-4 w-4 sm:h-4.5 sm:w-4.5" />
+          <div className="relative h-10 w-10 shrink-0 sm:h-11 sm:w-11">
+            <Image
+              alt="GradeLog logo"
+              className="object-contain"
+              fill
+              priority
+              sizes="44px"
+              src="/logo-mark.png"
+            />
           </div>
           <div className="min-w-0">
-            <p className="truncate text-[0.82rem] font-semibold text-foreground sm:text-sm">
+            <p className="truncate text-[0.88rem] font-semibold text-foreground sm:text-[0.95rem]">
               GradeLog
             </p>
             <p className="hidden text-xs text-ink-muted sm:block">
