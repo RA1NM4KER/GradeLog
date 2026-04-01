@@ -2,7 +2,7 @@
 
 import { ReactNode, SyntheticEvent, useEffect, useState } from "react";
 
-import { Button } from "@/components/ui/button";
+import { Button, type ButtonProps } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -24,7 +24,7 @@ import {
 import { GroupedAssessment, GroupedAssessmentCategory } from "@/lib/types";
 
 const dialogPrimaryButtonClassName =
-  "border border-stone-200 bg-white text-stone-950 shadow-[0_10px_24px_rgba(28,25,23,0.08)] hover:bg-stone-50";
+  "border border-white/35 bg-white/70 text-foreground shadow-[0_10px_24px_rgba(28,25,23,0.08)] backdrop-blur-sm hover:bg-white/85 dark:border-white/10 dark:bg-white/8 dark:hover:bg-white/12";
 
 interface GroupedAssessmentDialogProps {
   moduleId: string;
@@ -35,7 +35,7 @@ interface GroupedAssessmentDialogProps {
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
   triggerLabel?: string;
-  triggerVariant?: "default" | "secondary" | "outline" | "ghost";
+  triggerVariant?: ButtonProps["variant"];
   triggerAsChild?: boolean;
   triggerChildren?: ReactNode;
 }
@@ -127,7 +127,7 @@ export function GroupedAssessmentDialog({
             onChange={setForm}
             value={form}
           />
-          <DialogFooter className="grid grid-cols-2 gap-2 border-t border-stone-200 bg-[#f7f4ee]/95 pt-4 sm:flex sm:flex-row sm:items-center sm:justify-between">
+          <DialogFooter className="grid grid-cols-2 gap-2 pt-4 sm:flex sm:flex-row sm:items-center sm:justify-between">
             {assessment && onDeleteAssessment ? (
               <Button
                 className="w-full min-w-0 border-rose-200 bg-rose-50 px-3 text-rose-700 hover:bg-rose-100 sm:w-auto"

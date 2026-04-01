@@ -22,7 +22,7 @@ import {
 import { SingleAssessment } from "@/lib/types";
 
 const dialogPrimaryButtonClassName =
-  "border border-stone-200 bg-white text-stone-950 shadow-[0_10px_24px_rgba(28,25,23,0.08)] hover:bg-stone-50";
+  "border border-white/35 bg-white/70 text-foreground shadow-[0_10px_24px_rgba(28,25,23,0.08)] backdrop-blur-sm hover:bg-white/85 dark:border-white/10 dark:bg-white/8 dark:hover:bg-white/12";
 
 interface SingleAssessmentDialogProps {
   assessment: SingleAssessment;
@@ -177,7 +177,7 @@ export function SingleAssessmentDialog({
             </div>
           </div>
 
-          <DialogFooter className="shrink-0 items-center justify-between border-t border-stone-200 bg-[#f7f4ee]/95 pt-3 sm:flex-row">
+          <DialogFooter className="shrink-0 items-center justify-between pt-3 sm:flex-row">
             <Button
               className="w-full sm:w-auto"
               onClick={() => {

@@ -29,7 +29,7 @@ export function CourseMobileOverviewChart({
   const theme = getCourseTheme(module);
 
   return (
-    <div className="relative h-20 overflow-hidden rounded-[18px] border border-stone-200 bg-white">
+    <div className="relative h-20 overflow-hidden rounded-[18px] border border-line bg-surface">
       {hasAssessments ? (
         <>
           <div
@@ -48,16 +48,16 @@ export function CourseMobileOverviewChart({
           />
         </>
       ) : null}
-      <div className="absolute inset-y-0 left-[10%] border-l border-stone-300" />
-      <div className="absolute inset-y-0 left-[20%] border-l border-stone-200" />
-      <div className="absolute inset-y-0 left-[30%] border-l border-stone-200" />
-      <div className="absolute inset-y-0 left-[40%] border-l border-stone-200" />
-      <div className="absolute inset-y-0 left-[50%] border-l border-stone-300" />
-      <div className="absolute inset-y-0 left-[60%] border-l border-stone-200" />
-      <div className="absolute inset-y-0 left-[70%] border-l border-stone-200" />
-      <div className="absolute inset-y-0 left-[80%] border-l border-stone-300" />
-      <div className="absolute inset-y-0 left-[90%] border-l border-stone-200" />
-      <div className="absolute inset-y-0 right-0 border-r border-stone-300" />
+      <div className="absolute inset-y-0 left-[10%] border-l border-line-strong" />
+      <div className="absolute inset-y-0 left-[20%] border-l border-line" />
+      <div className="absolute inset-y-0 left-[30%] border-l border-line" />
+      <div className="absolute inset-y-0 left-[40%] border-l border-line" />
+      <div className="absolute inset-y-0 left-[50%] border-l border-line-strong" />
+      <div className="absolute inset-y-0 left-[60%] border-l border-line" />
+      <div className="absolute inset-y-0 left-[70%] border-l border-line" />
+      <div className="absolute inset-y-0 left-[80%] border-l border-line-strong" />
+      <div className="absolute inset-y-0 left-[90%] border-l border-line" />
+      <div className="absolute inset-y-0 right-0 border-r border-line-strong" />
       <div
         className={`absolute bottom-0 left-0 top-0 border-l-2 ${
           isExperimenting ? "border-violet-600" : theme.markerLine
@@ -65,7 +65,7 @@ export function CourseMobileOverviewChart({
         style={{ left: `${Math.min(Math.max(currentGrade, 0), 100)}%` }}
       />
       <div
-        className={`absolute top-2 -translate-x-1/2 rounded-full border bg-white px-2 py-1 text-sm font-semibold shadow-sm ${
+        className={`absolute top-2 -translate-x-1/2 rounded-full border bg-surface px-2 py-1 text-sm font-semibold shadow-sm ${
           isExperimenting
             ? "border-violet-200 text-violet-700"
             : `${theme.markerBorder} ${theme.markerText}`
@@ -80,7 +80,7 @@ export function CourseMobileOverviewChart({
 
           return (
             <span
-              className={`absolute inline-flex h-5 w-5 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border bg-white text-[0.68rem] font-medium ${
+              className={`absolute inline-flex h-5 w-5 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border bg-surface text-[0.68rem] font-medium ${
                 isExperimenting
                   ? "border-violet-200 text-violet-700"
                   : `${theme.markerBorder} ${theme.markerText} ${state === "unreachable" ? "opacity-60" : ""}`
@@ -96,7 +96,7 @@ export function CourseMobileOverviewChart({
           );
         })}
       </div>
-      <div className="pointer-events-none absolute inset-x-0 bottom-2 h-[10px] text-[10px] text-stone-400">
+      <div className="pointer-events-none absolute inset-x-0 bottom-2 h-[10px] text-[10px] text-ink-subtle">
         {[10, 20, 30, 40, 50, 60, 70, 80, 90].map((value) => (
           <span
             className="absolute bottom-0 -translate-x-1/2"

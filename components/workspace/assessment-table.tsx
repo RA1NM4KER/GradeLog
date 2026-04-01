@@ -58,10 +58,10 @@ interface AssessmentTableProps {
 }
 
 const inlineTextInputClassName =
-  "h-auto w-full rounded-none border-0 bg-transparent px-0 py-0 text-base font-medium leading-normal text-stone-950 shadow-none focus-visible:ring-0";
+  "h-auto w-full rounded-none border-0 bg-transparent px-0 py-0 text-base font-medium leading-normal text-foreground shadow-none focus-visible:ring-0";
 
 const inlineValueInputClassName =
-  "h-auto w-full rounded-none border-0 bg-transparent px-0 py-0 text-sm font-medium leading-normal text-stone-950 shadow-none [appearance:textfield] focus-visible:ring-0 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none";
+  "h-auto w-full rounded-none border-0 bg-transparent px-0 py-0 text-sm font-medium leading-normal text-foreground shadow-none [appearance:textfield] focus-visible:ring-0 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none";
 
 export function AssessmentTable({
   module,
@@ -91,7 +91,7 @@ export function AssessmentTable({
                   <div className="flex justify-center">
                     <Button
                       aria-label="Start experiment mode"
-                      className="group relative h-auto w-auto rounded-none border-0 bg-transparent p-0 text-stone-400 shadow-none hover:bg-transparent hover:text-violet-600"
+                      className="group relative h-auto w-auto rounded-none border-0 bg-transparent p-0 text-ink-subtle shadow-none hover:bg-transparent hover:text-violet-600"
                       disabled={isExperimenting}
                       onClick={onStartExperiment}
                       size="icon"
@@ -173,12 +173,12 @@ export function AssessmentTable({
       </div>
 
       <div className="grid max-h-full gap-3 overflow-auto md:hidden">
-        <div className="overflow-hidden rounded-[22px] border border-stone-200 bg-white shadow-card">
+        <div className="overflow-hidden rounded-[22px] border border-line bg-surface shadow-card">
           <div className="flex items-center justify-between gap-3 px-4 py-4">
             <div className="flex items-center gap-2">
               <Button
                 aria-label="Start experiment mode"
-                className="inline-flex h-9 items-center justify-center gap-1.5 rounded-full border border-stone-200 bg-white px-3 text-[0.78rem] font-medium text-stone-600 shadow-none transition hover:bg-stone-50 hover:text-violet-600"
+                className="inline-flex h-9 items-center justify-center gap-1.5 rounded-full border border-line bg-surface px-3 text-[0.78rem] font-medium text-ink-soft shadow-none transition hover:bg-surface-muted hover:text-violet-600"
                 disabled={isExperimenting}
                 onClick={onStartExperiment}
                 title="Experiment mode"
@@ -194,7 +194,7 @@ export function AssessmentTable({
                 triggerAsChild
                 triggerChildren={
                   <button
-                    className="inline-flex h-9 items-center justify-center gap-1.5 rounded-full border border-stone-200 bg-white px-3.5 text-[0.82rem] font-semibold text-stone-900 transition hover:bg-stone-50"
+                    className="inline-flex h-9 items-center justify-center gap-1.5 rounded-full border border-line bg-surface px-3.5 text-[0.82rem] font-semibold text-foreground transition hover:bg-surface-muted"
                     type="button"
                   >
                     <Plus className="h-3.5 w-3.5" />
@@ -207,7 +207,7 @@ export function AssessmentTable({
 
           <div
             className={cn(
-              "grid grid-cols-[minmax(0,1fr)_90px_90px] border-t border-stone-200 px-4 py-3 text-[0.68rem] font-semibold uppercase tracking-[0.18em]",
+              "grid grid-cols-[minmax(0,1fr)_90px_90px] border-t border-line px-4 py-3 text-[0.68rem] font-semibold uppercase tracking-[0.18em]",
               isExperimenting
                 ? "bg-violet-50 text-violet-700"
                 : theme.tableHeader,
@@ -231,14 +231,14 @@ export function AssessmentTable({
             ))}
           </div>
 
-          <div className="border-t border-stone-200 p-4">
+          <div className="border-t border-line p-4">
             <AssessmentComposerDialog
               module={module}
               onSaveAssessment={onSaveAssessment}
               triggerAsChild
               triggerChildren={
                 <button
-                  className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-full border border-dashed border-stone-300 bg-white text-sm font-medium text-stone-600 transition hover:border-stone-400 hover:text-stone-900"
+                  className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-full border border-dashed border-line-strong bg-surface text-sm font-medium text-ink-soft transition hover:border-line-strong hover:text-foreground"
                   type="button"
                 >
                   <Plus className="h-4 w-4" />
@@ -268,12 +268,12 @@ function MobileAssessmentRow({
 }) {
   if (isSingleAssessment(assessment)) {
     return (
-      <div className="grid grid-cols-[minmax(0,1fr)_90px_90px] items-center gap-3 border-t border-stone-200 px-4 py-3 text-sm text-stone-700 first:border-t-0">
+      <div className="grid grid-cols-[minmax(0,1fr)_90px_90px] items-center gap-3 border-t border-line px-4 py-3 text-sm text-ink-soft first:border-t-0">
         <div className="flex min-w-0 items-center gap-2">
           <div className="min-w-0 flex-1">
             <InlineText
               display={
-                <span className="block truncate font-medium text-stone-950">
+                <span className="block truncate font-medium text-foreground">
                   {assessment.name}
                 </span>
               }
@@ -348,12 +348,12 @@ function MobileGroupedAssessmentRow({
   return (
     <>
       <button
-        className="grid w-full grid-cols-[minmax(0,1fr)_90px_90px] items-center gap-3 border-t border-stone-200 px-4 py-3 text-left text-sm text-stone-700 transition hover:bg-stone-50/70"
+        className="grid w-full grid-cols-[minmax(0,1fr)_90px_90px] items-center gap-3 border-t border-line px-4 py-3 text-left text-sm text-ink-soft transition hover:bg-surface-muted/70"
         onClick={() => setOpen(true)}
         type="button"
       >
         <div className="flex min-w-0 items-center gap-2">
-          <span className="min-w-0 flex-1 truncate font-medium text-stone-950">
+          <span className="min-w-0 flex-1 truncate font-medium text-foreground">
             {assessment.name}
           </span>
           <EditAssessmentButton
@@ -367,7 +367,7 @@ function MobileGroupedAssessmentRow({
         <span className="block w-full px-2 py-3 -mx-2 -my-3 text-center">
           <span
             className={`font-medium ${
-              isExperimenting ? "text-violet-700" : "text-stone-950"
+              isExperimenting ? "text-violet-700" : "text-foreground"
             }`}
           >
             {assessment.weight}
@@ -375,14 +375,14 @@ function MobileGroupedAssessmentRow({
         </span>
         <span className="block w-full px-2 py-3 -mx-2 -my-3 text-center">
           {metrics.currentPercent === null ? (
-            <span className="text-stone-400">Pending</span>
+            <span className="text-ink-subtle">Pending</span>
           ) : (
             <span
               className={`font-medium ${
-                isExperimenting ? "text-violet-700" : "text-stone-950"
+                isExperimenting ? "text-violet-700" : "text-foreground"
               }`}
             >
-              <span className="mr-1 text-stone-400">Av:</span>
+              <span className="mr-1 text-ink-subtle">Av:</span>
               {formatPercent(metrics.currentPercent)}
             </span>
           )}
@@ -410,9 +410,9 @@ function AddAssessmentRow({
   onSaveAssessment: (moduleId: string, assessment: Assessment) => void;
 }) {
   return (
-    <WorkspaceTableRow className="bg-stone-100/90">
+    <WorkspaceTableRow className="bg-surface-muted/90">
       <WorkspaceTableCell className="px-1 py-2 text-center lg:px-2 min-[1024px]:max-[1120px]:px-0.5">
-        <Plus className="mx-auto h-3.5 w-3.5 text-stone-500" />
+        <Plus className="mx-auto h-3.5 w-3.5 text-ink-soft" />
       </WorkspaceTableCell>
       <WorkspaceTableCell
         className="px-3 py-2 lg:px-5 min-[1024px]:max-[1120px]:px-2"
@@ -424,7 +424,7 @@ function AddAssessmentRow({
           triggerAsChild
           triggerChildren={
             <button
-              className="flex w-full items-center text-left text-xs font-semibold uppercase tracking-[0.14em] text-stone-600 transition hover:text-stone-900"
+              className="flex w-full items-center text-left text-xs font-semibold uppercase tracking-[0.14em] text-ink-soft transition hover:text-foreground"
               type="button"
             >
               Add assignment
@@ -470,7 +470,7 @@ function SingleAssessmentRow({
     >
       <WorkspaceTableCell className="px-1 py-3 text-center lg:px-2 lg:py-4 min-[1024px]:max-[1120px]:px-0.5">
         <button
-          className="cursor-grab text-stone-300 transition hover:text-stone-500 active:cursor-grabbing"
+          className="cursor-grab text-line-strong transition hover:text-ink-soft active:cursor-grabbing"
           draggable
           onDragEnd={onDragEnd}
           onDragStart={onDragStart}
@@ -483,7 +483,7 @@ function SingleAssessmentRow({
         <InlineText
           align="left"
           display={
-            <p className="cursor-text font-medium text-stone-950">
+            <p className="cursor-text font-medium text-foreground">
               {assessment.name}
             </p>
           }
@@ -493,10 +493,10 @@ function SingleAssessmentRow({
           value={assessment.name}
         />
       </WorkspaceTableCell>
-      <WorkspaceTableCell className="px-3 py-3 text-sm text-stone-500 lg:px-5 lg:py-4 min-[1024px]:max-[1120px]:px-2">
+      <WorkspaceTableCell className="px-3 py-3 text-sm text-ink-soft lg:px-5 lg:py-4 min-[1024px]:max-[1120px]:px-2">
         {assessment.dueDate || "—"}
       </WorkspaceTableCell>
-      <WorkspaceTableCell className="px-3 py-3 text-sm text-stone-600 lg:px-5 lg:py-4 min-[1024px]:max-[1120px]:px-2">
+      <WorkspaceTableCell className="px-3 py-3 text-sm text-ink-soft lg:px-5 lg:py-4 min-[1024px]:max-[1120px]:px-2">
         <InlineNumber
           align="left"
           display={String(assessment.weight)}
@@ -507,7 +507,7 @@ function SingleAssessmentRow({
           value={assessment.weight}
         />
       </WorkspaceTableCell>
-      <WorkspaceTableCell className="px-3 py-3 text-sm text-stone-600 lg:px-5 lg:py-4 min-[1024px]:max-[1120px]:px-2">
+      <WorkspaceTableCell className="px-3 py-3 text-sm text-ink-soft lg:px-5 lg:py-4 min-[1024px]:max-[1120px]:px-2">
         <InlineAssessmentResult
           align="left"
           assessment={assessment}
@@ -564,7 +564,7 @@ function GroupedAssessmentRow({
 
   return (
     <WorkspaceTableRow
-      className="group/row cursor-pointer transition hover:bg-stone-50/70"
+      className="group/row cursor-pointer transition hover:bg-surface-muted/70"
       onClick={() => setOpen(true)}
       onDragOver={(event) => event.preventDefault()}
       onDrop={() => {
@@ -578,7 +578,7 @@ function GroupedAssessmentRow({
         onClick={(event) => event.stopPropagation()}
       >
         <button
-          className="cursor-grab text-stone-300 transition hover:text-stone-500 active:cursor-grabbing"
+          className="cursor-grab text-line-strong transition hover:text-ink-soft active:cursor-grabbing"
           draggable
           onDragEnd={onDragEnd}
           onDragStart={onDragStart}
@@ -594,9 +594,9 @@ function GroupedAssessmentRow({
         <InlineText
           align="left"
           display={
-            <div className="cursor-text font-medium text-stone-950">
+            <div className="cursor-text font-medium text-foreground">
               <span>{assessment.name}</span>
-              <span className="ml-1.5 text-sm font-normal text-stone-400">
+              <span className="ml-1.5 text-sm font-normal text-ink-subtle">
                 ({metrics.totalCount})
               </span>
             </div>
@@ -607,11 +607,11 @@ function GroupedAssessmentRow({
           value={assessment.name}
         />
       </WorkspaceTableCell>
-      <WorkspaceTableCell className="px-3 py-3 text-sm text-stone-500 lg:px-5 lg:py-4 min-[1024px]:max-[1120px]:px-2">
+      <WorkspaceTableCell className="px-3 py-3 text-sm text-ink-soft lg:px-5 lg:py-4 min-[1024px]:max-[1120px]:px-2">
         {assessment.dueDate || "—"}
       </WorkspaceTableCell>
       <WorkspaceTableCell
-        className="px-3 py-3 text-sm text-stone-600 lg:px-5 lg:py-4 min-[1024px]:max-[1120px]:px-2"
+        className="px-3 py-3 text-sm text-ink-soft lg:px-5 lg:py-4 min-[1024px]:max-[1120px]:px-2"
         onClick={(event) => event.stopPropagation()}
       >
         <InlineNumber
@@ -624,16 +624,16 @@ function GroupedAssessmentRow({
           value={assessment.weight}
         />
       </WorkspaceTableCell>
-      <WorkspaceTableCell className="px-3 py-3 text-sm text-stone-600 lg:px-5 lg:py-4 min-[1024px]:max-[1120px]:px-2">
+      <WorkspaceTableCell className="px-3 py-3 text-sm text-ink-soft lg:px-5 lg:py-4 min-[1024px]:max-[1120px]:px-2">
         {metrics.currentPercent === null ? (
-          <span className="text-stone-400">Pending</span>
+          <span className="text-ink-subtle">Pending</span>
         ) : (
           <div
             className={`font-medium ${
-              isExperimenting ? "text-violet-700" : "text-stone-950"
+              isExperimenting ? "text-violet-700" : "text-foreground"
             }`}
           >
-            <span className="text-stone-400">Av:</span>{" "}
+            <span className="text-ink-subtle">Av:</span>{" "}
             <span>{formatPercent(metrics.currentPercent)}</span>
           </div>
         )}
@@ -644,7 +644,7 @@ function GroupedAssessmentRow({
       >
         <button
           aria-label={`Edit ${assessment.name}`}
-          className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-stone-300 opacity-0 transition group-hover/row:opacity-100 hover:bg-stone-100 hover:text-stone-700 focus-visible:opacity-100"
+          className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-line-strong opacity-0 transition group-hover/row:opacity-100 hover:bg-surface-muted hover:text-ink-soft focus-visible:opacity-100"
           onClick={() => setOpen(true)}
           type="button"
         >
@@ -764,7 +764,7 @@ function InlineNumber({
       >
         <span
           className={`font-medium ${
-            isExperimenting ? "text-violet-700" : "text-stone-950"
+            isExperimenting ? "text-violet-700" : "text-foreground"
           }`}
         >
           {display}
@@ -842,11 +842,11 @@ function InlineAssessmentResult({
         type="button"
       >
         {assessment.scoreAchieved === null ? (
-          <span className="text-stone-400">Pending</span>
+          <span className="text-ink-subtle">Pending</span>
         ) : (
           <p
             className={`font-medium ${
-              isExperimenting ? "text-violet-700" : "text-stone-950"
+              isExperimenting ? "text-violet-700" : "text-foreground"
             }`}
           >
             {formatPercent(getAssessmentPercent(assessment) ?? 0)}
@@ -936,8 +936,8 @@ function EditAssessmentButton({
       aria-label={`Edit ${label}`}
       className={`inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full transition ${
         subtle
-          ? "text-stone-300 opacity-0 hover:bg-stone-100 hover:text-stone-700 group-hover/row:opacity-100 focus-visible:opacity-100"
-          : "text-stone-400 hover:bg-stone-100 hover:text-stone-700"
+          ? "text-line-strong opacity-0 hover:bg-surface-muted hover:text-ink-soft group-hover/row:opacity-100 focus-visible:opacity-100"
+          : "text-ink-subtle hover:bg-surface-muted hover:text-ink-soft"
       }`}
       onClick={onClick}
       type="button"

@@ -24,7 +24,7 @@ export function CourseMobileOverviewNeededGrid({
   return (
     <div className="grid gap-2.5">
       <div className="flex items-center justify-between gap-3">
-        <p className="text-[0.72rem] font-semibold uppercase tracking-[0.18em] text-stone-400">
+        <p className="text-[0.72rem] font-semibold uppercase tracking-[0.18em] text-ink-subtle">
           What do I need?
         </p>
         <GradeBandDialog
@@ -35,7 +35,7 @@ export function CourseMobileOverviewNeededGrid({
             <button
               aria-label="Edit cutoffs"
               className={cn(
-                "inline-flex h-7 w-7 items-center justify-center rounded-full border bg-white transition hover:bg-stone-50",
+                "inline-flex h-7 w-7 items-center justify-center rounded-full border bg-surface transition hover:bg-surface-muted",
                 isExperimenting
                   ? "border-violet-200 text-violet-700"
                   : `${theme.markerBorder} ${theme.markerText}`,
@@ -62,7 +62,7 @@ export function CourseMobileOverviewNeededGrid({
             <div
               className={cn(
                 "rounded-[16px] px-2 py-2.5 text-center",
-                "bg-white",
+                "bg-surface",
               )}
               key={band.id}
             >

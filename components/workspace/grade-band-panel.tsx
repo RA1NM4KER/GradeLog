@@ -49,10 +49,10 @@ export function GradeBandPanel({
   return (
     <div className="grid gap-3 sm:gap-4 min-[900px]:grid-cols-[280px_minmax(0,1fr)] min-[900px]:items-start">
       <div className="min-w-0">
-        <p className="mb-2.5 text-center text-[0.82rem] text-stone-500 sm:mb-3 sm:text-sm">
+        <p className="mb-2.5 text-center text-[0.82rem] text-ink-soft sm:mb-3 sm:text-sm">
           Current standing
         </p>
-        <div className="relative h-[320px] overflow-hidden rounded-[20px] border border-stone-200 bg-white/90 sm:h-[500px] sm:rounded-[24px]">
+        <div className="relative h-[320px] overflow-hidden rounded-[20px] border border-line bg-surface/90 sm:h-[500px] sm:rounded-[24px]">
           {hasAssessments ? (
             <>
               <div
@@ -103,7 +103,7 @@ export function GradeBandPanel({
             />
           ) : null}
 
-          <p className="absolute inset-x-0 bottom-3 text-center text-[0.8rem] text-stone-600 sm:bottom-4 sm:text-sm">
+          <p className="absolute inset-x-0 bottom-3 text-center text-[0.8rem] text-ink-soft sm:bottom-4 sm:text-sm">
             {hasRecordedGrade
               ? `${formatPercent(completion)} complete`
               : hasAssessments
@@ -114,10 +114,10 @@ export function GradeBandPanel({
       </div>
 
       <div className="min-w-0">
-        <p className="mb-2.5 text-center text-[0.82rem] text-stone-500 sm:mb-3 sm:text-sm">
+        <p className="mb-2.5 text-center text-[0.82rem] text-ink-soft sm:mb-3 sm:text-sm">
           Remainder of grades must average:
         </p>
-        <div className="overflow-hidden rounded-[20px] border border-stone-200 bg-white/90 sm:rounded-[24px]">
+        <div className="overflow-hidden rounded-[20px] border border-line bg-surface/90 sm:rounded-[24px]">
           {bands.map((band) => {
             const result = calculateRequiredScore(module, band.threshold);
             const state = hasAssessments
@@ -134,9 +134,9 @@ export function GradeBandPanel({
             return (
               <div
                 className={cn(
-                  "grid gap-1.5 border-t border-stone-200 px-3 py-2.5 first:border-t-0 sm:px-4 sm:py-3",
+                  "grid gap-1.5 border-t border-line px-3 py-2.5 first:border-t-0 sm:px-4 sm:py-3",
                   state === "unreachable"
-                    ? "text-stone-400"
+                    ? "text-ink-subtle"
                     : isExperimenting
                       ? "text-violet-700"
                       : theme.neededText,
@@ -149,12 +149,12 @@ export function GradeBandPanel({
                       {renderNeededValue(needed)}
                     </p>
                     <p className="text-[0.88rem] leading-none sm:text-base">
-                      <span className="font-medium text-stone-500">for a </span>
+                      <span className="font-medium text-ink-soft">for a </span>
                       <span
                         className={cn(
                           "font-semibold",
                           state === "unreachable"
-                            ? "text-stone-400"
+                            ? "text-ink-subtle"
                             : isExperimenting
                               ? "text-violet-700"
                               : theme.neededText,
@@ -188,7 +188,7 @@ function renderNeededValue(value: string) {
   return (
     <>
       {value.slice(0, -1)}
-      <span className="text-base font-medium text-stone-500">%</span>
+      <span className="text-base font-medium text-ink-soft">%</span>
     </>
   );
 }
@@ -200,10 +200,10 @@ function getLinePosition(value: number) {
 function GuideLine({ value }: { value: number }) {
   return (
     <div
-      className="absolute inset-x-0 border-t border-stone-200 transition-[bottom] duration-500 ease-out"
+      className="absolute inset-x-0 border-t border-line transition-[bottom] duration-500 ease-out"
       style={{ bottom: `${getLinePosition(value)}%` }}
     >
-      <span className="absolute right-4 top-0 -translate-y-1/2 text-[11px] text-stone-400">
+      <span className="absolute right-4 top-0 -translate-y-1/2 text-[11px] text-ink-subtle">
         {value}%
       </span>
     </div>
@@ -241,7 +241,7 @@ function BandLine({
       <div className="absolute inset-x-0 top-0 -translate-y-1/2 px-4">
         <span
           className={cn(
-            "inline-flex h-7 w-7 items-center justify-center rounded-full border bg-white text-sm transition-colors duration-300",
+            "inline-flex h-7 w-7 items-center justify-center rounded-full border bg-surface text-sm transition-colors duration-300",
             isExperimenting
               ? "border-violet-200 text-violet-700"
               : `${theme.markerBorder} ${theme.markerText}`,
@@ -291,7 +291,7 @@ function CurrentPill({
     >
       <div
         className={cn(
-          "rounded-full border bg-white px-6 py-2 shadow-sm transition-shadow duration-300",
+          "rounded-full border bg-surface px-6 py-2 shadow-sm transition-shadow duration-300",
           isExperimenting ? "border-violet-200" : theme.markerBorder,
         )}
       >
@@ -338,7 +338,7 @@ function InlineBandThreshold({
   if (!editing) {
     return (
       <button
-        className="cursor-text text-sm font-medium leading-none text-stone-400"
+        className="cursor-text text-sm font-medium leading-none text-ink-subtle"
         onClick={() => setEditing(true)}
         type="button"
       >
@@ -348,7 +348,7 @@ function InlineBandThreshold({
   }
 
   return (
-    <div className="inline-flex items-center gap-1 text-sm font-medium leading-none text-stone-400">
+    <div className="inline-flex items-center gap-1 text-sm font-medium leading-none text-ink-subtle">
       <Input
         className={`${inlineInputClassName} w-10 text-right text-sm`}
         onBlur={() => {
@@ -372,7 +372,7 @@ function InlineBandThreshold({
         type="text"
         value={draft}
       />
-      <span className="text-stone-500">%</span>
+      <span className="text-ink-soft">%</span>
     </div>
   );
 }

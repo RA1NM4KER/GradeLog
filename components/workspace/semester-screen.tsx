@@ -123,14 +123,14 @@ export function SemesterScreen() {
 
       <section className="mt-5 px-3 sm:mt-7 sm:px-7">
         <div>
-          <h2 className="text-[1.55rem] font-semibold leading-none tracking-[-0.04em] text-stone-800 sm:text-[1.7rem]">
+          <h2 className="text-[1.55rem] font-semibold leading-none tracking-[-0.04em] text-foreground sm:text-[1.7rem]">
             Courses
           </h2>
           <div className="mt-2.5 flex flex-row items-start gap-20 sm:mt-3 sm:items-end sm:justify-between sm:gap-4">
-            <p className="text-[0.95rem] text-stone-600">
+            <p className="text-[0.95rem] text-ink-soft">
               {semester.courses.length} active, {completedCourses} complete
             </p>
-            <p className="text-[0.92rem] text-stone-600">Open a course</p>
+            <p className="text-[0.92rem] text-ink-soft">Open a course</p>
           </div>
         </div>
 
@@ -150,11 +150,11 @@ export function SemesterScreen() {
                 triggerAsChild
                 triggerChildren={
                   <button
-                    className="group relative flex w-full overflow-hidden rounded-[20px] border border-stone-200 bg-white text-left shadow-card transition hover:-translate-y-0.5 hover:shadow-soft sm:rounded-[24px]"
+                    className="group relative flex w-full overflow-hidden rounded-[20px] border border-line bg-surface text-left shadow-card transition hover:-translate-y-0.5 hover:shadow-soft sm:rounded-[24px]"
                     type="button"
                   >
-                    <div className="absolute inset-y-0 left-0 w-2.5 bg-[#e9e4dc] sm:w-3" />
-                    <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center pl-2.5 text-center text-stone-500 transition group-hover:text-stone-900 sm:pl-3">
+                    <div className="absolute inset-y-0 left-0 w-2.5 bg-surface-strip sm:w-3" />
+                    <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center pl-2.5 text-center text-ink-muted transition group-hover:text-foreground sm:pl-3">
                       <Plus className="h-6 w-6 sm:h-7 sm:w-7" />
                       <span className="mt-2.5 text-[0.84rem] font-semibold uppercase tracking-[0.14em] sm:mt-3 sm:text-[0.92rem]">
                         Add course
@@ -228,7 +228,7 @@ export function SemesterScreen() {
                   triggerAsChild
                   triggerChildren={
                     <button
-                      className="flex min-h-[260px] w-full max-w-sm flex-col items-center justify-center rounded-[28px] bg-[#f0ede7] p-6 text-center text-stone-500 shadow-card transition hover:bg-[#ebe7e0] hover:text-stone-900"
+                      className="flex min-h-[260px] w-full max-w-sm flex-col items-center justify-center rounded-[28px] bg-surface-panel p-6 text-center text-ink-muted shadow-card transition hover:bg-surface-panel-hover hover:text-foreground"
                       type="button"
                     >
                       <Plus className="h-8 w-8" />

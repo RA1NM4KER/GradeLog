@@ -52,17 +52,17 @@ export function MinimalLanding() {
   return (
     <div className="mx-auto max-w-5xl px-5 pb-16 pt-12 sm:px-8">
       <div>
-        <p className="text-xs font-semibold uppercase tracking-[0.14em] text-stone-500">
+        <p className="text-xs font-semibold uppercase tracking-[0.14em] text-ink-muted">
           Gradeflow
         </p>
-        <h1 className="mt-2 text-3xl font-semibold tracking-[-0.04em] text-stone-950 sm:text-[2.2rem]">
+        <h1 className="mt-2 text-3xl font-semibold tracking-[-0.04em] text-foreground sm:text-[2.2rem]">
           Your semesters
         </h1>
-        <p className="mt-2 max-w-2xl text-sm leading-6 text-stone-600 sm:text-[0.98rem]">
+        <p className="mt-2 max-w-2xl text-sm leading-6 text-ink-soft sm:text-[0.98rem]">
           Create a semester, add your courses, and track grades without guessing
           what you still need.
         </p>
-        <div className="mt-4 inline-flex max-w-full items-center gap-2 rounded-full border border-stone-200 bg-white px-3.5 py-2 text-[0.78rem] font-medium text-stone-600 shadow-card">
+        <div className="mt-4 inline-flex max-w-full items-center gap-2 rounded-full border border-line bg-surface px-3.5 py-2 text-[0.78rem] font-medium text-ink-soft shadow-card">
           <span className="h-2 w-2 rounded-full bg-[#41b3a2]" />
           Privacy-first and local-first. Your data stays on this device unless
           you export it.
@@ -73,7 +73,7 @@ export function MinimalLanding() {
         <div className="mt-6 flex flex-wrap gap-2">
           {suggestions.map((suggestion) => (
             <button
-              className="rounded-xl bg-[#fbfbfa] px-4 py-2 text-sm font-medium text-stone-700 shadow-card transition hover:bg-white"
+              className="rounded-xl bg-surface-soft px-4 py-2 text-sm font-medium text-ink-strong shadow-card transition hover:bg-surface"
               key={suggestion.name}
               onClick={() =>
                 createSuggestedSemester(suggestion.name, suggestion.periodLabel)
@@ -93,17 +93,17 @@ export function MinimalLanding() {
               className={cn(
                 "grid w-full grid-cols-[minmax(0,1fr)_auto_20px] items-start gap-2.5 rounded-[18px] px-5 py-3.5 text-left transition",
                 semester.id === selectedSemester.id
-                  ? "bg-white shadow-soft"
-                  : "bg-[#fbfbfa] shadow-card hover:bg-white",
+                  ? "bg-surface shadow-soft"
+                  : "bg-surface-soft shadow-card hover:bg-surface",
               )}
               onClick={() => openSemester(semester.id)}
               type="button"
             >
               <div className="min-w-0">
-                <p className="text-[1.02rem] font-semibold leading-tight text-stone-950">
+                <p className="text-[1.02rem] font-semibold leading-tight text-foreground">
                   {semester.name}
                 </p>
-                <p className="mt-1 text-sm text-stone-500">
+                <p className="mt-1 text-sm text-ink-muted">
                   {semester.periodLabel}
                 </p>
               </div>
@@ -115,11 +115,11 @@ export function MinimalLanding() {
               ) : (
                 <span />
               )}
-              <ArrowRight className="h-5 w-5 text-stone-400" />
+              <ArrowRight className="h-5 w-5 text-ink-subtle" />
             </button>
             <button
               aria-label={`Delete ${semester.name}`}
-              className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#fbfbfa] text-stone-400 shadow-card transition hover:bg-white hover:text-stone-700"
+              className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-surface-soft text-ink-subtle shadow-card transition hover:bg-surface hover:text-ink-strong"
               onClick={() => removeSemester(semester.id, semester.name)}
               type="button"
             >
@@ -132,7 +132,7 @@ export function MinimalLanding() {
           triggerAsChild
           triggerChildren={
             <button
-              className="flex min-h-[82px] w-full items-center justify-center rounded-[18px] bg-[#fafaf8] px-5 py-3.5 text-stone-500 shadow-card transition hover:bg-white hover:text-stone-900"
+              className="flex min-h-[82px] w-full items-center justify-center rounded-[18px] bg-surface-sheet px-5 py-3.5 text-ink-muted shadow-card transition hover:bg-surface hover:text-foreground"
               type="button"
             >
               <div className="flex flex-col items-center text-center">

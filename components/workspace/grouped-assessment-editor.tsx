@@ -29,10 +29,10 @@ import {
 } from "@/lib/types";
 
 const inlineGroupedInputClassName =
-  "h-auto w-full rounded-none border-0 bg-transparent px-0 py-0 text-center text-sm font-medium leading-normal text-stone-950 shadow-none focus-visible:ring-0";
+  "h-auto w-full rounded-none border-0 bg-transparent px-0 py-0 text-center text-sm font-medium leading-normal text-foreground shadow-none focus-visible:ring-0";
 
 const inlineGroupedNumberInputClassName =
-  "h-auto w-full rounded-none border-0 bg-transparent px-0 py-0 text-sm font-medium leading-normal text-stone-950 shadow-none [appearance:textfield] focus-visible:ring-0 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none";
+  "h-auto w-full rounded-none border-0 bg-transparent px-0 py-0 text-sm font-medium leading-normal text-foreground shadow-none [appearance:textfield] focus-visible:ring-0 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none";
 
 interface GroupedAssessmentEditorProps {
   category: GroupedAssessmentCategory;
@@ -189,27 +189,27 @@ export function GroupedAssessmentEditor({
 
       <div className="flex min-h-0 flex-1 flex-col space-y-3">
         <div className="text-center">
-          <p className="text-sm font-semibold text-stone-950">
+          <p className="text-sm font-semibold text-foreground">
             {definition.label} items
           </p>
-          <p className="text-sm text-stone-500">
+          <p className="text-sm text-ink-soft">
             Rename items and capture marks directly in the table.
           </p>
         </div>
 
         <div className="min-h-0 sm:hidden">
-          <div className="max-h-[34vh] overflow-auto rounded-[18px] border border-stone-200 bg-white">
-            <div className="grid grid-cols-[minmax(0,1fr)_92px] border-b border-stone-200 bg-stone-50 px-4 py-3 text-[11px] font-semibold uppercase tracking-[0.16em] text-stone-500">
+          <div className="max-h-[34vh] overflow-auto rounded-[18px] border border-white/24 bg-white/34 backdrop-blur-sm dark:border-white/10 dark:bg-white/5">
+            <div className="grid grid-cols-[minmax(0,1fr)_92px] border-b border-white/18 bg-white/36 px-4 py-3 text-[11px] font-semibold uppercase tracking-[0.16em] text-ink-soft dark:border-white/8 dark:bg-white/6">
               <span>Assignment</span>
               <span className="text-right">Grade</span>
             </div>
             {value.items.map((item) => (
               <div
-                className="grid grid-cols-[minmax(0,1fr)_92px] items-center gap-3 border-t border-stone-200 px-4 py-3 first:border-t-0"
+                className="grid grid-cols-[minmax(0,1fr)_92px] items-center gap-3 border-t border-line px-4 py-3 first:border-t-0"
                 key={item.id}
               >
                 <Input
-                  className="h-auto rounded-none border-0 bg-transparent px-0 py-0 text-left text-base font-medium text-stone-950 shadow-none focus-visible:ring-0"
+                  className="h-auto rounded-none border-0 bg-transparent px-0 py-0 text-left text-base font-medium text-foreground shadow-none focus-visible:ring-0"
                   id={`${category}-label-${item.id}`}
                   onChange={(event) =>
                     updateItem(item.id, { label: event.target.value })
@@ -332,7 +332,7 @@ function GroupedScoreInput({
         value={draft}
       />
       {draft.trim() !== "" && !draft.includes("/") ? (
-        <span className="pointer-events-none absolute right-1 top-1/2 -translate-y-1/2 text-sm text-stone-400">
+        <span className="pointer-events-none absolute right-1 top-1/2 -translate-y-1/2 text-sm text-ink-subtle">
           %
         </span>
       ) : null}

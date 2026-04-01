@@ -240,7 +240,7 @@ export function CoursesProvider({ children }: { children: ReactNode }) {
       <CoursesBootState
         action={
           <button
-            className="inline-flex h-11 items-center rounded-full bg-stone-950 px-5 text-sm font-semibold text-stone-50"
+            className="inline-flex h-11 items-center rounded-full bg-primary px-5 text-sm font-semibold text-primary-foreground"
             onClick={() => window.location.reload()}
             type="button"
           >

@@ -72,10 +72,10 @@ export function GradeBandEditor({ bands, onChange }: GradeBandEditorProps) {
     <div className="grid gap-5">
       <div className="grid gap-3">
         <div>
-          <p className="text-sm font-semibold text-stone-950">
+          <p className="text-sm font-semibold text-foreground">
             Pick the grade bands you care about
           </p>
-          <p className="mt-1 text-sm text-stone-500">
+          <p className="mt-1 text-sm text-ink-soft">
             Choose only the cutoffs you want to track in the needed view.
           </p>
         </div>
@@ -87,8 +87,8 @@ export function GradeBandEditor({ bands, onChange }: GradeBandEditorProps) {
               <button
                 className={`rounded-full border px-3 py-1.5 text-sm font-medium transition ${
                   selected
-                    ? "border-stone-950 bg-stone-950 text-stone-50"
-                    : "border-stone-200 bg-white text-stone-600 hover:border-stone-300 hover:text-stone-900"
+                    ? "border-primary bg-primary text-primary-foreground"
+                    : "border-white/24 bg-white/28 text-ink-soft hover:border-white/35 hover:bg-white/42 hover:text-foreground dark:border-white/8 dark:bg-white/4 dark:hover:bg-white/8"
                 }`}
                 key={preset.label}
                 onClick={() => toggleBand(preset.label)}
@@ -103,23 +103,23 @@ export function GradeBandEditor({ bands, onChange }: GradeBandEditorProps) {
 
       <div className="grid gap-3">
         <div>
-          <p className="text-sm font-semibold text-stone-950">Set cutoffs</p>
-          <p className="mt-1 text-sm text-stone-500">
+          <p className="text-sm font-semibold text-foreground">Set cutoffs</p>
+          <p className="mt-1 text-sm text-ink-soft">
             Default values are filled in. Adjust anything you want.
           </p>
         </div>
         <div className="grid gap-3 sm:grid-cols-2">
           {orderedBands.map((band) => (
             <div
-              className="rounded-[20px] border border-stone-200 bg-white p-3.5"
+              className="rounded-[20px] border border-white/24 bg-white/34 p-3.5 backdrop-blur-sm dark:border-white/10 dark:bg-white/5"
               key={band.id}
             >
               <div className="flex items-center justify-between gap-3">
                 <div>
-                  <p className="text-sm font-semibold text-stone-950">
+                  <p className="text-sm font-semibold text-foreground">
                     {band.label}
                   </p>
-                  <p className="text-xs text-stone-500">Minimum percent</p>
+                  <p className="text-xs text-ink-soft">Minimum percent</p>
                 </div>
                 <div className="w-24 space-y-2">
                   <Label className="sr-only" htmlFor={`grade-band-${band.id}`}>

@@ -33,7 +33,7 @@ export function CourseListItem({
   return (
     <button
       className={cn(
-        "group relative flex w-full overflow-hidden rounded-[20px] border border-stone-200 bg-white text-left transition-all duration-200 sm:rounded-[24px]",
+        "group relative flex w-full overflow-hidden rounded-[20px] border border-line bg-surface text-left transition-all duration-200 sm:rounded-[24px]",
         "shadow-card hover:-translate-y-0.5 hover:shadow-soft",
         isActive && "shadow-soft",
       )}
@@ -47,18 +47,18 @@ export function CourseListItem({
         <div className="flex items-start justify-between gap-3 sm:gap-4">
           <div className="min-w-0 flex-1">
             <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
-              <h3 className="line-clamp-2 max-w-[14ch] text-[0.95rem] font-semibold leading-[1.05] tracking-[-0.025em] text-stone-950 sm:text-[1.1rem] sm:tracking-[-0.03em]">
+              <h3 className="line-clamp-2 max-w-[14ch] text-[0.95rem] font-semibold leading-[1.05] tracking-[-0.025em] text-foreground sm:text-[1.1rem] sm:tracking-[-0.03em]">
                 {course.name}
               </h3>
-              <span className="text-[0.65rem] font-medium uppercase tracking-[0.1em] text-stone-500 sm:text-[0.72rem] sm:tracking-[0.12em]">
+              <span className="text-[0.65rem] font-medium uppercase tracking-[0.1em] text-ink-muted sm:text-[0.72rem] sm:tracking-[0.12em]">
                 {course.code}
               </span>
             </div>
-            <p className="mt-0.5 text-[0.82rem] text-stone-500 sm:mt-1 sm:text-[0.92rem]">
+            <p className="mt-0.5 text-[0.82rem] text-ink-muted sm:mt-1 sm:text-[0.92rem]">
               {course.instructor} · {course.credits} credits
             </p>
           </div>
-          <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-stone-950 text-stone-50 transition-transform duration-200 group-hover:translate-x-0.5 sm:h-9 sm:w-9">
+          <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground transition-transform duration-200 group-hover:translate-x-0.5 sm:h-9 sm:w-9">
             <ArrowRight className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
           </span>
         </div>
@@ -71,9 +71,9 @@ export function CourseListItem({
             )}
           >
             {hasAssignments && remainingWeight === 0 ? (
-              <CheckCircle2 className="h-2.5 w-2.5 text-stone-900 sm:h-3 sm:w-3" />
+              <CheckCircle2 className="h-2.5 w-2.5 text-foreground sm:h-3 sm:w-3" />
             ) : (
-              <CircleDashed className="h-2.5 w-2.5 text-stone-500 sm:h-3 sm:w-3" />
+              <CircleDashed className="h-2.5 w-2.5 text-ink-muted sm:h-3 sm:w-3" />
             )}
             {!hasAssignments
               ? "Not started"
@@ -81,38 +81,38 @@ export function CourseListItem({
                 ? "Complete"
                 : `${remainingWeight}% remaining`}
           </span>
-          <span className="rounded-full bg-stone-100 px-2 py-1 text-[9px] font-medium text-stone-600 sm:px-2.5 sm:text-[10px]">
+          <span className="rounded-full bg-surface-muted px-2 py-1 text-[9px] font-medium text-ink-soft sm:px-2.5 sm:text-[10px]">
             {getAssessmentPace(course)}
           </span>
         </div>
 
         <div className="mt-1.5 grid grid-cols-[1fr_auto] gap-2.5 sm:mt-2 sm:gap-3">
           <div>
-            <p className="text-[9px] font-semibold uppercase tracking-[0.16em] text-stone-400 sm:text-[10px] sm:tracking-[0.18em]">
+            <p className="text-[9px] font-semibold uppercase tracking-[0.16em] text-ink-subtle sm:text-[10px] sm:tracking-[0.18em]">
               Current grade
             </p>
-            <p className="mt-1 text-[1.28rem] font-semibold tracking-[-0.045em] text-stone-950 sm:text-[1.45rem] sm:tracking-[-0.05em]">
+            <p className="mt-1 text-[1.28rem] font-semibold tracking-[-0.045em] text-foreground sm:text-[1.45rem] sm:tracking-[-0.05em]">
               {hasRecordedGrade ? formatPercent(grade) : "--"}
             </p>
           </div>
-          <div className="self-start rounded-[12px] bg-stone-50 px-2 py-1.5 text-right sm:rounded-[14px] sm:px-2.5">
-            <p className="text-[9px] font-semibold uppercase tracking-[0.16em] text-stone-400 sm:text-[10px] sm:tracking-[0.18em]">
+          <div className="self-start rounded-[12px] bg-[hsl(var(--surface-subtle))] px-2 py-1.5 text-right sm:rounded-[14px] sm:px-2.5">
+            <p className="text-[9px] font-semibold uppercase tracking-[0.16em] text-ink-subtle sm:text-[10px] sm:tracking-[0.18em]">
               Assessments
             </p>
-            <p className="mt-1 text-[0.82rem] font-semibold tracking-[-0.025em] text-stone-950 sm:text-[0.92rem] sm:tracking-[-0.03em]">
+            <p className="mt-1 text-[0.82rem] font-semibold tracking-[-0.025em] text-foreground sm:text-[0.92rem] sm:tracking-[-0.03em]">
               {course.assessments.length}
             </p>
           </div>
         </div>
 
         <div className="pt-2">
-          <div className="flex items-center justify-between text-[9px] font-semibold uppercase tracking-[0.14em] text-stone-500 sm:text-[10px] sm:tracking-[0.16em]">
+          <div className="flex items-center justify-between text-[9px] font-semibold uppercase tracking-[0.14em] text-ink-muted sm:text-[10px] sm:tracking-[0.16em]">
             <span>Progress</span>
             <span>{progressValue.toFixed(0)}%</span>
           </div>
           <div className="mt-1">
             <Progress
-              className="h-1 bg-stone-200/80"
+              className="h-1 bg-surface-muted"
               indicatorClassName={theme.progressFill}
               value={progressValue}
             />

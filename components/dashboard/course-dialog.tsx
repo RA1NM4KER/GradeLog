@@ -12,7 +12,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
+import { Button, type ButtonProps } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -31,7 +31,7 @@ const selectableCourseThemeOptions = courseThemeOptions.filter(
 interface CourseDialogProps {
   onSaveCourse: (course: Course) => void;
   triggerLabel?: string;
-  triggerVariant?: "default" | "secondary" | "outline" | "ghost";
+  triggerVariant?: ButtonProps["variant"];
   course?: Course;
   triggerAsChild?: boolean;
   triggerChildren?: ReactNode;
@@ -48,18 +48,26 @@ export function CourseDialog({
   const [open, setOpen] = useState(false);
   const [step, setStep] = useState<1 | 2>(1);
   const [isMobile, setIsMobile] = useState(false);
-  const [form, setForm] = useState({
-    code: course?.code ?? "",
-    name: course?.name ?? "",
-    instructor: course?.instructor ?? "",
-    credits: String(course?.credits ?? 12),
-    accent: getInitialCourseThemeId(course),
-  });
-  const [gradeBands, setGradeBands] = useState<GradeBand[]>(
-    course?.gradeBands ?? getDefaultGradeBands(course?.code ?? ""),
+  const [form, setForm] = useState(() => getInitialFormState(course));
+  const [gradeBands, setGradeBands] = useState<GradeBand[]>(() =>
+    getInitialGradeBands(course),
   );
   const usesStepper = useMemo(() => !(course && isMobile), [course, isMobile]);
   const showsCutoffEditor = usesStepper || !course;
+
+  function resetDialogState(targetCourse?: Course) {
+    setStep(1);
+    setForm(getInitialFormState(targetCourse));
+    setGradeBands(getInitialGradeBands(targetCourse));
+  }
+
+  function handleOpenChange(nextOpen: boolean) {
+    setOpen(nextOpen);
+
+    if (nextOpen) {
+      resetDialogState(course);
+    }
+  }
 
   useEffect(() => {
     if (typeof window === "undefined") {
@@ -74,22 +82,6 @@ export function CourseDialog({
 
     return () => mediaQuery.removeEventListener("change", sync);
   }, []);
-
-  useEffect(() => {
-    if (open) {
-      setStep(1);
-      setForm({
-        code: course?.code ?? "",
-        name: course?.name ?? "",
-        instructor: course?.instructor ?? "",
-        credits: String(course?.credits ?? 12),
-        accent: getInitialCourseThemeId(course),
-      });
-      setGradeBands(
-        course?.gradeBands ?? getDefaultGradeBands(course?.code ?? ""),
-      );
-    }
-  }, [course, open]);
 
   function submit(event: SyntheticEvent<HTMLFormElement, SubmitEvent>) {
     event.preventDefault();
@@ -114,22 +106,11 @@ export function CourseDialog({
     };
 
     onSaveCourse(nextCourse);
-    setForm({
-      code: course?.code ?? "",
-      name: course?.name ?? "",
-      instructor: course?.instructor ?? "",
-      credits: String(course?.credits ?? 12),
-      accent: getInitialCourseThemeId(course),
-    });
-    setGradeBands(
-      course?.gradeBands ?? getDefaultGradeBands(course?.code ?? ""),
-    );
-    setStep(1);
     setOpen(false);
   }
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       {triggerChildren ? (
         <DialogTrigger asChild={triggerAsChild}>
           {triggerChildren}
@@ -159,12 +140,12 @@ export function CourseDialog({
             <div className="flex items-center gap-2">
               <div
                 className={`h-1.5 flex-1 rounded-full ${
-                  step >= 1 ? "bg-stone-950" : "bg-stone-200"
+                  step >= 1 ? "bg-primary" : "bg-line"
                 }`}
               />
               <div
                 className={`h-1.5 flex-1 rounded-full ${
-                  step >= 2 ? "bg-stone-950" : "bg-stone-200"
+                  step >= 2 ? "bg-primary" : "bg-line"
                 }`}
               />
             </div>
@@ -245,10 +226,10 @@ export function CourseDialog({
                     return (
                       <button
                         className={cn(
-                          "relative rounded-full border bg-white p-1 transition",
+                          "relative rounded-full border bg-surface p-1 transition",
                           isSelected
-                            ? "border-stone-400 shadow-[0_10px_24px_rgba(28,25,23,0.12)]"
-                            : "border-stone-200 hover:border-stone-300 hover:bg-stone-50/70",
+                            ? "border-line-strong shadow-[0_10px_24px_rgba(28,25,23,0.12)]"
+                            : "border-line hover:border-line-strong hover:bg-surface-muted/70",
                         )}
                         aria-label={`${theme.name} course color`}
                         key={theme.id}
@@ -262,12 +243,12 @@ export function CourseDialog({
                       >
                         <span
                           className={cn(
-                            "block h-8 w-8 rounded-full border border-white/70 shadow-inner",
+                            "block h-8 w-8 rounded-full border border-surface/70 shadow-inner",
                             theme.band,
                           )}
                         />
                         {isSelected ? (
-                          <span className="absolute -right-1 -top-1 inline-flex h-5 w-5 items-center justify-center rounded-full bg-stone-950 text-white shadow-sm">
+                          <span className="absolute -right-1 -top-1 inline-flex h-5 w-5 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-sm">
                             <Check className="h-3 w-3" />
                           </span>
                         ) : null}
@@ -306,6 +287,7 @@ export function CourseDialog({
     </Dialog>
   );
 }
+
 function getDefaultGradeBands(courseCode: string) {
   return GRADE_BAND_PRESETS.filter((band) =>
     ["A", "B", "C", "D"].includes(band.label),
@@ -314,6 +296,20 @@ function getDefaultGradeBands(courseCode: string) {
     label: band.label,
     threshold: band.threshold,
   }));
+}
+
+function getInitialGradeBands(course?: Course) {
+  return course?.gradeBands ?? getDefaultGradeBands(course?.code ?? "");
+}
+
+function getInitialFormState(course?: Course) {
+  return {
+    code: course?.code ?? "",
+    name: course?.name ?? "",
+    instructor: course?.instructor ?? "",
+    credits: String(course?.credits ?? 12),
+    accent: getInitialCourseThemeId(course),
+  };
 }
 
 function getInitialCourseThemeId(course?: Course) {

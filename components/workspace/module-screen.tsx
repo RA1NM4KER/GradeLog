@@ -71,7 +71,7 @@ export function CourseScreen({ moduleId }: { moduleId?: string }) {
         <EmptyState
           action={
             <button
-              className="inline-flex h-11 items-center rounded-full bg-stone-950 px-5 text-sm font-semibold text-stone-50"
+              className="inline-flex h-11 items-center rounded-full bg-primary px-5 text-sm font-semibold text-primary-foreground"
               onClick={() => navigateCourses("/courses")}
               type="button"
             >
@@ -129,7 +129,7 @@ export function CourseScreen({ moduleId }: { moduleId?: string }) {
         />
       </div>
 
-      <div className="fixed inset-x-0 bottom-0 z-30 border-t border-stone-200/80 bg-[#f8f5ef]/88 backdrop-blur-xl md:hidden">
+      <div className="fixed inset-x-0 bottom-0 z-30 border-t border-line/80 bg-surface-footer/88 backdrop-blur-xl md:hidden">
         <div className="mx-auto max-w-7xl px-4 py-3">
           <CourseSwitcher
             semesterCourses={semester.courses}
@@ -159,7 +159,7 @@ export function CourseScreen({ moduleId }: { moduleId?: string }) {
         </div>
       </div>
 
-      <div className="hidden border-t border-stone-200/80 bg-[#f8f5ef]/88 pt-4 backdrop-blur-xl md:mt-4 md:block">
+      <div className="hidden border-t border-line/80 bg-surface-footer/88 pt-4 backdrop-blur-xl md:mt-4 md:block">
         <CourseSwitcher
           semesterCourses={semester.courses}
           activeCourseId={module.id}
@@ -204,8 +204,8 @@ function CourseSwitcher({
               "group relative shrink-0 overflow-hidden rounded-lg border px-3.5 py-2.5 text-left text-sm shadow-sm transition-all duration-200",
               itemClassName,
               isActive
-                ? "border-stone-200/70 bg-white text-stone-950 shadow-[0_10px_24px_rgba(28,25,23,0.08)]"
-                : "border-stone-200/70 bg-white/82 text-stone-700 hover:-translate-y-0.5 hover:border-stone-300 hover:bg-white",
+                ? "border-line/70 bg-surface text-foreground shadow-[0_10px_24px_rgba(28,25,23,0.08)]"
+                : "border-line/70 bg-surface/82 text-ink-soft hover:-translate-y-0.5 hover:border-line-strong hover:bg-surface",
             )}
             key={course.id}
             onClick={() => navigateCourses(`/courses/${course.id}`)}

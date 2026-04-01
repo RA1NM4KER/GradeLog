@@ -2,7 +2,7 @@
 
 import { ReactNode, SyntheticEvent, useEffect, useState } from "react";
 
-import { Button } from "@/components/ui/button";
+import { Button, type ButtonProps } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -23,13 +23,13 @@ import { sanitizePlainNumberInput } from "@/lib/numeric-input";
 import { Assessment, Module, SingleAssessment } from "@/lib/types";
 
 const dialogPrimaryButtonClassName =
-  "border border-stone-200 bg-white text-stone-950 shadow-[0_10px_24px_rgba(28,25,23,0.08)] hover:bg-stone-50";
+  "border border-white/35 bg-white/70 text-foreground shadow-[0_10px_24px_rgba(28,25,23,0.08)] backdrop-blur-sm hover:bg-white/85 dark:border-white/10 dark:bg-white/8 dark:hover:bg-white/12";
 
 interface AssessmentComposerDialogProps {
   module: Module;
   onSaveAssessment: (moduleId: string, assessment: Assessment) => void;
   triggerLabel?: string;
-  triggerVariant?: "default" | "secondary" | "outline" | "ghost";
+  triggerVariant?: ButtonProps["variant"];
   triggerAsChild?: boolean;
   triggerChildren?: ReactNode;
 }
@@ -127,7 +127,7 @@ export function AssessmentComposerDialog({
             </div>
 
             {mode === "single" ? (
-              <div className="grid gap-4 rounded-[20px] border border-stone-200 bg-white p-3.5 sm:rounded-[28px] sm:p-4">
+              <div className="grid gap-4 rounded-[20px] border border-white/28 bg-white/42 p-3.5 backdrop-blur-sm sm:rounded-[28px] sm:p-4 dark:border-white/10 dark:bg-white/5">
                 <div className="space-y-2">
                   <Label htmlFor="single-name">Assignment name</Label>
                   <Input
@@ -185,7 +185,7 @@ export function AssessmentComposerDialog({
             )}
           </div>
 
-          <DialogFooter className="shrink-0 border-t border-stone-200 bg-[#f7f4ee]/95 pt-3">
+          <DialogFooter className="shrink-0 pt-3">
             <Button
               className={`w-full sm:w-auto ${dialogPrimaryButtonClassName}`}
               type="submit"
@@ -214,8 +214,8 @@ function ModeCard({
     <button
       className={`rounded-[20px] border px-3 py-3 text-left transition sm:rounded-[24px] sm:px-4 sm:py-4 ${
         isActive
-          ? "border-stone-300 bg-[#f2ede5] text-stone-950 shadow-[0_10px_24px_rgba(28,25,23,0.08)]"
-          : "border-stone-200 bg-white/90 text-stone-950 hover:border-stone-300 hover:bg-[#fbfaf7]"
+          ? "border-white/35 bg-white/62 text-foreground shadow-[0_10px_24px_rgba(28,25,23,0.08)] backdrop-blur-sm dark:border-white/10 dark:bg-white/10"
+          : "border-white/22 bg-white/28 text-foreground hover:border-white/35 hover:bg-white/42 dark:border-white/8 dark:bg-white/4 dark:hover:bg-white/8"
       }`}
       onClick={onClick}
       type="button"
@@ -223,11 +223,7 @@ function ModeCard({
       <p className="text-[0.9rem] font-semibold leading-5 sm:text-sm">
         {title}
       </p>
-      <p
-        className={`mt-1 text-[0.8rem] leading-5 sm:text-sm ${
-          isActive ? "text-stone-600" : "text-stone-600"
-        }`}
-      >
+      <p className="mt-1 text-[0.8rem] leading-5 text-ink-muted sm:text-sm">
         {description}
       </p>
     </button>

@@ -9,21 +9,93 @@
   --font-newsreader:
     ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica,
     Arial, sans-serif;
-  --background: 40 18% 96%;
-  --foreground: 0 0% 14%;
+  --canvas: #f5f5f3;
+  --background: 60 9.1% 97.8%;
+  --foreground: 20 14.3% 4.1%;
+  --foreground-deep: 12 6.5% 15.1%;
+  --foreground-strong: 30 6.3% 25.1%;
+  --foreground-soft: 33 5.5% 32.4%;
+  --foreground-muted: 25 5.3% 44.7%;
+  --foreground-subtle: 24 5.4% 63.9%;
   --card: 0 0% 100%;
-  --card-foreground: 0 0% 14%;
-  --primary: 0 0% 14%;
-  --primary-foreground: 0 0% 98%;
+  --card-foreground: 20 14.3% 4.1%;
+  --surface-soft-rgb: 251 251 250;
+  --surface-hover-rgb: 251 250 247;
+  --surface-table-rgb: 247 247 245;
+  --surface-dialog-rgb: 247 244 238;
+  --surface-footer-rgb: 248 245 239;
+  --surface-panel-rgb: 240 237 231;
+  --surface-panel-hover-rgb: 235 231 224;
+  --surface-strip-rgb: 233 228 220;
+  --surface-sheet-rgb: 250 250 248;
+  --surface-selected-rgb: 242 237 229;
+  --surface: 0 0% 100%;
+  --surface-foreground: 20 14.3% 4.1%;
+  --surface-subtle: 60 9.1% 97.8%;
+  --surface-muted: 60 4.8% 95.9%;
+  --surface-soft: 0 0% 100%;
+  --surface-overlay: 0 0% 100%;
+  --brand-rgb: 11 110 230;
+  --brand-hover-rgb: 10 99 206;
+  --primary: 20 14.3% 4.1%;
+  --primary-hover-rgb: 41 37 36;
+  --primary-foreground: 60 9.1% 97.8%;
+  --overlay: 20 14.3% 4.1%;
   --secondary: 40 18% 94%;
-  --secondary-foreground: 0 0% 14%;
-  --muted: 40 14% 94%;
-  --muted-foreground: 0 0% 38%;
-  --accent: 40 18% 92%;
-  --accent-foreground: 0 0% 14%;
-  --border: 36 10% 90%;
-  --input: 36 10% 90%;
-  --ring: 0 0% 65%;
+  --secondary-foreground: 24 9.8% 10%;
+  --muted: 60 4.8% 95.9%;
+  --muted-foreground: 25 5.3% 44.7%;
+  --accent: 60 4.8% 95.9%;
+  --accent-foreground: 24 9.8% 10%;
+  --border: 20 5.9% 90%;
+  --line-strong: 24 5.7% 82.9%;
+  --input: 20 5.9% 90%;
+  --ring: 24 5.4% 63.9%;
+}
+
+.dark {
+  --canvas: #17181b;
+  --background: 220 16% 11%;
+  --foreground: 40 20% 92%;
+  --foreground-deep: 40 20% 92%;
+  --foreground-strong: 40 10% 84%;
+  --foreground-soft: 40 10% 76%;
+  --foreground-muted: 40 10% 76%;
+  --foreground-subtle: 40 8% 62%;
+  --card: 220 16% 14%;
+  --card-foreground: 40 20% 92%;
+  --surface-soft-rgb: 28 29 33;
+  --surface-hover-rgb: 32 33 38;
+  --surface-table-rgb: 26 27 31;
+  --surface-dialog-rgb: 29 30 34;
+  --surface-footer-rgb: 31 32 37;
+  --surface-panel-rgb: 34 36 42;
+  --surface-panel-hover-rgb: 39 41 49;
+  --surface-strip-rgb: 43 45 53;
+  --surface-sheet-rgb: 27 28 32;
+  --surface-selected-rgb: 35 37 44;
+  --surface: 220 16% 14%;
+  --surface-foreground: 40 20% 92%;
+  --surface-subtle: 220 14% 16%;
+  --surface-muted: 220 13% 18%;
+  --surface-soft: 220 14% 16%;
+  --surface-overlay: 220 16% 14%;
+  --brand-rgb: 91 162 255;
+  --brand-hover-rgb: 75 147 240;
+  --primary: 40 20% 92%;
+  --primary-hover-rgb: 214 211 209;
+  --primary-foreground: 220 16% 11%;
+  --overlay: 220 20% 3%;
+  --secondary: 220 13% 18%;
+  --secondary-foreground: 40 20% 92%;
+  --muted: 220 13% 18%;
+  --muted-foreground: 40 10% 76%;
+  --accent: 220 12% 22%;
+  --accent-foreground: 40 20% 92%;
+  --border: 220 10% 24%;
+  --line-strong: 220 8% 32%;
+  --input: 220 10% 24%;
+  --ring: 40 12% 72%;
 }
 
 * {
@@ -36,14 +108,14 @@ html {
 
 body {
   min-height: 100vh;
-  background: #f5f5f3;
+  background: var(--canvas);
   color: hsl(var(--foreground));
   font-feature-settings: "cv11", "ss01";
 }
 
 ::selection {
-  background: rgba(55, 53, 47, 0.16);
-  color: #141310;
+  background: hsl(var(--accent) / 0.7);
+  color: hsl(var(--foreground));
 }
 
 input[type="range"]::-webkit-slider-thumb {

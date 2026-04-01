@@ -22,9 +22,9 @@ export function EmptyState({
   action,
 }: EmptyStateProps) {
   return (
-    <Card className="border-dashed border-stone-300/90 bg-white/70">
+    <Card className="border-dashed border-line-strong/90 bg-surface/70">
       <CardHeader>
-        <div className="mb-2 flex h-12 w-12 items-center justify-center rounded-2xl bg-stone-100 text-stone-700">
+        <div className="mb-2 flex h-12 w-12 items-center justify-center rounded-2xl bg-surface-muted text-ink-soft">
           {icon}
         </div>
         <CardTitle>{title}</CardTitle>

@@ -106,7 +106,7 @@ export function LocalBackupDialog({
     >
       <DialogTrigger asChild>
         <button
-          className="rounded-md px-3 py-2 text-sm font-medium text-stone-700 transition hover:bg-stone-100 hover:text-stone-950"
+          className="rounded-md px-3 py-2 text-sm font-medium text-ink-strong transition hover:bg-surface-muted hover:text-foreground"
           type="button"
         >
           Backup
@@ -122,11 +122,11 @@ export function LocalBackupDialog({
         </DialogHeader>
 
         <div className="grid gap-5">
-          <div className="rounded-[24px] bg-[#fbfbfa] p-4 shadow-card">
-            <p className="text-sm font-semibold text-stone-900">
+          <div className="rounded-[24px] border border-white/24 bg-white/38 p-4 shadow-card backdrop-blur-sm dark:border-white/10 dark:bg-white/5">
+            <p className="text-sm font-semibold text-foreground">
               Export current data
             </p>
-            <p className="mt-1 text-sm leading-6 text-stone-600">
+            <p className="mt-1 text-sm leading-6 text-ink-soft">
               Version {summary.version}. {summary.semesterCount} semesters,{" "}
               {summary.courseCount} courses, and {summary.assessmentCount}{" "}
               assessments will be saved to a local JSON file.
@@ -140,11 +140,11 @@ export function LocalBackupDialog({
             </Button>
           </div>
 
-          <div className="rounded-[24px] bg-[#fbfbfa] p-4 shadow-card">
-            <p className="text-sm font-semibold text-stone-900">
+          <div className="rounded-[24px] border border-white/24 bg-white/38 p-4 shadow-card backdrop-blur-sm dark:border-white/10 dark:bg-white/5">
+            <p className="text-sm font-semibold text-foreground">
               Import backup
             </p>
-            <p className="mt-1 text-sm leading-6 text-stone-600">
+            <p className="mt-1 text-sm leading-6 text-ink-soft">
               Review the backup before replacing the current local state on this
               device.
             </p>
@@ -165,7 +165,7 @@ export function LocalBackupDialog({
             </Button>
 
             {isImporting ? (
-              <p className="mt-3 text-sm text-stone-500">
+              <p className="mt-3 text-sm text-ink-muted">
                 Checking backup file…
               </p>
             ) : null}
@@ -175,18 +175,18 @@ export function LocalBackupDialog({
             ) : null}
 
             {pendingImport ? (
-              <div className="mt-3 rounded-2xl bg-white p-3 shadow-card">
-                <p className="text-sm font-medium text-stone-900">
+              <div className="mt-3 rounded-2xl border border-white/20 bg-white/44 p-3 shadow-card backdrop-blur-sm dark:border-white/10 dark:bg-white/6">
+                <p className="text-sm font-medium text-foreground">
                   Ready to import {pendingImport.fileName}
                 </p>
-                <p className="mt-1 text-sm text-stone-600">
+                <p className="mt-1 text-sm text-ink-soft">
                   Version {pendingImportSummary?.version}.{" "}
                   {pendingImportSummary?.semesterCount} semesters,{" "}
                   {pendingImportSummary?.courseCount} courses, and{" "}
                   {pendingImportSummary?.assessmentCount} assessments detected.
                 </p>
                 {pendingImport.lastModified ? (
-                  <p className="mt-1 text-sm text-stone-500">
+                  <p className="mt-1 text-sm text-ink-muted">
                     File updated {pendingImport.lastModified}
                   </p>
                 ) : null}

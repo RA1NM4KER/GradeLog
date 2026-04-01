@@ -18,7 +18,7 @@ export function CourseHeader({
     <div className="flex items-start justify-between gap-3">
       <div className="min-w-0">
         <button
-          className="inline-flex items-center gap-1.5 text-[0.82rem] text-stone-500 transition hover:text-stone-950 sm:gap-2 sm:text-sm"
+          className="inline-flex items-center gap-1.5 text-[0.82rem] text-ink-muted transition hover:text-foreground sm:gap-2 sm:text-sm"
           onClick={() => navigateCourses("/courses")}
           type="button"
         >
@@ -26,7 +26,7 @@ export function CourseHeader({
           {semesterName}
         </button>
         <div className="mt-1 flex items-start gap-1.5 sm:mt-1.5 sm:items-center sm:gap-2">
-          <h1 className="text-[1.15rem] font-semibold tracking-tight text-stone-950 sm:text-xl">
+          <h1 className="text-[1.15rem] font-semibold tracking-tight text-foreground sm:text-xl">
             {module.name}
           </h1>
           <CourseDialog
@@ -36,7 +36,7 @@ export function CourseHeader({
             triggerChildren={
               <Button
                 aria-label="Edit course"
-                className="group h-auto w-auto rounded-none border-0 bg-transparent p-0 text-stone-500 shadow-none hover:bg-transparent hover:text-stone-800"
+                className="group h-auto w-auto rounded-none border-0 bg-transparent p-0 text-ink-muted shadow-none hover:bg-transparent hover:text-ink-deep"
                 size="icon"
                 title="Edit course"
                 type="button"
@@ -47,7 +47,7 @@ export function CourseHeader({
             }
           />
         </div>
-        <p className="mt-0.5 max-w-[34ch] text-[0.74rem] text-stone-600 sm:max-w-none sm:text-xs">
+        <p className="mt-0.5 max-w-[34ch] text-[0.74rem] text-ink-soft sm:max-w-none sm:text-xs">
           {module.code} · Lecturer: {module.instructor} · {module.credits}{" "}
           credits
         </p>
