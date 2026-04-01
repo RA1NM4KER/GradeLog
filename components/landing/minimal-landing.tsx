@@ -1,7 +1,13 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { ArrowRight, Plus, Trash2 } from "lucide-react";
+import {
+  ArrowRight,
+  ExternalLink,
+  HeartHandshake,
+  Plus,
+  Trash2,
+} from "lucide-react";
 
 import { SemesterDialog } from "@/components/landing/semester-dialog";
 import { useCourses } from "@/components/workspace/courses-provider";
@@ -50,7 +56,7 @@ export function MinimalLanding() {
   }
 
   return (
-    <div className="mx-auto max-w-5xl px-5 pb-16 pt-12 sm:px-8">
+    <div className="mx-auto flex min-h-[calc(100vh-5.5rem)] max-w-5xl flex-col px-5 pt-12 sm:px-8">
       <div>
         <p className="text-xs font-semibold uppercase tracking-[0.14em] text-ink-muted">
           Gradeflow
@@ -144,6 +150,37 @@ export function MinimalLanding() {
             </button>
           }
         />
+      </div>
+
+      <div className="mt-auto pt-6 sm:pt-8">
+        <div className="rounded-[22px] border border-white/24 bg-white/42 p-5 shadow-card backdrop-blur-sm dark:border-white/10 dark:bg-white/6 sm:px-6 sm:py-5">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex items-start gap-3">
+              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-white/28 bg-white/58 text-foreground shadow-[0_8px_24px_-18px_rgba(15,23,42,0.2)] backdrop-blur-sm dark:border-white/10 dark:bg-white/10">
+                <HeartHandshake className="h-5 w-5" />
+              </div>
+              <div>
+                <p className="text-sm font-semibold text-foreground sm:text-[0.98rem]">
+                  Keep Gradeflow independent
+                </p>
+                <p className="mt-1 max-w-2xl text-sm leading-6 text-ink-soft">
+                  Gradeflow stays free, local-first, and account-free. If it has
+                  been useful to you, you can help support development.
+                </p>
+              </div>
+            </div>
+
+            <a
+              className="inline-flex items-center justify-center gap-1 self-start rounded-full border border-white/28 bg-white/62 px-4 py-2 text-sm font-medium text-foreground shadow-[0_10px_24px_-18px_rgba(15,23,42,0.18)] backdrop-blur-sm transition hover:bg-white/82 dark:border-white/10 dark:bg-white/10 dark:hover:bg-white/14 sm:self-center"
+              href="https://ko-fi.com/kefasaleck"
+              rel="noreferrer"
+              target="_blank"
+            >
+              Support on Ko-fi
+              <ExternalLink className="h-4 w-4" />
+            </a>
+          </div>
+        </div>
       </div>
     </div>
   );
