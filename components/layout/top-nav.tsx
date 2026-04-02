@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Menu } from "lucide-react";
+import { DatabaseBackup, Menu } from "lucide-react";
 import { useState } from "react";
 
 import { InstallAppButton } from "@/components/pwa/install-app-button";
@@ -106,9 +106,10 @@ export function TopNav() {
                 triggerAsChild
                 triggerChildren={
                   <Button
-                    className="w-full justify-start rounded-[18px] border-white/24 bg-white/44 px-4 text-left shadow-card backdrop-blur-sm dark:border-white/10 dark:bg-white/6"
+                    className="w-full justify-start gap-2 rounded-[18px] border-white/24 bg-white/44 px-4 text-left shadow-card backdrop-blur-sm dark:border-white/10 dark:bg-white/6"
                     variant="outline"
                   >
+                    <DatabaseBackup className="h-4 w-4" />
                     Backup and restore
                   </Button>
                 }
