@@ -9,6 +9,7 @@ import { ServiceWorkerRegistration } from "@/components/pwa/service-worker-regis
 import { ThemeProvider } from "@/components/theme/theme-provider";
 import { CoursesProvider } from "@/components/workspace/courses-provider";
 import { THEME_STORAGE_KEY } from "@/lib/theme";
+import { Analytics } from "@vercel/analytics/next";
 
 import "./globals.css";
 
@@ -89,6 +90,7 @@ export default function RootLayout({
             </AppShell>
           </CoursesProvider>
         </ThemeProvider>
+        <Analytics />
         <ServiceWorkerRegistration />
       </body>
     </html>
