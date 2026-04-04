@@ -17,7 +17,10 @@ import {
   isSupabaseConfigured,
 } from "@/lib/supabase-browser";
 import {
+  clearPasswordRecoverySession,
   getCurrentSyncSession,
+  markPasswordRecoverySession,
+  requestPasswordResetForEmail,
   signInWithEmailPassword,
   signOutFromSync,
   signUpWithEmailPassword,
@@ -59,6 +62,9 @@ interface SyncConnectionContextValue {
     password: string,
   ) => Promise<{ ok: boolean; errorMessage: string | null }>;
   signOut: () => Promise<void>;
+  requestPasswordReset: (
+    email: string,
+  ) => Promise<{ ok: boolean; errorMessage: string | null }>;
   signUp: (
     email: string,
     password: string,
@@ -336,7 +342,15 @@ export function SyncProvider({ children }: { children: ReactNode }) {
 
     const {
       data: { subscription },
-    } = client.auth.onAuthStateChange((_event, nextSession) => {
+    } = client.auth.onAuthStateChange((event, nextSession) => {
+      if (event === "PASSWORD_RECOVERY") {
+        markPasswordRecoverySession();
+      }
+
+      if (event === "SIGNED_OUT") {
+        clearPasswordRecoverySession();
+      }
+
       void applyAuthState(nextSession, null);
     });
 
@@ -448,6 +462,31 @@ export function SyncProvider({ children }: { children: ReactNode }) {
       setIsBusy(false);
     }
   }, [applyAuthState, session]);
+
+  const requestPasswordReset = useCallback(async (email: string) => {
+    setIsBusy(true);
+
+    try {
+      const { error } = await withTimeout(
+        requestPasswordResetForEmail(email),
+        AUTH_REQUEST_TIMEOUT_MS,
+      );
+
+      if (error) {
+        throw error;
+      }
+
+      return { ok: true, errorMessage: null };
+    } catch (error) {
+      const message =
+        error instanceof Error
+          ? error.message
+          : "GradeLog could not send the password reset email.";
+      return { ok: false, errorMessage: message };
+    } finally {
+      setIsBusy(false);
+    }
+  }, []);
 
   const runSyncNow = useCallback(
     async (reason: SyncTriggerReason) => {
@@ -573,6 +612,7 @@ export function SyncProvider({ children }: { children: ReactNode }) {
       isSyncing,
       lastSyncedAt: syncMeta?.lastSyncedAt ?? null,
       registerSyncAdapter: setSyncAdapter,
+      requestPasswordReset,
       session,
       statusNotice,
       status:
@@ -600,6 +640,7 @@ export function SyncProvider({ children }: { children: ReactNode }) {
       isSyncing,
       statusNotice,
       session,
+      requestPasswordReset,
       signIn,
       signOut,
       signUp,

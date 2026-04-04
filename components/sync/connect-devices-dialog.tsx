@@ -34,6 +34,7 @@ export function ConnectDevicesDialog({
     isAuthenticated,
     isConfigured,
     isRestoringSession,
+    requestPasswordReset,
     isSyncEnabled,
     isSyncing,
     lastSyncedAt,
@@ -51,6 +52,7 @@ export function ConnectDevicesDialog({
   const [password, setPassword] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
+  const [resetNotice, setResetNotice] = useState<string | null>(null);
   const trimmedEmail = email.trim();
   const isEmailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmedEmail);
   const isPasswordValid = password.length >= 8;
@@ -90,6 +92,7 @@ export function ConnectDevicesDialog({
     event.preventDefault();
     setIsSubmitting(true);
     setSubmitError(null);
+    setResetNotice(null);
 
     try {
       const result =
@@ -122,9 +125,34 @@ export function ConnectDevicesDialog({
   async function handleSyncNow() {
     setIsSubmitting(true);
     setSubmitError(null);
+    setResetNotice(null);
 
     try {
       await syncNow();
+    } finally {
+      setIsSubmitting(false);
+    }
+  }
+
+  async function handleForgotPassword() {
+    if (!isEmailValid) {
+      return;
+    }
+
+    setIsSubmitting(true);
+    setSubmitError(null);
+    setResetNotice(null);
+
+    try {
+      const result = await requestPasswordReset(trimmedEmail);
+
+      if (result.ok) {
+        setResetNotice(
+          `Password reset email sent to ${trimmedEmail}. Open the link there to choose a new password.`,
+        );
+      } else {
+        setSubmitError(result.errorMessage);
+      }
     } finally {
       setIsSubmitting(false);
     }
@@ -138,6 +166,7 @@ export function ConnectDevicesDialog({
         if (!nextOpen) {
           setPassword("");
           setSubmitError(null);
+          setResetNotice(null);
         }
       }}
       open={open}
@@ -255,6 +284,7 @@ export function ConnectDevicesDialog({
                   onClick={() => {
                     setMode("sign-up");
                     setSubmitError(null);
+                    setResetNotice(null);
                   }}
                   type="button"
                 >
@@ -270,6 +300,7 @@ export function ConnectDevicesDialog({
                   onClick={() => {
                     setMode("sign-in");
                     setSubmitError(null);
+                    setResetNotice(null);
                   }}
                   type="button"
                 >
@@ -286,6 +317,7 @@ export function ConnectDevicesDialog({
                     onChange={(event) => {
                       setEmail(event.target.value);
                       setSubmitError(null);
+                      setResetNotice(null);
                     }}
                     required
                     type="email"
@@ -316,7 +348,24 @@ export function ConnectDevicesDialog({
                     ? "Only needed for syncing across devices."
                     : "Your data stays on this device unless you choose to connect."}
                 </p>
+
+                {mode === "sign-in" ? (
+                  <div className="flex justify-start">
+                    <button
+                      className="text-sm font-medium text-foreground underline decoration-line underline-offset-4 transition hover:text-foreground/80 disabled:cursor-not-allowed disabled:text-ink-muted"
+                      disabled={isSubmitting || !isEmailValid}
+                      onClick={handleForgotPassword}
+                      type="button"
+                    >
+                      Forgot password?
+                    </button>
+                  </div>
+                ) : null}
               </div>
+
+              {resetNotice ? (
+                <p className="text-sm text-emerald-700">{resetNotice}</p>
+              ) : null}
 
               {(submitError ?? errorMessage) ? (
                 <div className="grid gap-2">
@@ -329,6 +378,7 @@ export function ConnectDevicesDialog({
                       onClick={() => {
                         setMode("sign-in");
                         setSubmitError(null);
+                        setResetNotice(null);
                       }}
                       type="button"
                     >
