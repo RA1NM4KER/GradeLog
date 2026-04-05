@@ -16,7 +16,7 @@ import { GradeBandEditor } from "@/components/workspace/grade-band-editor";
 import { GradeBand } from "@/lib/types";
 
 const dialogPrimaryButtonClassName =
-  "border border-white/35 bg-white/70 text-foreground shadow-[0_10px_24px_rgba(28,25,23,0.08)] backdrop-blur-sm hover:bg-white/85 dark:border-white/10 dark:bg-white/8 dark:hover:bg-white/12";
+  "border border-black/10 bg-black text-white shadow-[0_10px_24px_rgba(28,25,23,0.12)] hover:bg-black/90 dark:border-white/10 dark:bg-white dark:text-black dark:hover:bg-white/90";
 
 interface GradeBandDialogProps {
   bands: GradeBand[];

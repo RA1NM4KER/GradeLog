@@ -1,5 +1,6 @@
 "use client";
 
+import { ChartBoundMarker } from "@/components/workspace/chart-bound-marker";
 import { useTheme } from "@/components/theme/theme-provider";
 import { getCourseTheme } from "@/lib/course-theme";
 import { getExperimentTheme } from "@/lib/experiment-theme";
@@ -31,6 +32,7 @@ export function CourseMobileOverviewChart({
   const { resolvedTheme } = useTheme();
   const theme = getCourseTheme(module, resolvedTheme);
   const experimentTheme = getExperimentTheme(resolvedTheme);
+  const isLockedRange = Math.abs(ceiling - guaranteedGrade) < 0.01;
 
   return (
     <div className="relative h-20 overflow-hidden rounded-[18px] border border-line bg-surface">
@@ -50,6 +52,40 @@ export function CourseMobileOverviewChart({
               width: `${100 - getLinePosition(ceiling)}%`,
             }}
           />
+          {isLockedRange && guaranteedGrade > 0 ? (
+            <ChartBoundMarker
+              description={`Your final grade is now locked at ${formatPercent(
+                guaranteedGrade,
+              )}. There is no remaining weighted work that can move it up or down.`}
+              orientation="horizontal"
+              positionPercent={getLinePosition(guaranteedGrade)}
+              title={`Locked: ${formatPercent(guaranteedGrade)}`}
+            />
+          ) : null}
+          {!isLockedRange && ceiling < 100 ? (
+            <ChartBoundMarker
+              description={`You have already lost ${formatPercent(
+                100 - ceiling,
+              )}. Even with perfect scores from here, the highest final grade you can still reach is ${formatPercent(
+                ceiling,
+              )}.`}
+              orientation="horizontal"
+              positionPercent={getLinePosition(ceiling)}
+              title={`Lost: ${formatPercent(100 - ceiling)}`}
+            />
+          ) : null}
+          {!isLockedRange && guaranteedGrade > 0 ? (
+            <ChartBoundMarker
+              description={`You have already secured ${formatPercent(
+                guaranteedGrade,
+              )}. Even if every remaining assessment goes badly, your final grade cannot fall below ${formatPercent(
+                guaranteedGrade,
+              )}.`}
+              orientation="horizontal"
+              positionPercent={getLinePosition(guaranteedGrade)}
+              title={`Guaranteed: ${formatPercent(guaranteedGrade)}`}
+            />
+          ) : null}
         </>
       ) : null}
       <div className="absolute inset-y-0 left-[10%] border-l border-line-strong" />

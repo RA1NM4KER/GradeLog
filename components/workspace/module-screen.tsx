@@ -223,6 +223,7 @@ export function CourseScreen({ moduleId }: { moduleId?: string }) {
           <GradeBandPanel
             isExperimenting={isExperimenting}
             module={module}
+            onSaveBandsAction={saveGradeBands}
             onUpdateGradeBand={updateGradeBand}
           />
         </div>

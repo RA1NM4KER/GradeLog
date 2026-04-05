@@ -1,6 +1,6 @@
 "use client";
 
-import { ReactNode, SyntheticEvent, useEffect, useMemo, useState } from "react";
+import { ReactNode, SyntheticEvent, useState } from "react";
 import { Check } from "lucide-react";
 
 import {
@@ -48,13 +48,12 @@ export function CourseDialog({
 }: CourseDialogProps) {
   const [open, setOpen] = useState(false);
   const [step, setStep] = useState<1 | 2>(1);
-  const [isMobile, setIsMobile] = useState(false);
   const [form, setForm] = useState(() => getInitialFormState(course));
   const [gradeBands, setGradeBands] = useState<GradeBand[]>(() =>
     getInitialGradeBands(course),
   );
-  const usesStepper = useMemo(() => !(course && isMobile), [course, isMobile]);
-  const showsCutoffEditor = usesStepper || !course;
+  const usesStepper = !course;
+  const showsCutoffEditor = !course;
 
   function resetDialogState(targetCourse?: Course) {
     setStep(1);
@@ -69,20 +68,6 @@ export function CourseDialog({
       resetDialogState(course);
     }
   }
-
-  useEffect(() => {
-    if (typeof window === "undefined") {
-      return;
-    }
-
-    const mediaQuery = window.matchMedia("(max-width: 639px)");
-    const sync = () => setIsMobile(mediaQuery.matches);
-
-    sync();
-    mediaQuery.addEventListener("change", sync);
-
-    return () => mediaQuery.removeEventListener("change", sync);
-  }, []);
 
   function submit(event: SyntheticEvent<HTMLFormElement, SubmitEvent>) {
     event.preventDefault();
@@ -130,9 +115,7 @@ export function CourseDialog({
               : !usesStepper
                 ? "Update course details and cutoffs."
                 : step === 1
-                  ? course
-                    ? "Step 1 of 2. Update course details."
-                    : "Step 1 of 2. Create a course."
+                  ? "Step 1 of 2. Create a course."
                   : "Step 2 of 2. Choose and tune your cutoffs."}
           </DialogDescription>
         </DialogHeader>

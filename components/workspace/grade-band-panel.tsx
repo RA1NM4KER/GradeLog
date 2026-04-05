@@ -1,7 +1,10 @@
 "use client";
 
 import React, { KeyboardEvent, useEffect, useRef, useState } from "react";
+import { Pencil } from "lucide-react";
 
+import { ChartBoundMarker } from "@/components/workspace/chart-bound-marker";
+import { GradeBandDialog } from "@/components/workspace/grade-band-dialog";
 import { useTheme } from "@/components/theme/theme-provider";
 import { Input } from "@/components/ui/input";
 import { getCourseTheme } from "@/lib/course-theme";
@@ -29,12 +32,14 @@ const neutralChartStripe =
 interface GradeBandPanelProps {
   module: Module;
   isExperimenting?: boolean;
+  onSaveBandsAction: (bands: GradeBand[]) => void;
   onUpdateGradeBand: (bandId: string, threshold: number) => void;
 }
 
 export function GradeBandPanel({
   module,
   isExperimenting = false,
+  onSaveBandsAction,
   onUpdateGradeBand,
 }: GradeBandPanelProps) {
   const hasAssessments = module.assessments.length > 0;
@@ -44,6 +49,7 @@ export function GradeBandPanel({
   const guaranteedGrade = getModuleGuaranteedGrade(module);
   const remainingWeight = getRemainingWeight(module);
   const ceiling = guaranteedGrade + remainingWeight;
+  const isLockedRange = Math.abs(ceiling - guaranteedGrade) < 0.01;
   const completion = getCompletedWeight(module);
   const bands = getSortedGradeBands(module);
   const { resolvedTheme } = useTheme();
@@ -53,9 +59,31 @@ export function GradeBandPanel({
   return (
     <div className="grid gap-3 sm:gap-4 min-[900px]:grid-cols-[280px_minmax(0,1fr)] min-[900px]:items-start">
       <div className="min-w-0">
-        <p className="mb-2.5 text-center text-[0.82rem] text-ink-soft sm:mb-3 sm:text-sm">
-          Current standing
-        </p>
+        <div className="mb-2.5 flex items-center justify-between gap-3 sm:mb-3">
+          <span className="w-7" />
+          <p className="text-center text-[0.82rem] text-ink-soft sm:text-sm">
+            Current standing
+          </p>
+          <GradeBandDialog
+            bands={bands}
+            onSave={onSaveBandsAction}
+            triggerAsChild
+            triggerChildren={
+              <button
+                aria-label="Edit cutoffs"
+                className={cn(
+                  "inline-flex h-7 w-7 items-center justify-center rounded-full border bg-surface transition hover:bg-surface-muted",
+                  isExperimenting
+                    ? `${experimentTheme.accentBorder} ${experimentTheme.accentText}`
+                    : `${theme.chartAccentBorder} ${theme.chartAccentText}`,
+                )}
+                type="button"
+              >
+                <Pencil className="h-3.5 w-3.5" />
+              </button>
+            }
+          />
+        </div>
         <div className="relative h-[320px] overflow-hidden rounded-[20px] border border-line bg-surface/90 sm:h-[500px] sm:rounded-[24px]">
           {hasAssessments ? (
             <>
@@ -66,6 +94,28 @@ export function GradeBandPanel({
                   height: `${100 - getLinePosition(ceiling)}%`,
                 }}
               />
+              {isLockedRange && guaranteedGrade > 0 ? (
+                <ChartBoundMarker
+                  description={`Your final grade is now locked at ${formatPercent(
+                    guaranteedGrade,
+                  )}. There is no remaining weighted work that can move it up or down.`}
+                  orientation="vertical"
+                  positionPercent={getLinePosition(guaranteedGrade)}
+                  title={`Locked: ${formatPercent(guaranteedGrade)}`}
+                />
+              ) : null}
+              {!isLockedRange && ceiling < 100 ? (
+                <ChartBoundMarker
+                  description={`You have already lost ${formatPercent(
+                    100 - ceiling,
+                  )}. Even with perfect scores from here, the highest final grade you can still reach is ${formatPercent(
+                    ceiling,
+                  )}.`}
+                  orientation="vertical"
+                  positionPercent={getLinePosition(ceiling)}
+                  title={`Lost: ${formatPercent(100 - ceiling)}`}
+                />
+              ) : null}
               <div
                 className="absolute inset-x-0 bottom-0 transition-[height] duration-500 ease-out"
                 style={{
@@ -73,6 +123,18 @@ export function GradeBandPanel({
                   height: `${getLinePosition(guaranteedGrade)}%`,
                 }}
               />
+              {!isLockedRange && guaranteedGrade > 0 ? (
+                <ChartBoundMarker
+                  description={`You have already secured ${formatPercent(
+                    guaranteedGrade,
+                  )}. Even if every remaining assessment goes badly, your final grade cannot fall below ${formatPercent(
+                    guaranteedGrade,
+                  )}.`}
+                  orientation="vertical"
+                  positionPercent={getLinePosition(guaranteedGrade)}
+                  title={`Guaranteed: ${formatPercent(guaranteedGrade)}`}
+                />
+              ) : null}
             </>
           ) : null}
 
