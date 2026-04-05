@@ -73,6 +73,8 @@ Today the app supports:
 - assignment tracking inside a module
 - grouped tutorial tracking with drop-lowest support
 - current-grade calculations, weighted contributions, and grade-band views
+- course setup sharing by link and QR code
+- importing a shared course setup into a semester as your own copy
 - browser-local persistence across refreshes
 - installable offline-first behavior after the first load
 
@@ -89,6 +91,9 @@ Current behavior:
 - backups can be exported to and restored from local JSON files
 - optional sync can be enabled to keep data in sync across connected devices
 - when sync is used today, data is stored on a remote service to enable cross-device syncing
+- shared course setup links are accessible to anyone who has the link
+- importing a shared course setup creates a separate copy and does not keep the course linked to the original
+- deleting a cloud account removes the remote account and synced cloud data, but does not automatically erase local-only data already stored on a device
 - synced data is not yet end-to-end encrypted
 
 This is not a temporary implementation detail. It is part of the product direction.
@@ -124,6 +129,18 @@ npm run dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000).
+
+If you want optional connected-device sync and account deletion to work locally,
+set `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` in
+`.env.local`.
+
+If you want shared course links and cloud account deletion to work against your
+Supabase project, also apply the project-side setup:
+
+- run `supabase db push` to apply migrations such as `course_templates`
+- deploy the `delete-account` Edge Function
+- set the function secrets `SUPABASE_URL`, `SUPABASE_ANON_KEY`, and `SUPABASE_SERVICE_ROLE_KEY`
+- leave JWT verification disabled for the `delete-account` function, because the function verifies the bearer token in its own handler
 
 ## Persistence
 

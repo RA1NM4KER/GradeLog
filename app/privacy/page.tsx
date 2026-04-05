@@ -58,6 +58,18 @@ const sections = [
       "authentication session data",
       "device identifiers used to keep your devices in sync",
       "synced academic data and sync operation records",
+      "shared course setup records that you create",
+    ],
+  },
+  {
+    title: "Shared course links",
+    body: [
+      "GradeLog lets you create shareable course setup links so another person can add a copy of a course to their own semester.",
+    ],
+    bullets: [
+      "anyone with the link can open the shared course setup",
+      "importing from a shared link creates a separate copy and does not keep the imported course synced to the original",
+      "shared course links are intended to share course structure, not your personal grades",
     ],
   },
   {
@@ -109,8 +121,9 @@ const sections = [
     title: "Retention",
     body: [
       "Local data remains on your device until you delete it, uninstall the app, clear browser or app storage, or replace it through import or restore.",
-      "If you use optional sync, synced data may remain on the remote service until it is deleted through future account or sync-data management features, or otherwise removed through operational cleanup.",
-      "Retention and deletion controls will become more explicit as the sync feature matures.",
+      "If you use optional sync, synced data may remain on the remote service until you disconnect, delete your cloud account, or it is otherwise removed through operational cleanup.",
+      "Deleting your cloud account is intended to remove your remote account, synced cloud data, connected-device records, and shared course setup records tied to that account.",
+      "Deleting your cloud account does not automatically erase local-only data already stored on a browser or device unless you separately clear that device.",
     ],
   },
   {
@@ -122,6 +135,7 @@ const sections = [
       "import or replace local data manually",
       "connect your devices for optional sync",
       "disconnect sync later",
+      "delete your cloud account and synced remote data if you no longer want connected-device features",
     ],
     footer:
       "If you prefer not to store academic data remotely, do not enable connected-device sync.",

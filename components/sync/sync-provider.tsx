@@ -25,6 +25,7 @@ import {
   signOutFromSync,
   signUpWithEmailPassword,
 } from "@/lib/sync-auth";
+import { deleteCurrentAccount } from "@/lib/delete-account";
 import {
   enqueueLocalSyncOperation,
   type SyncAdapter,
@@ -33,6 +34,7 @@ import {
 import {
   listPendingSyncOperations,
   loadSyncMeta,
+  resetLocalSyncState,
   saveSyncMeta,
 } from "@/lib/sync-storage";
 import { SyncMetaRecord, SyncOperation, SyncStatus } from "@/lib/sync-types";
@@ -62,6 +64,7 @@ interface SyncConnectionContextValue {
     password: string,
   ) => Promise<{ ok: boolean; errorMessage: string | null }>;
   signOut: () => Promise<void>;
+  deleteAccount: () => Promise<{ ok: boolean; errorMessage: string | null }>;
   requestPasswordReset: (
     email: string,
   ) => Promise<{ ok: boolean; errorMessage: string | null }>;
@@ -463,6 +466,39 @@ export function SyncProvider({ children }: { children: ReactNode }) {
     }
   }, [applyAuthState, session]);
 
+  const deleteAccount = useCallback(async () => {
+    setIsBusy(true);
+
+    try {
+      await deleteCurrentAccount();
+
+      try {
+        await signOutFromSync();
+      } catch {
+        // Local session cleanup still happens below even if Auth no longer
+        // accepts the token because the user was deleted first.
+      }
+
+      const nextMeta = await resetLocalSyncState();
+      syncMetaState(nextMeta);
+      clearPasswordRecoverySession();
+      setSession(null);
+      setErrorMessage(null);
+      setStatusNotice(
+        "Your cloud account was deleted. This device is now back to local-only storage.",
+      );
+      return { ok: true, errorMessage: null };
+    } catch (error) {
+      const message =
+        error instanceof Error
+          ? error.message
+          : "GradeLog could not delete your account.";
+      return { ok: false, errorMessage: message };
+    } finally {
+      setIsBusy(false);
+    }
+  }, [syncMetaState]);
+
   const requestPasswordReset = useCallback(async (email: string) => {
     setIsBusy(true);
 
@@ -603,6 +639,7 @@ export function SyncProvider({ children }: { children: ReactNode }) {
   const value = useMemo<SyncConnectionContextValue>(
     () => ({
       errorMessage,
+      deleteAccount,
       enqueueOperation,
       isAuthenticated: Boolean(session?.user),
       isConfigured: configured,
@@ -631,6 +668,7 @@ export function SyncProvider({ children }: { children: ReactNode }) {
     }),
     [
       configured,
+      deleteAccount,
       enqueueOperation,
       errorMessage,
       isBusy,

@@ -1,7 +1,13 @@
 "use client";
 
 import { FormEvent, ReactNode, useMemo, useState } from "react";
-import { Cloud, LoaderCircle, Smartphone } from "lucide-react";
+import {
+  ChevronDown,
+  Cloud,
+  LoaderCircle,
+  Smartphone,
+  TriangleAlert,
+} from "lucide-react";
 
 import {
   Dialog,
@@ -30,6 +36,7 @@ export function ConnectDevicesDialog({
   triggerChildren?: ReactNode;
 }) {
   const {
+    deleteAccount,
     errorMessage,
     isAuthenticated,
     isConfigured,
@@ -52,6 +59,10 @@ export function ConnectDevicesDialog({
   const [password, setPassword] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
+  const [deleteConfirmation, setDeleteConfirmation] = useState("");
+  const [deleteError, setDeleteError] = useState<string | null>(null);
+  const [isDeletingAccount, setIsDeletingAccount] = useState(false);
+  const [isDangerZoneOpen, setIsDangerZoneOpen] = useState(false);
   const [resetNotice, setResetNotice] = useState<string | null>(null);
   const trimmedEmail = email.trim();
   const isEmailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmedEmail);
@@ -64,6 +75,7 @@ export function ConnectDevicesDialog({
     () => formatLastSyncedAt(lastSyncedAt),
     [lastSyncedAt],
   );
+  const canDeleteAccount = deleteConfirmation.trim() === "DELETE";
 
   const connectedStateCopy = useMemo(() => {
     if (
@@ -134,6 +146,34 @@ export function ConnectDevicesDialog({
     }
   }
 
+  async function handleDeleteAccount() {
+    if (!canDeleteAccount) {
+      return;
+    }
+
+    setIsDeletingAccount(true);
+    setDeleteError(null);
+
+    try {
+      const result = await deleteAccount();
+
+      if (!result.ok) {
+        setDeleteError(result.errorMessage);
+        return;
+      }
+
+      setDeleteConfirmation("");
+      setDeleteError(null);
+      setIsDangerZoneOpen(false);
+      setMode("sign-in");
+      setPassword("");
+      setSubmitError(null);
+      setResetNotice(null);
+    } finally {
+      setIsDeletingAccount(false);
+    }
+  }
+
   async function handleForgotPassword() {
     if (!isEmailValid) {
       return;
@@ -165,6 +205,9 @@ export function ConnectDevicesDialog({
 
         if (!nextOpen) {
           setPassword("");
+          setDeleteConfirmation("");
+          setDeleteError(null);
+          setIsDangerZoneOpen(false);
           setSubmitError(null);
           setResetNotice(null);
         }
@@ -237,6 +280,12 @@ export function ConnectDevicesDialog({
             </div>
           </div>
 
+          {statusNotice && !isAuthenticated ? (
+            <div className="rounded-[24px] border border-emerald-200 bg-emerald-50/90 p-4 text-sm text-emerald-900 dark:border-emerald-950/40 dark:bg-emerald-950/20 dark:text-emerald-100">
+              {statusNotice}
+            </div>
+          ) : null}
+
           {!isConfigured ? (
             <div className="rounded-[24px] border border-amber-200 bg-amber-50/90 p-4 text-sm text-amber-900">
               Sync is not configured in this build yet. Add
@@ -244,33 +293,111 @@ export function ConnectDevicesDialog({
               enable connected devices.
             </div>
           ) : isAuthenticated ? (
-            <div className="rounded-[24px] border border-white/24 bg-white/38 p-4 shadow-card backdrop-blur-sm dark:border-white/10 dark:bg-white/5">
-              <p className="text-sm font-semibold text-foreground">
-                Connected devices are enabled
-              </p>
-              <p className="mt-1 text-sm leading-6 text-ink-soft">
-                {connectedStateCopy}
-              </p>
-              {statusNotice ? (
-                <p className="mt-2 text-sm text-ink-muted">{statusNotice}</p>
-              ) : null}
-              {status === "error" && errorMessage ? (
-                <p className="mt-2 text-sm text-rose-700">{errorMessage}</p>
-              ) : null}
-              <div className="mt-4">
-                <Button
-                  disabled={isSubmitting || isSyncing}
-                  onClick={handleSyncNow}
-                  type="button"
-                  variant="outline"
-                >
-                  {isSubmitting || isSyncing ? (
-                    <LoaderCircle className="h-4 w-4 animate-spin" />
-                  ) : null}
-                  Sync now
-                </Button>
+            <>
+              <div className="rounded-[24px] border border-white/24 bg-white/38 p-4 shadow-card backdrop-blur-sm dark:border-white/10 dark:bg-white/5">
+                <p className="text-sm font-semibold text-foreground">
+                  Connected devices are enabled
+                </p>
+                <p className="mt-1 text-sm leading-6 text-ink-soft">
+                  {connectedStateCopy}
+                </p>
+                {statusNotice ? (
+                  <p className="mt-2 text-sm text-ink-muted">{statusNotice}</p>
+                ) : null}
+                {status === "error" && errorMessage ? (
+                  <p className="mt-2 text-sm text-rose-700">{errorMessage}</p>
+                ) : null}
+                <div className="mt-4">
+                  <Button
+                    disabled={isSubmitting || isSyncing}
+                    onClick={handleSyncNow}
+                    type="button"
+                    variant="outline"
+                  >
+                    {isSubmitting || isSyncing ? (
+                      <LoaderCircle className="h-4 w-4 animate-spin" />
+                    ) : null}
+                    Sync now
+                  </Button>
+                </div>
               </div>
-            </div>
+              <div className="rounded-[24px] border border-line/80 bg-surface/70 shadow-card backdrop-blur-sm dark:border-white/10 dark:bg-white/5">
+                <button
+                  className="flex w-full items-center justify-between gap-3 px-4 py-4 text-left"
+                  onClick={() => {
+                    setIsDangerZoneOpen((current) => !current);
+                    setDeleteError(null);
+                  }}
+                  type="button"
+                >
+                  <div className="flex items-start gap-3">
+                    <div className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-2xl border border-red-200 bg-red-50 text-red-700 dark:border-red-950/40 dark:bg-red-950/30 dark:text-red-200">
+                      <TriangleAlert className="h-4.5 w-4.5" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-semibold text-foreground">
+                        Danger zone
+                      </p>
+                      <p className="mt-1 text-sm leading-5 text-ink-soft">
+                        Delete your cloud account and synced data.
+                      </p>
+                    </div>
+                  </div>
+                  <ChevronDown
+                    className={cn(
+                      "h-4 w-4 shrink-0 text-ink-muted transition-transform",
+                      isDangerZoneOpen ? "rotate-180" : "",
+                    )}
+                  />
+                </button>
+
+                {isDangerZoneOpen ? (
+                  <div className="border-t border-red-200/70 bg-red-50/80 px-4 py-4 dark:border-red-950/40 dark:bg-red-950/20">
+                    <p className="text-sm font-semibold text-red-900 dark:text-red-100">
+                      Delete cloud account
+                    </p>
+                    <p className="mt-1 text-sm leading-6 text-red-800 dark:text-red-200">
+                      This permanently deletes your GradeLog account, synced
+                      devices, shared course links, and cloud sync history.
+                      Courses saved only on this device will stay here.
+                    </p>
+                    <div className="mt-4 space-y-2">
+                      <Label htmlFor="delete-account-confirmation">
+                        Type DELETE to confirm
+                      </Label>
+                      <Input
+                        id="delete-account-confirmation"
+                        onChange={(event) => {
+                          setDeleteConfirmation(event.target.value);
+                          setDeleteError(null);
+                        }}
+                        placeholder="DELETE"
+                        value={deleteConfirmation}
+                      />
+                    </div>
+                    {deleteError ? (
+                      <p className="mt-3 text-sm text-red-700 dark:text-red-200">
+                        {deleteError}
+                      </p>
+                    ) : null}
+                    <div className="mt-4">
+                      <Button
+                        className="border-red-600 bg-red-600 text-white hover:bg-red-700 dark:border-red-500 dark:bg-red-600 dark:hover:bg-red-500"
+                        disabled={isDeletingAccount || !canDeleteAccount}
+                        onClick={handleDeleteAccount}
+                        type="button"
+                        variant="outline"
+                      >
+                        {isDeletingAccount ? (
+                          <LoaderCircle className="h-4 w-4 animate-spin" />
+                        ) : null}
+                        Delete account
+                      </Button>
+                    </div>
+                  </div>
+                ) : null}
+              </div>
+            </>
           ) : (
             <form className="grid gap-4" onSubmit={handleSubmit}>
               <div className="grid grid-cols-2 gap-1.5 sm:gap-2">

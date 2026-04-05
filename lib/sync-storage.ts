@@ -97,6 +97,10 @@ export async function clearPendingSyncOperations() {
   );
 }
 
+async function clearStore(storeName: string) {
+  await withStore(storeName, "readwrite", (store) => store.clear());
+}
+
 export async function loadLocalTombstones() {
   const result = await withStore(TOMBSTONES_STORE_NAME, "readonly", (store) =>
     store.getAll(),
@@ -195,3 +199,14 @@ export const SYNC_STORE_NAMES = {
   syncMeta: SYNC_META_STORE_NAME,
   tombstones: TOMBSTONES_STORE_NAME,
 } as const;
+
+export async function resetLocalSyncState() {
+  await Promise.all([
+    clearStore(PENDING_OPS_STORE_NAME),
+    clearStore(TOMBSTONES_STORE_NAME),
+    clearStore(APPLIED_OPS_STORE_NAME),
+    clearStore(ENTITY_VERSIONS_STORE_NAME),
+  ]);
+
+  return await saveSyncMeta(createDefaultSyncMeta());
+}
