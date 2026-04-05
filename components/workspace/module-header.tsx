@@ -1,6 +1,7 @@
-import { ArrowLeft, Cog, FlaskConical } from "lucide-react";
+import { ArrowLeft, Cog, FlaskConical, Share2 } from "lucide-react";
 
 import { CourseDialog } from "@/components/dashboard/course-dialog";
+import { ShareCourseTemplateDialog } from "@/components/workspace/share-course-template-dialog";
 import { Button } from "@/components/ui/button";
 import { navigateCourses } from "@/lib/courses-navigation";
 import { getExperimentTheme } from "@/lib/experiment-theme";
@@ -65,6 +66,21 @@ export function CourseHeader({
                 variant="ghost"
               >
                 <Cog className="h-5 w-5 transition-transform duration-300 group-hover:rotate-90 sm:h-6 sm:w-6" />
+              </Button>
+            }
+          />
+          <ShareCourseTemplateDialog
+            course={module}
+            triggerChildren={
+              <Button
+                aria-label="Share course template"
+                className="group h-auto w-auto rounded-none border-0 bg-transparent p-0 text-ink-muted shadow-none hover:bg-transparent hover:text-ink-deep"
+                size="icon"
+                title="Share course template"
+                type="button"
+                variant="ghost"
+              >
+                <Share2 className="h-5 w-5 transition-transform duration-300 group-hover:-translate-y-0.5 sm:h-6 sm:w-6" />
               </Button>
             }
           />

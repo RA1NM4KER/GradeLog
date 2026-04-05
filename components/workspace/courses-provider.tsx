@@ -52,6 +52,7 @@ interface CoursesContextValue {
   ) => void;
   selectSemester: (semesterId: string) => void;
   addCourse: (course: Course) => void;
+  addCourseToSemester: (semesterId: string, course: Course) => void;
   deleteCourse: (courseId: string) => void;
   moveCourse: (courseId: string, toSemesterId: string) => void;
   updateCourse: (
@@ -286,6 +287,30 @@ export function CoursesProvider({ children }: { children: ReactNode }) {
           async () => {
             const syncMeta = await loadSyncMeta();
             return buildCourseCreateOperation(syncMeta, semester.id, course);
+          },
+        );
+      },
+      addCourseToSemester: (semesterId, course) => {
+        if (isExperimenting) {
+          applyWorkspaceState((currentState) =>
+            appStateActions.addCourse(currentState, semesterId, course),
+          );
+          return;
+        }
+
+        void applyPersistedDataChange(
+          (currentState) =>
+            appStateActions.addCourse(
+              {
+                ...currentState,
+                selectedSemesterId: semesterId,
+              },
+              semesterId,
+              course,
+            ),
+          async () => {
+            const syncMeta = await loadSyncMeta();
+            return buildCourseCreateOperation(syncMeta, semesterId, course);
           },
         );
       },
