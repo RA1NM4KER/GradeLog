@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { navigateCourses } from "@/lib/courses-navigation";
 import { getExperimentTheme } from "@/lib/experiment-theme";
 import { cn } from "@/lib/utils";
-import { Course } from "@/lib/types";
+import { Course, Semester } from "@/lib/types";
 import { useTheme } from "@/components/theme/theme-provider";
 
 export function CourseHeader({
@@ -13,15 +13,21 @@ export function CourseHeader({
   module,
   onToggleExperiment,
   semesterName,
+  semesterId,
+  semesters,
   onSaveCourse,
   onDeleteCourse,
+  onMoveCourse,
 }: {
   isExperimenting: boolean;
   module: Course;
   onToggleExperiment: () => void;
   semesterName: string;
+  semesterId: string;
+  semesters: Pick<Semester, "id" | "name" | "periodLabel">[];
   onSaveCourse: (course: Course) => void;
   onDeleteCourse: (courseId: string) => void;
+  onMoveCourse: (courseId: string, targetSemesterId: string) => void;
 }) {
   const { resolvedTheme } = useTheme();
   const experimentTheme = getExperimentTheme(resolvedTheme);
@@ -42,8 +48,11 @@ export function CourseHeader({
             {module.name}
           </h1>
           <CourseDialog
+            availableSemesters={semesters}
             course={module}
+            currentSemesterId={semesterId}
             onDeleteCourse={onDeleteCourse}
+            onMoveCourse={onMoveCourse}
             onSaveCourse={onSaveCourse}
             triggerAsChild
             triggerChildren={

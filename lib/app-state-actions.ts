@@ -157,6 +157,60 @@ export function deleteCourse(
   });
 }
 
+export function moveCourse(
+  state: AppState,
+  fromSemesterId: string,
+  toSemesterId: string,
+  courseId: string,
+): AppState {
+  if (fromSemesterId === toSemesterId) {
+    return state;
+  }
+
+  const sourceSemester = state.semesters.find(
+    (semester) => semester.id === fromSemesterId,
+  );
+  const targetSemester = state.semesters.find(
+    (semester) => semester.id === toSemesterId,
+  );
+  const courseToMove =
+    sourceSemester?.courses.find((course) => course.id === courseId) ?? null;
+
+  if (!sourceSemester || !targetSemester || !courseToMove) {
+    return state;
+  }
+
+  return {
+    ...state,
+    selectedSemesterId: toSemesterId,
+    semesters: state.semesters.map((semester) => {
+      if (semester.id === fromSemesterId) {
+        const nextCourses = semester.courses.filter(
+          (course) => course.id !== courseId,
+        );
+
+        return {
+          ...semester,
+          courses: nextCourses,
+          modules: nextCourses,
+        };
+      }
+
+      if (semester.id === toSemesterId) {
+        const nextCourses = [...semester.courses, courseToMove];
+
+        return {
+          ...semester,
+          courses: nextCourses,
+          modules: nextCourses,
+        };
+      }
+
+      return semester;
+    }),
+  };
+}
+
 export function addAssessment(
   state: AppState,
   semesterId: string,

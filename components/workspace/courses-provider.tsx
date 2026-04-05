@@ -53,6 +53,7 @@ interface CoursesContextValue {
   selectSemester: (semesterId: string) => void;
   addCourse: (course: Course) => void;
   deleteCourse: (courseId: string) => void;
+  moveCourse: (courseId: string, toSemesterId: string) => void;
   updateCourse: (
     courseId: string,
     updates: Partial<Omit<Course, "id" | "assessments">>,
@@ -305,6 +306,80 @@ export function CoursesProvider({ children }: { children: ReactNode }) {
           },
         );
       },
+      moveCourse: (courseId, toSemesterId) => {
+        if (semester.id === toSemesterId) {
+          return;
+        }
+
+        const course =
+          semester.courses.find((item) => item.id === courseId) ?? null;
+
+        if (!course) {
+          return;
+        }
+
+        if (isExperimenting) {
+          applyWorkspaceState((currentState) =>
+            appStateActions.moveCourse(
+              currentState,
+              semester.id,
+              toSemesterId,
+              courseId,
+            ),
+          );
+          return;
+        }
+
+        if (!persistedAppState) {
+          return;
+        }
+
+        const currentState = persistedAppState;
+        const intermediateState = appStateActions.deleteCourse(
+          currentState,
+          semester.id,
+          courseId,
+        );
+        const finalState = appStateActions.addCourse(
+          {
+            ...intermediateState,
+            selectedSemesterId: toSemesterId,
+          },
+          toSemesterId,
+          course,
+        );
+
+        replacePersistedAppState(finalState);
+
+        void (async () => {
+          const syncMeta = await loadSyncMeta();
+          const deleteBuilt = buildCourseDeleteOperation(
+            syncMeta,
+            semester.id,
+            courseId,
+          );
+
+          await enqueueOperation(
+            currentState,
+            deleteBuilt.operation,
+            deleteBuilt.nextMeta,
+          );
+
+          const createBuilt = buildCourseCreateOperation(
+            deleteBuilt.nextMeta,
+            toSemesterId,
+            course,
+          );
+
+          await enqueueOperation(
+            intermediateState,
+            createBuilt.operation,
+            createBuilt.nextMeta,
+          );
+        })().catch((error) => {
+          console.error("Failed to enqueue synced course move.", error);
+        });
+      },
       updateCourse: (courseId, updates) => {
         if (isExperimenting) {
           applyWorkspaceState((currentState) =>
@@ -529,6 +604,7 @@ export function CoursesProvider({ children }: { children: ReactNode }) {
     activeAppState,
     applyPersistedDataChange,
     applyWorkspaceState,
+    enqueueOperation,
     isExperimenting,
     persistedAppState,
     replacePersistedAppState,

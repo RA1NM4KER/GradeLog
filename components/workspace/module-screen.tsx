@@ -21,9 +21,11 @@ import { Assessment, Course } from "@/lib/types";
 export function CourseScreen({ moduleId }: { moduleId?: string }) {
   const {
     semester,
+    semesters,
     addAssessment,
     deleteAssessment,
     deleteCourse,
+    moveCourse,
     isExperimenting,
     recordGrade,
     reorderAssessments,
@@ -140,6 +142,14 @@ export function CourseScreen({ moduleId }: { moduleId?: string }) {
         <CourseHeader
           isExperimenting={isExperimenting}
           module={module}
+          onMoveCourse={(courseId, targetSemesterId) => {
+            moveCourse(courseId, targetSemesterId);
+            navigateCourses(
+              `/courses?semester=${encodeURIComponent(
+                targetSemesterId,
+              )}&course=${encodeURIComponent(courseId)}`,
+            );
+          }}
           onDeleteCourse={(courseId) => {
             deleteCourse(courseId);
             navigateCourses("/courses");
@@ -147,7 +157,9 @@ export function CourseScreen({ moduleId }: { moduleId?: string }) {
           onToggleExperiment={() =>
             isExperimenting ? stopExperiment() : startExperiment()
           }
+          semesterId={semester.id}
           semesterName={semester.name}
+          semesters={semesters}
           onSaveCourse={(nextModule) =>
             updateCourse(module.id, {
               accent: nextModule.accent,
