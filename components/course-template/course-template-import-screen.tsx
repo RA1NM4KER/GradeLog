@@ -6,16 +6,17 @@ import { useRouter, useSearchParams } from "next/navigation";
 
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { PageContainer } from "@/components/ui/page-container";
 import { PageIntro } from "@/components/ui/page-intro";
 import { Label } from "@/components/ui/label";
 import { Select } from "@/components/ui/select";
 import { SectionLabel } from "@/components/ui/section-label";
-import { useCourses } from "@/components/workspace/courses-provider";
+import { useCourses } from "@/components/workspace/shared/courses-provider";
 import {
   fetchCourseTemplateByToken,
   instantiateCourseFromTemplate,
   CourseTemplateRecord,
-} from "@/lib/course-template";
+} from "@/lib/course/course-template";
 
 export function CourseTemplateImportScreen() {
   const router = useRouter();
@@ -128,7 +129,7 @@ export function CourseTemplateImportScreen() {
   }
 
   return (
-    <div className="mx-auto max-w-5xl px-4 py-6 sm:px-8 sm:py-8">
+    <PageContainer className="px-4 py-6 sm:py-8">
       <PageIntro
         badge="Course setup"
         className="mb-5 sm:mb-7"
@@ -215,9 +216,10 @@ export function CourseTemplateImportScreen() {
                   <div className="mt-4 grid gap-3">
                     {templateRecord.payload.assessments.map(
                       (assessment, index) => (
-                        <div
-                          className="rounded-[18px] border border-line bg-surface px-4 py-3"
+                        <Card
+                          className="rounded-[18px] px-4 py-3"
                           key={`${assessment.name}-${index}`}
+                          variant="surface-subtle"
                         >
                           <div className="flex flex-wrap items-start justify-between gap-2">
                             <div>
@@ -247,7 +249,7 @@ export function CourseTemplateImportScreen() {
                               Total possible: {assessment.totalPossible}
                             </p>
                           )}
-                        </div>
+                        </Card>
                       ),
                     )}
                   </div>
@@ -311,6 +313,6 @@ export function CourseTemplateImportScreen() {
           </Card>
         </div>
       ) : null}
-    </div>
+    </PageContainer>
   );
 }

@@ -4,8 +4,8 @@ import { Download } from "lucide-react";
 import { useEffect, useState } from "react";
 
 import { Button } from "@/components/ui/button";
-import { isNativeApp } from "@/lib/platform";
-import { cn } from "@/lib/utils";
+import { isNativeApp } from "@/lib/platform/platform";
+import { cn } from "@/lib/shared/utils";
 
 interface BeforeInstallPromptEvent extends Event {
   prompt: () => Promise<void>;

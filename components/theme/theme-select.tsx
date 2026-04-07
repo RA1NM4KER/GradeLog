@@ -5,8 +5,8 @@ import { ReactNode, useEffect, useRef, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { useTheme } from "@/components/theme/theme-provider";
-import { ThemeMode } from "@/lib/theme";
-import { cn } from "@/lib/utils";
+import { ThemeMode } from "@/lib/theme/types";
+import { cn } from "@/lib/shared/utils";
 
 export const themeOptions: {
   icon: typeof MonitorCog;
@@ -41,6 +41,7 @@ function ThemeOptionsList({ onSelect }: { onSelect?: () => void }) {
 
         return (
           <button
+            aria-checked={isActive}
             className={cn(
               "flex w-full items-center gap-2.5 rounded-[12px] px-3 py-2 text-left text-sm transition",
               isActive

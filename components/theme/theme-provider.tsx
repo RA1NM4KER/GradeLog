@@ -12,11 +12,10 @@ import {
 import {
   isThemeMode,
   resolveTheme,
-  ResolvedTheme,
   THEME_MODES,
   THEME_STORAGE_KEY,
-  ThemeMode,
-} from "@/lib/theme";
+} from "@/lib/theme/theme";
+import { ResolvedTheme, ThemeMode } from "@/lib/theme/types";
 
 interface ThemeContextValue {
   resolvedTheme: ResolvedTheme;

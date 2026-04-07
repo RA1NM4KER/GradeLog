@@ -1,4 +1,4 @@
-import { LegalSection } from "@/lib/legal/legal-types";
+import { LegalSection } from "@/lib/legal/types";
 
 export const privacyPolicyTitle = "Privacy Policy";
 export const privacyPolicyLastUpdated = "April 3, 2026";

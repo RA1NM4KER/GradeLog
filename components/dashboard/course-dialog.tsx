@@ -20,12 +20,12 @@ import { Select } from "@/components/ui/select";
 import {
   GradeBandEditor,
   GRADE_BAND_PRESETS,
-} from "@/components/workspace/grade-band-editor";
-import { courseThemeOptions, getCourseTheme } from "@/lib/course-theme";
-import { sanitizeIntegerInput } from "@/lib/numeric-input";
-import { cn } from "@/lib/utils";
-import { Course, GradeBand, Semester } from "@/lib/types";
-import { ensureUuid, createUuid } from "@/lib/uuid";
+} from "@/components/workspace/grades/grade-band-editor";
+import { courseThemeOptions, getCourseTheme } from "@/lib/course/course-theme";
+import { sanitizeIntegerInput } from "@/lib/assessments/numeric-input";
+import { cn } from "@/lib/shared/utils";
+import { Course, GradeBand, Semester } from "@/lib/shared/types";
+import { ensureUuid, createUuid } from "@/lib/shared/uuid";
 
 const selectableCourseThemeOptions = courseThemeOptions.filter(
   (theme) => theme.id !== "violet",

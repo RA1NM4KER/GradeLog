@@ -8,7 +8,7 @@ import { InstallAppButton } from "@/components/pwa/install-app-button";
 import { LocalBackupDialog } from "@/components/pwa/local-backup-dialog";
 import { ConnectDevicesDialog } from "@/components/sync/connect-devices-dialog";
 import { useSyncConnection } from "@/components/sync/sync-provider";
-import { formatLastSyncedAt, getSyncStatusLabel } from "@/lib/sync-status";
+import { formatLastSyncedAt, getSyncStatusLabel } from "@/lib/sync/sync-status";
 import {
   Dialog,
   DialogContent,
@@ -18,7 +18,7 @@ import {
 } from "@/components/ui/dialog";
 import { ThemeModePanel, ThemeSelect } from "@/components/theme/theme-select";
 import { Button } from "@/components/ui/button";
-import { useCourses } from "@/components/workspace/courses-provider";
+import { useCourses } from "@/components/workspace/shared/courses-provider";
 
 export function TopNav() {
   const { appState, replaceAppState } = useCourses();

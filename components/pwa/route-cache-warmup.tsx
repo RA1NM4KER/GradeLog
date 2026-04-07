@@ -3,7 +3,7 @@
 import { useEffect, useRef } from "react";
 import { usePathname, useSearchParams } from "next/navigation";
 
-import { isNativeApp } from "@/lib/platform";
+import { isNativeApp } from "@/lib/platform/platform";
 
 function buildCurrentRouteUrl(pathname: string, searchParams: URLSearchParams) {
   const queryString = searchParams.toString();

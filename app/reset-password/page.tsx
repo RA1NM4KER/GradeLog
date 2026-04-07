@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { FormEvent, useEffect, useState } from "react";
+import { SyntheticEvent, useEffect, useState } from "react";
 import { LoaderCircle } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -20,8 +20,7 @@ import {
   hasPasswordRecoverySession,
   signOutFromSync,
   updateCurrentSyncPassword,
-} from "@/lib/sync-auth";
-import { cn } from "@/lib/utils";
+} from "@/lib/sync/sync-auth";
 
 export default function ResetPasswordPage() {
   const [password, setPassword] = useState("");
@@ -80,7 +79,9 @@ export default function ResetPasswordPage() {
     };
   }, []);
 
-  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(
+    event: SyntheticEvent<HTMLFormElement, SubmitEvent>,
+  ) {
     event.preventDefault();
 
     if (!canSubmit) {
@@ -95,7 +96,8 @@ export default function ResetPasswordPage() {
       const { error } = await updateCurrentSyncPassword(password);
 
       if (error) {
-        throw error;
+        setErrorMessage(error.message);
+        return;
       }
 
       clearPasswordRecoverySession();
@@ -120,7 +122,7 @@ export default function ResetPasswordPage() {
 
   return (
     <div className="relative mx-auto flex min-h-[calc(100vh-5rem)] w-full max-w-2xl items-center px-4 py-16 sm:px-6">
-      <Card className="w-full border border-white/24 bg-white/72 backdrop-blur-sm dark:border-white/10 dark:bg-white/6">
+      <Card className="w-full" variant="glass-panel">
         <CardHeader>
           <CardTitle>Reset your password</CardTitle>
           <CardDescription>
@@ -203,14 +205,9 @@ export default function ResetPasswordPage() {
               ) : null}
 
               <Button
-                className={cn(
-                  canSubmit
-                    ? "border border-stone-300/80 bg-stone-900 text-white shadow-[0_10px_24px_-16px_rgba(15,23,42,0.28)] hover:bg-stone-800 dark:border-white/14 dark:bg-white/18 dark:text-white dark:hover:bg-white/24"
-                    : "border border-white/35 bg-white/82 text-ink-muted shadow-[0_10px_24px_-18px_rgba(15,23,42,0.14)] hover:bg-white/82 dark:border-white/12 dark:bg-white/10 dark:text-ink-muted dark:hover:bg-white/10",
-                )}
                 disabled={isSubmitting || !canSubmit}
                 type="submit"
-                variant="outline"
+                variant={canSubmit ? "glass-strong" : "glass-muted"}
               >
                 {isSubmitting ? (
                   <LoaderCircle className="h-4 w-4 animate-spin" />

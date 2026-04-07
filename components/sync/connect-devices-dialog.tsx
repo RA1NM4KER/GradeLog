@@ -23,8 +23,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { SelectableCardButton } from "@/components/ui/selectable-card-button";
 import { useSyncConnection } from "@/components/sync/sync-provider";
-import { formatLastSyncedAt, getSyncStatusLabel } from "@/lib/sync-status";
-import { cn } from "@/lib/utils";
+import { formatLastSyncedAt, getSyncStatusLabel } from "@/lib/sync/sync-status";
+import { cn } from "@/lib/shared/utils";
 
 type AuthMode = "sign-in" | "sign-up";
 

@@ -7,10 +7,11 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { PageContainer } from "@/components/ui/page-container";
 
 export default function OfflinePage() {
   return (
-    <div className="mx-auto flex min-h-[calc(100vh-5.5rem)] max-w-5xl items-center px-5 py-8 sm:px-8">
+    <PageContainer className="flex min-h-[calc(100vh-5.5rem)] items-center py-8">
       <Card className="w-full max-w-2xl bg-surface/85 shadow-card">
         <CardHeader className="space-y-2">
           <CardTitle className="text-base">Offline for now</CardTitle>
@@ -29,6 +30,6 @@ export default function OfflinePage() {
           </Link>
         </CardContent>
       </Card>
-    </div>
+    </PageContainer>
   );
 }

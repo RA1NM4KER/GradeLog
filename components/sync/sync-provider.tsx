@@ -15,7 +15,7 @@ import type { Session, User } from "@supabase/supabase-js";
 import {
   getSupabaseBrowserClient,
   isSupabaseConfigured,
-} from "@/lib/supabase-browser";
+} from "@/lib/supabase/supabase-browser";
 import {
   clearPasswordRecoverySession,
   getCurrentSyncSession,
@@ -24,21 +24,21 @@ import {
   signInWithEmailPassword,
   signOutFromSync,
   signUpWithEmailPassword,
-} from "@/lib/sync-auth";
-import { deleteCurrentAccount } from "@/lib/delete-account";
+} from "@/lib/sync/sync-auth";
+import { deleteCurrentAccount } from "@/lib/supabase/delete-account";
 import {
   enqueueLocalSyncOperation,
   type SyncAdapter,
   syncWithServer,
-} from "@/lib/sync-engine";
+} from "@/lib/sync/sync-engine";
 import {
   listPendingSyncOperations,
   loadSyncMeta,
   resetLocalSyncState,
   saveSyncMeta,
-} from "@/lib/sync-storage";
-import { SyncMetaRecord, SyncOperation, SyncStatus } from "@/lib/sync-types";
-import { AppState } from "@/lib/app-state";
+} from "@/lib/sync/sync-storage";
+import { SyncMetaRecord, SyncOperation, SyncStatus } from "@/lib/sync/types";
+import { AppState } from "@/lib/app/types";
 
 interface SyncConnectionContextValue {
   errorMessage: string | null;

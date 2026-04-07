@@ -2,7 +2,7 @@ import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
 import { PageIntro } from "@/components/ui/page-intro";
-import { LegalSection } from "@/lib/legal/legal-types";
+import { LegalSection } from "@/lib/legal/types";
 
 export function LegalPage({
   intro,

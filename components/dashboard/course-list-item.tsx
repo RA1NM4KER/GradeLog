@@ -1,16 +1,16 @@
 import { ArrowRight, CheckCircle2, CircleDashed } from "lucide-react";
 
 import { Progress } from "@/components/ui/progress";
-import { getCourseTheme } from "@/lib/course-theme";
-import { cn } from "@/lib/utils";
+import { getCourseTheme } from "@/lib/course/course-theme";
+import { cn } from "@/lib/shared/utils";
 import {
   formatPercent,
   getAssessmentPace,
   getCourseCurrentGrade,
   getRemainingWeight,
   hasRecordedCourseGrade,
-} from "@/lib/grade-utils";
-import { Course } from "@/lib/types";
+} from "@/lib/grades/grade-utils";
+import { Course } from "@/lib/shared/types";
 
 interface CourseListItemProps {
   course: Course;

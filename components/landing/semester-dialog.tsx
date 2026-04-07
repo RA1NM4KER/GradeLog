@@ -14,8 +14,8 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { createSemester } from "@/lib/semester-utils";
-import { Semester } from "@/lib/types";
+import { createSemester } from "@/lib/course/semester-utils";
+import { Semester } from "@/lib/shared/types";
 
 interface SemesterDialogProps {
   onSaveSemester: (semester: Semester) => void;

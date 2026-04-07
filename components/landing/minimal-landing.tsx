@@ -12,11 +12,15 @@ import {
 
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { PageContainer } from "@/components/ui/page-container";
 import { PageIntro } from "@/components/ui/page-intro";
 import { SemesterDialog } from "@/components/landing/semester-dialog";
-import { useCourses } from "@/components/workspace/courses-provider";
-import { createSemester, getSuggestedSemesters } from "@/lib/semester-utils";
-import { cn } from "@/lib/utils";
+import { useCourses } from "@/components/workspace/shared/courses-provider";
+import {
+  createSemester,
+  getSuggestedSemesters,
+} from "@/lib/course/semester-utils";
+import { cn } from "@/lib/shared/utils";
 
 export function MinimalLanding() {
   const router = useRouter();
@@ -60,7 +64,7 @@ export function MinimalLanding() {
   }
 
   return (
-    <div className="mx-auto flex min-h-[calc(100vh-5.5rem)] max-w-5xl flex-col px-5 pt-12 sm:px-8">
+    <PageContainer className="flex min-h-[calc(100vh-5.5rem)] flex-col pt-12">
       <PageIntro
         badge="GradeLog"
         description="Keep track of your marks and know exactly where you stand."
@@ -209,6 +213,6 @@ export function MinimalLanding() {
           </CardContent>
         </Card>
       </div>
-    </div>
+    </PageContainer>
   );
 }

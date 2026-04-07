@@ -1,4 +1,4 @@
-import { LegalSection } from "@/lib/legal/legal-types";
+import { LegalSection } from "@/lib/legal/types";
 
 export const termsOfServiceTitle = "Terms of Service";
 export const termsOfServiceLastUpdated = "April 3, 2026";

@@ -16,8 +16,8 @@ import {
   downloadAppStateBackup,
   getAppStateBackupSummary,
   importAppStateBackup,
-} from "@/lib/app-state-backup";
-import { AppState } from "@/lib/app-state";
+} from "@/lib/app/app-state-backup";
+import { AppState } from "@/lib/app/types";
 
 export function LocalBackupDialog({
   appState,

@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 
-import { isNativeApp } from "@/lib/platform";
+import { isNativeApp } from "@/lib/platform/platform";
 
 export function ServiceWorkerRegistration() {
   useEffect(() => {

@@ -8,8 +8,8 @@ import { RouteCacheWarmup } from "@/components/pwa/route-cache-warmup";
 import { ServiceWorkerRegistration } from "@/components/pwa/service-worker-registration";
 import { SyncProvider } from "@/components/sync/sync-provider";
 import { ThemeProvider } from "@/components/theme/theme-provider";
-import { CoursesProvider } from "@/components/workspace/courses-provider";
-import { THEME_STORAGE_KEY } from "@/lib/theme";
+import { CoursesProvider } from "@/components/workspace/shared/courses-provider";
+import { THEME_STORAGE_KEY } from "@/lib/theme/theme";
 import { Analytics } from "@vercel/analytics/next";
 
 import "./globals.css";
