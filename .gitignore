@@ -3,6 +3,7 @@ node_modules
 .idea
 out
 dist
+coverage
 *.log
 .gradeflow/state.json
 .DS_Store

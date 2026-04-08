@@ -112,7 +112,12 @@ export function LocalBackupDialog({
       <DialogTriggerAction
         asChild={triggerAsChild}
         fallback={
-          <Button className="h-auto p-0" size="default" type="button" variant="nav">
+          <Button
+            className="h-auto p-0"
+            size="default"
+            type="button"
+            variant="nav"
+          >
             Backup
           </Button>
         }
