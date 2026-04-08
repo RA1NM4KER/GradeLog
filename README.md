@@ -136,13 +136,25 @@ If you want optional connected-device sync and account deletion to work locally,
 set `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` in
 `.env.local`.
 
-If you want shared course links and cloud account deletion to work against your
-Supabase project, also apply the project-side setup:
+If you want shared course links, password reset, and cloud account deletion to
+work against your Supabase project, apply the following project-side setup.
+
+### Supabase setup
 
 - run `supabase db push` to apply migrations such as `course_templates`
 - deploy the `delete-account` Edge Function
 - set the function secrets `SUPABASE_URL`, `SUPABASE_ANON_KEY`, and `SUPABASE_SERVICE_ROLE_KEY`
-- leave JWT verification disabled for the `delete-account` function, because the function verifies the bearer token in its own handler
+
+### Manual dashboard configuration
+
+Some Supabase settings must still be configured manually in the dashboard.
+
+- add password reset redirect URLs for local development and production, for example:
+  `http://localhost:3000/reset-password` and `https://gradelog.app/reset-password`
+- disable `Verify JWT with legacy secret` for the `delete-account` Edge Function
+
+The `delete-account` function validates the bearer token in its own handler, so
+that legacy JWT verification setting should remain disabled.
 
 ## Persistence
 
@@ -176,15 +188,15 @@ High-level layout:
 
 Important files:
 
-- [app/page.tsx](/app/page.tsx) — root semester landing page
-- [components/landing/minimal-landing.tsx](/components/landing/minimal-landing.tsx) — semester list UI
-- [components/workspace/semester-screen.tsx](/components/workspace/semester-screen.tsx) — selected semester workspace
-- [components/workspace/module-screen.tsx](/components/workspace/module-screen.tsx) — module detail screen
-- [components/workspace/courses-provider.tsx](/components/workspace/courses-provider.tsx) — shared client state
-- [lib/app-state.ts](lib/app-state.ts) — app state shape, versioning, and migration
-- [lib/app-state-actions.ts](lib/app-state-actions.ts) — pure immutable app-state mutations
-- [lib/grade-utils.ts](lib/grade-utils.ts) — grade and weighting logic
-- [lib/app-state-storage.ts](lib/app-state-storage.ts) — IndexedDB persistence
+- [app/page.tsx](./app/page.tsx) — root semester landing page
+- [components/landing/minimal-landing.tsx](./components/landing/minimal-landing.tsx) — semester list UI
+- [components/workspace/semester/semester-screen.tsx](./components/workspace/semester/semester-screen.tsx) — selected semester workspace
+- [components/workspace/course/module-screen.tsx](./components/workspace/course/module-screen.tsx) — module detail screen
+- [components/workspace/shared/courses-provider.tsx](./components/workspace/shared/courses-provider.tsx) — shared client state
+- [lib/app/app-state.ts](./lib/app/app-state.ts) — app state shape, versioning, and migration
+- [lib/app/app-state-actions.ts](./lib/app/app-state-actions.ts) — pure immutable app-state mutations
+- [lib/grades/grade-utils.ts](./lib/grades/grade-utils.ts) — grade and weighting logic
+- [lib/app/app-state-storage.ts](./lib/app/app-state-storage.ts) — IndexedDB persistence
 
 ## Product stance
 
