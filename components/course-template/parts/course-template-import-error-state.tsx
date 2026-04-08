@@ -8,7 +8,7 @@ export function CourseTemplateImportErrorState({
   message: string;
 }) {
   return (
-    <Card className="rounded-[28px] border-danger-soft bg-danger-soft">
+    <Card className="rounded-[28px] border border-danger-soft bg-danger-soft">
       <CardContent className="flex items-start gap-3 p-6">
         <AlertTriangle className="mt-0.5 h-5 w-5 text-danger" />
         <div>
