@@ -50,7 +50,7 @@ import { cn } from "@/lib/shared/utils";
 interface AssessmentTableProps {
   module: Module;
   isExperimenting: boolean;
-  onStartExperiment: () => void;
+  onToggleExperiment: () => void;
   onDeleteAssessment: (courseId: string, assessmentId: string) => void;
   onRecordGrade: (
     moduleId: string,
@@ -69,7 +69,7 @@ interface AssessmentTableProps {
 export function AssessmentTable({
   module,
   isExperimenting,
-  onStartExperiment,
+  onToggleExperiment,
   onDeleteAssessment,
   onRecordGrade,
   onSaveAssessment,
@@ -167,11 +167,16 @@ export function AssessmentTable({
           <div className="flex items-center justify-between gap-3 px-4 py-4">
             <div className="flex items-center gap-2">
               <Button
-                aria-label="Start experiment mode"
+                aria-label={
+                  isExperimenting
+                    ? "Exit experiment mode"
+                    : "Start experiment mode"
+                }
                 className={`inline-flex h-9 items-center justify-center gap-1.5 rounded-full border border-line bg-surface px-3 text-[0.78rem] font-medium text-ink-soft shadow-none transition hover:bg-surface-muted ${experimentTheme.hoverText}`}
-                disabled={isExperimenting}
-                onClick={onStartExperiment}
-                title="Experiment mode"
+                onClick={onToggleExperiment}
+                title={
+                  isExperimenting ? "Exit experiment mode" : "Experiment mode"
+                }
                 type="button"
                 variant="ghost"
               >

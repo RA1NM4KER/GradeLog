@@ -213,6 +213,13 @@ export function MinimalLanding() {
                       <span className="sm:hidden">Terms</span>
                       <span className="hidden sm:inline">Terms of service</span>
                     </Link>
+                    <Link
+                      className="text-[0.92rem] font-medium text-foreground/88 underline decoration-foreground/35 underline-offset-4 transition hover:text-foreground hover:decoration-foreground sm:text-sm"
+                      href="/contact"
+                      prefetch={false}
+                    >
+                      Contact
+                    </Link>
                   </div>
                 </div>
               </div>

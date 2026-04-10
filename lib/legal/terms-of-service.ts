@@ -1,4 +1,5 @@
 import { LegalSection } from "@/lib/legal/types";
+import { contactEmail } from "@/lib/contact";
 
 export const termsOfServiceTitle = "Terms of Service";
 export const termsOfServiceLastUpdated = "April 3, 2026";
@@ -119,8 +120,6 @@ export const termsOfServiceSections: LegalSection[] = [
   },
   {
     title: "Contact",
-    body: [
-      "If you have questions about these terms, use the project contact or support channel listed in the repository or product site.",
-    ],
+    body: [`If you have questions about these terms, email ${contactEmail}.`],
   },
 ];

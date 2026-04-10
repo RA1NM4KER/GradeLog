@@ -117,6 +117,15 @@ export function CourseScreen({ moduleId }: { moduleId?: string }) {
     });
   }
 
+  function toggleExperimentMode() {
+    if (isExperimenting) {
+      stopExperiment();
+      return;
+    }
+
+    startExperiment();
+  }
+
   if (!course) {
     return (
       <PageContainer className="pb-10 pt-6">
@@ -156,9 +165,7 @@ export function CourseScreen({ moduleId }: { moduleId?: string }) {
             deleteCourse(courseId);
             navigateCourses("/courses");
           }}
-          onToggleExperiment={() =>
-            isExperimenting ? stopExperiment() : startExperiment()
-          }
+          onToggleExperiment={() => toggleExperimentMode()}
           semesterId={semester.id}
           semesterName={semester.name}
           semesters={semesters}
@@ -210,7 +217,7 @@ export function CourseScreen({ moduleId }: { moduleId?: string }) {
           module={course}
           isExperimenting={isExperimenting}
           onRecordGrade={recordGrade}
-          onStartExperiment={startExperiment}
+          onToggleExperiment={toggleExperimentMode}
           onReorderAssessments={reorderAssessments}
           onSaveAssessment={saveAssessment}
         />
@@ -232,7 +239,7 @@ export function CourseScreen({ moduleId }: { moduleId?: string }) {
             module={course}
             isExperimenting={isExperimenting}
             onRecordGrade={recordGrade}
-            onStartExperiment={startExperiment}
+            onToggleExperiment={toggleExperimentMode}
             onReorderAssessments={reorderAssessments}
             onSaveAssessment={saveAssessment}
           />

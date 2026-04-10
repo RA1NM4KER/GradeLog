@@ -1,4 +1,5 @@
 import { LegalSection } from "@/lib/legal/types";
+import { contactEmail } from "@/lib/contact";
 
 export const privacyPolicyTitle = "Privacy Policy";
 export const privacyPolicyLastUpdated = "April 3, 2026";
@@ -162,7 +163,7 @@ export const privacyPolicySections: LegalSection[] = [
   {
     title: "Contact",
     body: [
-      "If you have privacy questions about GradeLog, use the project contact or support channel listed in the repository or product site.",
+      `If you have privacy questions about GradeLog, email ${contactEmail}.`,
     ],
   },
 ];
