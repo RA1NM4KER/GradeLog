@@ -504,7 +504,7 @@ export function ConnectDevicesDialog({
                 <Button
                   disabled={isSubmitting || !isFormValid}
                   type="submit"
-                  variant={isFormValid ? "glass-strong" : "glass-muted"}
+                  variant={isFormValid ? "default" : "glass-muted"}
                 >
                   {isSubmitting ? <LoadingSpinner /> : null}
                   {mode === "sign-in" ? "Sign in" : "Create account"}

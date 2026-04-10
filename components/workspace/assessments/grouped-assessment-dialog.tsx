@@ -37,6 +37,7 @@ interface GroupedAssessmentDialogProps {
   triggerVariant?: ButtonProps["variant"];
   triggerAsChild?: boolean;
   triggerChildren?: ReactNode;
+  renderTrigger?: boolean;
 }
 
 export function GroupedAssessmentDialog({
@@ -51,6 +52,7 @@ export function GroupedAssessmentDialog({
   triggerVariant = "outline",
   triggerAsChild = false,
   triggerChildren,
+  renderTrigger = true,
 }: GroupedAssessmentDialogProps) {
   const [internalOpen, setInternalOpen] = useState(false);
   const isControlled = open !== undefined;
@@ -103,12 +105,14 @@ export function GroupedAssessmentDialog({
 
   return (
     <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-      <DialogTriggerAction
-        asChild={triggerAsChild}
-        fallback={<Button variant={triggerVariant}>{triggerLabel}</Button>}
-      >
-        {triggerChildren}
-      </DialogTriggerAction>
+      {renderTrigger ? (
+        <DialogTriggerAction
+          asChild={triggerAsChild}
+          fallback={<Button variant={triggerVariant}>{triggerLabel}</Button>}
+        >
+          {triggerChildren}
+        </DialogTriggerAction>
+      ) : null}
       <DialogContent className="max-h-[90vh] overflow-hidden sm:max-w-3xl">
         <DialogHeader>
           <DialogTitle>

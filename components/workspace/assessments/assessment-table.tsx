@@ -357,10 +357,17 @@ function MobileGroupedAssessmentRow({
 
   return (
     <>
-      <button
+      <div
         className="grid w-full grid-cols-[minmax(0,1fr)_90px_90px] items-center gap-3 border-t border-line px-4 py-3 text-left text-sm text-ink-soft transition hover:bg-surface-muted/70"
         onClick={() => setOpen(true)}
-        type="button"
+        onKeyDown={(event) => {
+          if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault();
+            setOpen(true);
+          }
+        }}
+        role="button"
+        tabIndex={0}
       >
         <div className="flex min-w-0 items-center gap-2">
           <span className="min-w-0 flex-1 truncate font-medium text-foreground">
@@ -397,7 +404,7 @@ function MobileGroupedAssessmentRow({
             </span>
           )}
         </span>
-      </button>
+      </div>
       <GroupedAssessmentDialog
         assessment={assessment}
         moduleId={moduleId}
@@ -405,8 +412,7 @@ function MobileGroupedAssessmentRow({
         onOpenChange={setOpen}
         onSaveAssessment={onSaveAssessment}
         open={open}
-        triggerChildren={<span className="hidden" />}
-        triggerAsChild
+        renderTrigger={false}
       />
     </>
   );
@@ -668,14 +674,11 @@ function GroupedAssessmentRow({
         className="px-1 py-3 text-center lg:px-2 lg:py-4 min-[1024px]:max-[1120px]:px-1"
         onClick={(event) => event.stopPropagation()}
       >
-        <button
-          aria-label={`Edit ${assessment.name}`}
-          className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-line-strong opacity-0 transition group-hover/row:opacity-100 hover:bg-surface-muted hover:text-ink-soft focus-visible:opacity-100"
+        <EditAssessmentButton
+          label={assessment.name}
           onClick={() => setOpen(true)}
-          type="button"
-        >
-          <Pencil className="h-3.5 w-3.5" />
-        </button>
+          subtle
+        />
       </WorkspaceTableCell>
       <GroupedAssessmentDialog
         assessment={assessment}
@@ -684,8 +687,7 @@ function GroupedAssessmentRow({
         onOpenChange={setOpen}
         onSaveAssessment={onSaveAssessment}
         open={open}
-        triggerChildren={<span className="hidden" />}
-        triggerAsChild
+        renderTrigger={false}
       />
     </WorkspaceTableRow>
   );
@@ -991,7 +993,7 @@ function EditAssessmentButton({
       aria-label={`Edit ${label}`}
       className={`inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full transition ${
         subtle
-          ? "text-line-strong opacity-0 hover:bg-surface-muted hover:text-ink-soft group-hover/row:opacity-100 focus-visible:opacity-100"
+          ? "text-ink-subtle opacity-0 hover:bg-surface-muted hover:text-foreground group-hover/row:opacity-100 group-hover/row:text-foreground focus-visible:opacity-100 focus-visible:text-foreground"
           : "text-ink-subtle hover:bg-surface-muted hover:text-ink-soft"
       }`}
       onClick={onClick}

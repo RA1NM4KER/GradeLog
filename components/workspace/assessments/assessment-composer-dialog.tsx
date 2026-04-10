@@ -218,7 +218,7 @@ export function AssessmentComposerDialog({
               className="w-full sm:w-auto"
               disabled={!isSubmitEnabled}
               type="submit"
-              variant={isSubmitEnabled ? "dialog-primary" : "dialog-muted"}
+              variant={isSubmitEnabled ? "default" : "dialog-muted"}
             >
               {mode === "single" ? "Save assignment" : "Create Tutorials"}
             </Button>
