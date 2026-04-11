@@ -132,6 +132,24 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000).
 
+Build and sync the Android Capacitor project:
+
+```bash
+npm run android:sync
+```
+
+Open the Android project in Android Studio:
+
+```bash
+npm run android:open
+```
+
+Build a local debug APK:
+
+```bash
+npm run android:debug
+```
+
 If you want optional connected-device sync and account deletion to work locally,
 set `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` in
 `.env.local`.
