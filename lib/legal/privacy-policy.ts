@@ -2,7 +2,7 @@ import { LegalSection } from "@/lib/legal/types";
 import { contactEmail } from "@/lib/contact";
 
 export const privacyPolicyTitle = "Privacy Policy";
-export const privacyPolicyLastUpdated = "April 3, 2026";
+export const privacyPolicyLastUpdated = "April 23, 2026";
 export const privacyPolicyIntro =
   "GradeLog is local-first by default. This page explains what stays on your device, what happens if you enable optional sync, and where the product is still headed.";
 
@@ -23,6 +23,7 @@ export const privacyPolicySections: LegalSection[] = [
       "the app works offline after it has been loaded",
       "no account is required",
       "backup export and import happen locally",
+      "on first launch, a random anonymous install ID is generated and sent to a remote counter so the developer can count how many devices have installed the app — this ID is not linked to you, your grades, or any personal information",
     ],
     footer:
       "In this mode, GradeLog does not require a cloud database to provide its core functionality.",
@@ -113,6 +114,7 @@ export const privacyPolicySections: LegalSection[] = [
     body: [
       "GradeLog currently uses Supabase for optional authentication and sync infrastructure.",
       "If you enable connected-device sync, relevant account and sync data is processed through that provider.",
+      "GradeLog also uses Supabase to record a one-time anonymous install count on first launch. Only a randomly generated install ID and the platform (web, Android, or iOS) are stored. No personal data is included.",
     ],
   },
   {

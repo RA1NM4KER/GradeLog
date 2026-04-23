@@ -91,6 +91,7 @@ Current behavior:
 - the app does not require a remote database to function
 - the app shell can reopen offline after it has been loaded once
 - backups can be exported to and restored from local JSON files
+- on first launch, a randomly generated anonymous install ID and platform (web, Android, or iOS) are sent to a remote counter — this is the only data sent without an account, contains no personal information, and is used solely to count installs
 - optional sync can be enabled to keep data in sync across connected devices
 - when sync is used today, data is stored on a remote service to enable cross-device syncing
 - shared course setup links are accessible to anyone who has the link

@@ -12,6 +12,7 @@ import {
   loadAppStateRecord,
   saveAppState,
 } from "@/lib/app/app-state-storage";
+import { maybeRecordInstallPing } from "@/lib/telemetry/install-ping";
 
 const APP_STATE_CHANNEL_NAME = "gradeflow-app-state";
 const EXTERNAL_REFRESH_DELAY_MS = 1200;
@@ -128,6 +129,7 @@ export function usePersistedAppState() {
         applyLoadedState(state, metadata.snapshot);
         setBootError(null);
         setIsHydrated(true);
+        void maybeRecordInstallPing();
       } catch (error) {
         if (cancelled) {
           return;
