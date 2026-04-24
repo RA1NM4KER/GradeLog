@@ -51,12 +51,44 @@ export default function DeleteAccountPage() {
   if (!isAuthenticated) {
     return (
       <main className="mx-auto max-w-lg px-4 py-16">
-        <h1 className="text-xl font-semibold">Delete account</h1>
+        <h1 className="text-xl font-semibold">Delete your GradeLog account</h1>
         <p className="mt-3 text-sm text-ink-muted">
-          You need to be signed in to delete your account.
+          To delete your account, open GradeLog and sign in. Then return to this
+          page or go to Settings → Connected devices → Delete cloud account.
         </p>
-        <Button className="mt-6" onClick={() => router.push("/")}>
-          Go to GradeLog
+
+        <div className="mt-8 space-y-4">
+          <div>
+            <h2 className="text-sm font-semibold">What gets deleted</h2>
+            <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-ink-muted">
+              <li>Your GradeLog account and credentials</li>
+              <li>All synced grade data stored in the cloud</li>
+              <li>Connected devices and sync history</li>
+              <li>Shared course links you have created</li>
+            </ul>
+          </div>
+
+          <div>
+            <h2 className="text-sm font-semibold">What is kept</h2>
+            <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-ink-muted">
+              <li>
+                Grades saved only on your device — these remain until you
+                uninstall the app
+              </li>
+            </ul>
+          </div>
+
+          <div>
+            <h2 className="text-sm font-semibold">Retention</h2>
+            <p className="mt-2 text-sm text-ink-muted">
+              Cloud data is deleted immediately and permanently. No retention
+              period applies.
+            </p>
+          </div>
+        </div>
+
+        <Button className="mt-8" onClick={() => router.push("/")}>
+          Open GradeLog
         </Button>
       </main>
     );
