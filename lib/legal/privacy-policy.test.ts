@@ -10,7 +10,7 @@ import {
 describe("privacy-policy", () => {
   it("exports the expected metadata", () => {
     expect(privacyPolicyTitle).toBe("Privacy Policy");
-    expect(privacyPolicyLastUpdated).toBe("April 3, 2026");
+    expect(privacyPolicyLastUpdated).toBe("April 23, 2026");
     expect(privacyPolicyIntro).toContain("local-first");
   });
 
