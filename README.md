@@ -232,7 +232,7 @@ GradeLog is active, and evolving. The current focus is product clarity, UI consi
 
 ## License
 
-MIT. See [`LICENSE`](./LICENSE).
+AGPL-3.0. See [`LICENSE`](./LICENSE) and [`CLA.md`](./CLA.md) for contributor terms.
 
 ## Security
 
