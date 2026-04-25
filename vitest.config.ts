@@ -23,6 +23,7 @@ export default defineConfig({
         "lib/shared/types.ts",
         "supabase/functions/**/index.ts",
         "supabase/functions/**/types.ts",
+        "lib/telemetry/**",
       ],
       thresholds: {
         statements: 90,

@@ -148,4 +148,131 @@ describe("courses-navigation", () => {
     cleanup();
     expect(removeEventListener).toHaveBeenCalledTimes(2);
   });
+
+  describe("readCoursesLocation", () => {
+    it("returns default location when window is undefined", async () => {
+      const { readCoursesLocation } =
+        await import("@/lib/course/courses-navigation");
+
+      const result = readCoursesLocation();
+
+      expect(result).toEqual({
+        moduleId: null,
+        pathname: "/courses",
+        scope: "semester",
+        semesterId: null,
+      });
+    });
+
+    it("parses basic /courses pathname with no params", async () => {
+      vi.stubGlobal("window", {
+        location: { pathname: "/courses", search: "" },
+      });
+
+      const { readCoursesLocation } =
+        await import("@/lib/course/courses-navigation");
+
+      const result = readCoursesLocation();
+
+      expect(result).toEqual({
+        moduleId: null,
+        pathname: "/courses",
+        scope: "semester",
+        semesterId: null,
+      });
+    });
+
+    it("parses semesterId and scope=all from search params", async () => {
+      vi.stubGlobal("window", {
+        location: {
+          pathname: "/courses",
+          search: "?semester=sem-1&scope=all",
+        },
+      });
+
+      const { readCoursesLocation } =
+        await import("@/lib/course/courses-navigation");
+
+      const result = readCoursesLocation();
+
+      expect(result).toEqual({
+        moduleId: null,
+        pathname: "/courses",
+        scope: "all",
+        semesterId: "sem-1",
+      });
+    });
+
+    it("parses moduleId from course query param", async () => {
+      vi.stubGlobal("window", {
+        location: {
+          pathname: "/courses",
+          search: "?course=mod-42",
+        },
+      });
+
+      const { readCoursesLocation } =
+        await import("@/lib/course/courses-navigation");
+
+      const result = readCoursesLocation();
+
+      expect(result.moduleId).toBe("mod-42");
+    });
+
+    it("parses moduleId from /courses/:id pathname", async () => {
+      vi.stubGlobal("window", {
+        location: { pathname: "/courses/mod-99", search: "" },
+      });
+
+      const { readCoursesLocation } =
+        await import("@/lib/course/courses-navigation");
+
+      const result = readCoursesLocation();
+
+      expect(result.moduleId).toBe("mod-99");
+    });
+
+    it("parses moduleId from /workspace/modules/:id pathname", async () => {
+      vi.stubGlobal("window", {
+        location: { pathname: "/workspace/modules/mod-77", search: "" },
+      });
+
+      const { readCoursesLocation } =
+        await import("@/lib/course/courses-navigation");
+
+      const result = readCoursesLocation();
+
+      expect(result.moduleId).toBe("mod-77");
+    });
+
+    it("returns cached location when called twice with same URL", async () => {
+      vi.stubGlobal("window", {
+        location: { pathname: "/courses", search: "?semester=s1" },
+      });
+
+      const { readCoursesLocation } =
+        await import("@/lib/course/courses-navigation");
+
+      const first = readCoursesLocation();
+      const second = readCoursesLocation();
+
+      expect(first).toBe(second);
+    });
+
+    it("decodes URI-encoded moduleId from pathname", async () => {
+      vi.stubGlobal("window", {
+        location: {
+          pathname: "/courses/hello%20world",
+          search: "",
+        },
+      });
+
+      const { readCoursesLocation } =
+        await import("@/lib/course/courses-navigation");
+
+      const result = readCoursesLocation();
+
+      expect(result.moduleId).toBe("hello world");
+    });
+  });
 });
