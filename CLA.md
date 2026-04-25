@@ -25,4 +25,4 @@ Submitting a pull request constitutes acceptance of this agreement. No signature
 
 ---
 
-_Questions? Open an issue or email the project maintainer._
+_Questions? Open an issue or email [kefasa112@gmail.com](mailto:kefasa112@gmail.com)._
