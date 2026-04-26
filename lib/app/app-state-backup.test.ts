@@ -16,26 +16,34 @@ describe("app-state-backup", () => {
   it("summarizes the app state for backups", () => {
     const state = getDefaultAppState();
 
-    state.semesters[0]?.courses.push({
-      id: "course-1",
-      code: "MAT101",
-      name: "Calculus",
-      instructor: "Dr. Maya Patel",
-      credits: 16,
-      accent: "teal",
-      gradeBands: [],
-      assessments: [
+    state.semesters.push({
+      id: "sem-1",
+      name: "Semester 1",
+      periodLabel: "January to June",
+      modules: [],
+      courses: [
         {
-          id: "a1",
-          kind: "single",
-          name: "Quiz 1",
-          weight: 20,
-          dueDate: "2026-04-10",
-          status: "ongoing",
-          scoreAchieved: null,
-          subminimumPercent: null,
-          totalPossible: 100,
-          category: "assignment",
+          id: "course-1",
+          code: "MAT101",
+          name: "Calculus",
+          instructor: "Dr. Maya Patel",
+          credits: 16,
+          accent: "teal",
+          gradeBands: [],
+          assessments: [
+            {
+              id: "a1",
+              kind: "single",
+              name: "Quiz 1",
+              weight: 20,
+              dueDate: "2026-04-10",
+              status: "ongoing",
+              scoreAchieved: null,
+              subminimumPercent: null,
+              totalPossible: 100,
+              category: "assignment",
+            },
+          ],
         },
       ],
     });

@@ -6,16 +6,8 @@ vi.mock("@/lib/sync/sync-operation-builders", () => ({
 
 vi.mock("@/lib/app/app-state", () => ({
   getDefaultAppState: vi.fn(() => ({
-    selectedSemesterId: "default-semester",
-    semesters: [
-      {
-        id: "default-semester",
-        name: "Semester 1 2026",
-        periodLabel: "January to June",
-        courses: [],
-        modules: [],
-      },
-    ],
+    selectedSemesterId: "",
+    semesters: [],
   })),
 }));
 

@@ -400,6 +400,7 @@ async function applyPulledOperations(
   adapter: SyncAdapter,
   rows: RemoteSyncOperationRow[],
   syncMeta: SyncMetaRecord,
+  startState?: AppState,
 ) {
   if (rows.length === 0) {
     return {
@@ -408,7 +409,7 @@ async function applyPulledOperations(
     };
   }
 
-  const baseState = adapter.getAppState() ?? getDefaultAppState();
+  const baseState = startState ?? adapter.getAppState() ?? getDefaultAppState();
   const currentContext = await loadMergeContext();
   const appliedRows = await loadAppliedSyncOperations();
   const appliedClientOpIds = new Set(appliedRows.map((row) => row.clientOpId));
@@ -548,6 +549,7 @@ export async function syncWithServer(options: {
           adapter,
           remoteHead,
           syncMeta,
+          getDefaultAppState(),
         );
         nextStatusNotice =
           getConflictNotice(pullResult.skippedDeleteCount) ??

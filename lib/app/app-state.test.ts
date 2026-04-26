@@ -13,14 +13,11 @@ import {
 } from "@/lib/app/app-state";
 
 describe("app-state", () => {
-  it("falls back to the default state when normalization input is empty", () => {
+  it("returns empty state when normalization input is empty", () => {
     const normalized = normalizeAppState(null);
 
-    expect(normalized.semesters).toHaveLength(1);
-    expect(normalized.selectedSemesterId).toBe(normalized.semesters[0]?.id);
-    expect(normalized.semesters[0]?.modules).toEqual(
-      normalized.semesters[0]?.courses,
-    );
+    expect(normalized.semesters).toHaveLength(0);
+    expect(normalized.selectedSemesterId).toBe("");
   });
 
   it("migrates legacy persisted state and preserves selection through UUID normalization", () => {

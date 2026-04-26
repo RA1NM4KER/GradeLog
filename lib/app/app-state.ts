@@ -21,24 +21,16 @@ import type {
   PersistedAppStateMetadata,
 } from "@/lib/app/types";
 import { importedAppStateSchema } from "@/lib/app/schemas";
-import { createUuid, ensureUuid } from "@/lib/shared/uuid";
+import { ensureUuid } from "@/lib/shared/uuid";
 import { ZodError } from "zod";
 
 const UNVERSIONED_APP_STATE_VERSION = 1;
 export const APP_STATE_VERSION = 2;
 
 export function getDefaultAppState(): AppState {
-  const initialSemester: Semester = {
-    id: createUuid(),
-    name: "Semester 1 2026",
-    periodLabel: "January to June",
-    courses: [],
-    modules: [],
-  };
-
   return {
-    semesters: [initialSemester],
-    selectedSemesterId: initialSemester.id,
+    semesters: [],
+    selectedSemesterId: "",
   };
 }
 
