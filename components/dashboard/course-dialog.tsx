@@ -200,7 +200,9 @@ export function CourseDialog({
             <>
               <div className="grid gap-4 sm:grid-cols-2">
                 <div className="space-y-2">
-                  <Label htmlFor="course-code">Course code *</Label>
+                  <Label htmlFor="course-code">
+                    Course code <span className="text-red-500">*</span>
+                  </Label>
                   <Input
                     id="course-code"
                     onChange={(event) =>
@@ -216,7 +218,9 @@ export function CourseDialog({
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="course-credits">Credits *</Label>
+                  <Label htmlFor="course-credits">
+                    Credits <span className="text-red-500">*</span>
+                  </Label>
                   <Input
                     id="course-credits"
                     min={1}
@@ -234,7 +238,9 @@ export function CourseDialog({
                 </div>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="course-name">Course title *</Label>
+                <Label htmlFor="course-name">
+                  Course title <span className="text-red-500">*</span>
+                </Label>
                 <Input
                   id="course-name"
                   onChange={(event) =>
@@ -249,7 +255,7 @@ export function CourseDialog({
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="course-instructor">Lecturer *</Label>
+                <Label htmlFor="course-instructor">Lecturer</Label>
                 <Input
                   id="course-instructor"
                   onChange={(event) =>
@@ -259,7 +265,6 @@ export function CourseDialog({
                     }))
                   }
                   placeholder="Dr. Maya Patel"
-                  required
                   value={form.instructor}
                 />
               </div>
