@@ -98,7 +98,7 @@ export function SemesterScreen() {
       ) : null}
 
       {isAllCoursesView ? (
-        <Card className="rounded-[20px] bg-[hsl(var(--surface))] px-3 py-3 shadow-none sm:rounded-[26px] sm:px-6 sm:py-5">
+        <Card className="rounded-[20px] border border-line/70 bg-[hsl(var(--surface))] px-3 py-3 shadow-none dark:bg-surface-soft sm:rounded-[26px] sm:px-6 sm:py-5">
           <CardContent className="grid gap-3 p-0 sm:gap-4">
             <div className="grid gap-3 lg:grid-cols-[minmax(0,1.2fr)_minmax(280px,0.8fr)] lg:items-start">
               <div>
@@ -205,7 +205,7 @@ export function SemesterScreen() {
                 triggerAsChild
                 triggerChildren={
                   <button
-                    className="group relative flex w-full overflow-hidden rounded-[20px] border border-line bg-surface text-left shadow-card transition hover:-translate-y-0.5 hover:shadow-soft sm:rounded-[24px]"
+                    className="group relative flex w-full overflow-hidden rounded-[20px] border border-line bg-surface text-left shadow-card transition hover:-translate-y-0.5 hover:shadow-soft dark:bg-surface-soft sm:rounded-[24px]"
                     type="button"
                   >
                     <div className="absolute inset-y-0 left-0 w-2.5 bg-surface-strip sm:w-3" />

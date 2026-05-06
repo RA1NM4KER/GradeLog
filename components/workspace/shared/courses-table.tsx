@@ -47,7 +47,7 @@ export function WorkspaceTableHeader({
   return (
     <thead
       className={cn(
-        "sticky top-0 bg-surface-table text-xs uppercase tracking-[0.14em] text-ink-soft",
+        "sticky top-0 bg-surface-soft text-xs uppercase tracking-[0.14em] text-ink-soft",
         className,
       )}
       {...props}

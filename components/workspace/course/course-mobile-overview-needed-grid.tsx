@@ -43,7 +43,7 @@ export function CourseMobileOverviewNeededGrid({
   return (
     <div className="grid gap-2.5">
       {subminimumRequirements.length > 0 ? (
-        <Card className="rounded-[18px] px-3 py-3" variant="surface-subtle">
+        <Card className="rounded-[18px] bg-surface-soft px-3 py-3">
           <p className="text-[0.72rem] font-semibold uppercase tracking-[0.18em] text-ink-subtle">
             Subminimum rules
           </p>
@@ -94,7 +94,7 @@ export function CourseMobileOverviewNeededGrid({
             <Button
               aria-label="Edit cutoffs"
               className={cn(
-                "h-7 w-7 rounded-full border bg-surface p-0 transition hover:bg-surface-muted",
+                "h-7 w-7 rounded-full border bg-surface-soft p-0 transition hover:bg-surface-muted",
                 isExperimenting
                   ? `${experimentTheme.accentBorder} ${experimentTheme.accentText}`
                   : `${theme.chartAccentBorder} ${theme.chartAccentText}`,
@@ -127,7 +127,7 @@ export function CourseMobileOverviewNeededGrid({
             <div
               className={cn(
                 "rounded-[16px] px-2 py-2.5 text-center",
-                isAttainable ? "bg-surface" : "bg-surface",
+                "bg-surface-soft",
               )}
               key={band.id}
             >

@@ -35,7 +35,7 @@ export function CourseMobileOverviewChart({
   const isLockedRange = Math.abs(ceiling - guaranteedGrade) < 0.01;
 
   return (
-    <div className="relative h-20 overflow-hidden rounded-[18px] border border-line bg-surface">
+    <div className="relative h-20 overflow-hidden rounded-[18px] border border-line bg-surface-soft">
       {hasAssessments ? (
         <>
           <div
@@ -105,7 +105,7 @@ export function CourseMobileOverviewChart({
         style={{ left: `${Math.min(Math.max(currentGrade, 0), 100)}%` }}
       />
       <div
-        className={`absolute top-2 -translate-x-1/2 rounded-full border bg-surface px-2 py-1 text-sm font-semibold shadow-sm ${
+        className={`absolute top-2 -translate-x-1/2 rounded-full border bg-surface-soft px-2 py-1 text-sm font-semibold shadow-sm ${
           isExperimenting
             ? `${experimentTheme.accentBorder} ${experimentTheme.accentText}`
             : `${theme.chartAccentBorder} ${theme.chartAccentText}`
@@ -120,7 +120,7 @@ export function CourseMobileOverviewChart({
 
           return (
             <span
-              className={`absolute inline-flex h-5 w-5 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border bg-surface text-[0.68rem] font-medium ${
+              className={`absolute inline-flex h-5 w-5 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border bg-surface-soft text-[0.68rem] font-medium ${
                 isExperimenting
                   ? `${experimentTheme.accentBorder} ${experimentTheme.accentText}`
                   : `${theme.chartAccentBorder} ${theme.chartAccentText} ${state === "unreachable" ? "opacity-60" : ""}`

@@ -36,7 +36,7 @@ export function CourseListItem({
     <button
       aria-pressed={isActive}
       className={cn(
-        "group relative flex w-full overflow-hidden rounded-[20px] border border-line bg-surface text-left transition-all duration-200 sm:rounded-[24px]",
+        "group relative flex w-full overflow-hidden rounded-[20px] border border-line bg-surface text-left transition-all duration-200 dark:bg-surface-soft sm:rounded-[24px]",
         "shadow-card hover:-translate-y-0.5 hover:shadow-soft",
         isActive && "shadow-soft",
       )}
@@ -66,7 +66,7 @@ export function CourseListItem({
               {course.instructor} · {course.credits} credits
             </p>
           </div>
-          <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground transition-transform duration-200 group-hover:translate-x-0.5 sm:h-9 sm:w-9">
+          <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground transition-transform duration-200 group-hover:translate-x-0.5 dark:bg-white/10 dark:text-foreground sm:h-9 sm:w-9">
             <ArrowRight className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
           </span>
         </div>
@@ -74,14 +74,14 @@ export function CourseListItem({
         <div className="mt-1.5 flex flex-wrap items-center gap-1.5 sm:mt-2 sm:gap-2">
           <span
             className={cn(
-              "inline-flex items-center gap-1.5 rounded-full px-2 py-1 text-[9px] font-medium sm:gap-2 sm:px-2.5 sm:text-[10px]",
+              "inline-flex items-center gap-1.5 rounded-full px-2 py-1 text-[9px] font-medium sm:gap-2 sm:px-2.5 sm:text-[10px] dark:!border dark:!border-white/10 dark:!bg-surface-muted dark:!text-foreground",
               theme.chip,
             )}
           >
             {hasAssignments && remainingWeight === 0 ? (
-              <CheckCircle2 className="h-2.5 w-2.5 text-foreground sm:h-3 sm:w-3" />
+              <CheckCircle2 className="h-2.5 w-2.5 text-foreground dark:text-foreground sm:h-3 sm:w-3" />
             ) : (
-              <CircleDashed className="h-2.5 w-2.5 text-ink-muted sm:h-3 sm:w-3" />
+              <CircleDashed className="h-2.5 w-2.5 text-ink-muted dark:text-ink-subtle sm:h-3 sm:w-3" />
             )}
             {!hasAssignments
               ? "Not started"

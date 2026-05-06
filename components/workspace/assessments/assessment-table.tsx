@@ -160,10 +160,7 @@ export function AssessmentTable({
       </div>
 
       <div className="grid max-h-full gap-3 overflow-auto md:hidden">
-        <Card
-          className="overflow-hidden rounded-[22px]"
-          variant="surface-subtle"
-        >
+        <Card className="overflow-hidden rounded-[22px] bg-surface-soft">
           <div className="flex items-center justify-between gap-3 px-4 py-4">
             <div className="flex items-center gap-2">
               <Button
@@ -172,7 +169,7 @@ export function AssessmentTable({
                     ? "Exit experiment mode"
                     : "Start experiment mode"
                 }
-                className={`inline-flex h-9 items-center justify-center gap-1.5 rounded-full border border-line bg-surface px-3 text-[0.78rem] font-medium text-ink-soft shadow-none transition hover:bg-surface-muted ${experimentTheme.hoverText}`}
+                className={`inline-flex h-9 items-center justify-center gap-1.5 rounded-full border border-line bg-surface-soft px-3 text-[0.78rem] font-medium text-ink-soft shadow-none transition hover:bg-surface-muted ${experimentTheme.hoverText}`}
                 onClick={onToggleExperiment}
                 title={
                   isExperimenting ? "Exit experiment mode" : "Experiment mode"
@@ -189,7 +186,7 @@ export function AssessmentTable({
                 triggerAsChild
                 triggerChildren={
                   <button
-                    className="inline-flex h-9 items-center justify-center gap-1.5 rounded-full border border-line bg-surface px-3.5 text-[0.82rem] font-semibold text-foreground transition hover:bg-surface-muted"
+                    className="inline-flex h-9 items-center justify-center gap-1.5 rounded-full border border-line bg-surface-soft px-3.5 text-[0.82rem] font-semibold text-foreground transition hover:bg-surface-muted"
                     type="button"
                   >
                     <Plus className="h-3.5 w-3.5" />
@@ -234,7 +231,7 @@ export function AssessmentTable({
               triggerAsChild
               triggerChildren={
                 <button
-                  className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-full border border-dashed border-line-strong bg-surface text-sm font-medium text-ink-soft transition hover:border-line-strong hover:text-foreground"
+                  className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-full border border-dashed border-line-strong bg-surface-soft text-sm font-medium text-ink-soft transition hover:border-line-strong hover:text-foreground"
                   type="button"
                 >
                   <Plus className="h-4 w-4" />

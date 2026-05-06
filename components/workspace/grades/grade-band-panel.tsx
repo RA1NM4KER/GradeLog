@@ -88,7 +88,7 @@ export function GradeBandPanel({
             }
           />
         </div>
-        <div className="relative h-[320px] overflow-hidden rounded-[20px] border border-line bg-surface/90 sm:h-[500px] sm:rounded-[24px]">
+        <div className="relative h-[320px] overflow-hidden rounded-[20px] border border-line bg-surface-soft sm:h-[500px] sm:rounded-[24px]">
           {hasAssessments ? (
             <>
               <div
@@ -185,10 +185,7 @@ export function GradeBandPanel({
 
       <div className="min-w-0">
         {subminimumRequirements.length > 0 ? (
-          <Card
-            className="mb-3 overflow-hidden rounded-[20px] bg-surface/90 sm:mb-4 sm:rounded-[24px]"
-            variant="surface-subtle"
-          >
+          <Card className="mb-3 overflow-hidden rounded-[20px] bg-surface-soft sm:mb-4 sm:rounded-[24px]">
             <div className="border-b border-line px-3 py-2.5 text-[0.72rem] font-semibold uppercase tracking-[0.18em] text-ink-subtle sm:px-4">
               Subminimum rules
             </div>
@@ -235,10 +232,7 @@ export function GradeBandPanel({
         <p className="mb-2.5 text-center text-[0.82rem] text-ink-soft sm:mb-3 sm:text-sm">
           Remainder of grades must average:
         </p>
-        <Card
-          className="overflow-hidden rounded-[20px] bg-surface/90 sm:rounded-[24px]"
-          variant="surface-subtle"
-        >
+        <Card className="overflow-hidden rounded-[20px] bg-surface-soft sm:rounded-[24px]">
           {bands.map((band) => {
             const result = calculateRequiredScore(module, band.threshold);
             const state = hasAssessments

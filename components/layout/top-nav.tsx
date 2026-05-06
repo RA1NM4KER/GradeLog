@@ -117,11 +117,13 @@ export function TopNav() {
                 onRestoreAppStateAction={replaceAppState}
               />
             </div>
-            <Button asChild size="pill-sm" variant="glass-soft">
-              <Link href="/" prefetch={false}>
-                Semesters
-              </Link>
-            </Button>
+            <Link
+              className="px-1 text-sm font-medium text-ink-strong transition hover:text-foreground sm:rounded-[10px] sm:bg-white/10 sm:px-4 sm:py-2 sm:text-[13px] sm:backdrop-blur-sm dark:sm:bg-white/10"
+              href="/"
+              prefetch={false}
+            >
+              Semesters
+            </Link>
             <Button
               aria-expanded={mobileMenuOpen}
               aria-haspopup="dialog"

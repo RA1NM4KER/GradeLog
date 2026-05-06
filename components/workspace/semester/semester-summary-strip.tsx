@@ -33,7 +33,7 @@ export function SemesterSummaryStrip({
   ];
 
   return (
-    <Card className="rounded-[20px] bg-[hsl(var(--surface))] px-3 py-3 sm:rounded-[26px] sm:px-6 sm:py-5">
+    <Card className="rounded-[20px] border border-line/70 bg-[hsl(var(--surface))] px-3 py-3 shadow-none dark:bg-surface-soft sm:rounded-[26px] sm:px-6 sm:py-5">
       <div className="grid gap-3 lg:grid-cols-[minmax(0,1.25fr)_minmax(300px,0.82fr)] lg:items-start lg:gap-5">
         <div className="lg:pr-4">
           <p className="text-[0.64rem] font-semibold uppercase tracking-[0.14em] text-ink-muted sm:text-[0.7rem]">

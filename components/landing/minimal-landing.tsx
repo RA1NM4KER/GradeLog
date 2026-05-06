@@ -3,13 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import {
-  ArrowRight,
-  ExternalLink,
-  HeartHandshake,
-  Plus,
-  Trash2,
-} from "lucide-react";
+import { ExternalLink, HeartHandshake, Plus, Trash2 } from "lucide-react";
 
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -21,17 +15,11 @@ import {
   createSemester,
   getSuggestedSemesters,
 } from "@/lib/course/semester-utils";
-import { cn } from "@/lib/shared/utils";
 
 export function MinimalLanding() {
   const router = useRouter();
-  const {
-    addSemester,
-    deleteSemester,
-    semester: selectedSemester,
-    semesters,
-    selectSemester,
-  } = useCourses();
+  const { addSemester, deleteSemester, semesters, selectSemester } =
+    useCourses();
   const [suggestionNames, setSuggestionNames] = useState<string[]>([]);
 
   const existingNames = new Set(semesters.map((semester) => semester.name));
@@ -78,7 +66,7 @@ export function MinimalLanding() {
   }
 
   return (
-    <PageContainer className="flex min-h-[calc(100vh-5.5rem)] flex-col pt-7 pb-0 sm:pt-12 sm:pb-10">
+    <PageContainer className="flex min-h-[calc(100vh-5.5rem)] flex-col px-3 pt-7 pb-0 sm:px-8 sm:pt-12 sm:pb-10">
       <PageIntro
         badge="GradeLog"
         descriptionClassName="sm:text-[1.08rem] sm:leading-7"
@@ -115,14 +103,9 @@ export function MinimalLanding() {
 
       <div className="mt-6 grid gap-2.5 sm:mt-8 sm:gap-3">
         {semesters.map((semester) => (
-          <div className="flex items-center gap-2.5 sm:gap-3" key={semester.id}>
+          <div className="relative" key={semester.id}>
             <button
-              className={cn(
-                "grid w-full grid-cols-[minmax(0,1fr)_auto_18px] items-center gap-2 rounded-[16px] px-4 py-3 text-left transition sm:grid-cols-[minmax(0,1fr)_auto_20px] sm:items-start sm:gap-2.5 sm:rounded-[18px] sm:px-5 sm:py-3.5",
-                semester.id === selectedSemester.id
-                  ? "bg-surface shadow-soft"
-                  : "bg-surface-soft shadow-card hover:bg-surface",
-              )}
+              className="grid w-full grid-cols-1 items-center gap-2 rounded-[14px] bg-surface-soft px-4 py-3 pr-14 text-left shadow-card transition hover:bg-surface sm:items-start sm:gap-2.5 sm:rounded-[18px] sm:px-5 sm:py-3.5 sm:pr-16"
               onClick={() => openSemester(semester.id)}
               type="button"
             >
@@ -134,19 +117,10 @@ export function MinimalLanding() {
                   {semester.periodLabel}
                 </p>
               </div>
-              {semester.id === selectedSemester.id ? (
-                <span className="inline-flex items-center gap-1 self-start rounded-full border border-success-soft bg-success-soft px-2 py-0.5 text-[0.55rem] font-semibold uppercase tracking-[0.12em] text-success sm:mt-0.5 sm:text-[0.58rem]">
-                  <span className="h-1.5 w-1.5 rounded-full bg-success-solid" />
-                  Current
-                </span>
-              ) : (
-                <span />
-              )}
-              <ArrowRight className="h-5 w-5 text-ink-subtle" />
             </button>
             <button
               aria-label={`Delete ${semester.name}`}
-              className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-surface-soft text-ink-subtle shadow-card transition hover:bg-surface hover:text-ink-strong sm:h-11 sm:w-11"
+              className="absolute top-1/2 right-3 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-xl text-ink-subtle transition hover:bg-black/5 hover:text-ink-strong sm:top-4 sm:right-4 sm:h-10 sm:w-10 sm:translate-y-0 dark:hover:bg-white/8"
               onClick={() => removeSemester(semester.id, semester.name)}
               type="button"
             >
@@ -159,7 +133,7 @@ export function MinimalLanding() {
           triggerAsChild
           triggerChildren={
             <Button
-              className="min-h-[64px] w-full rounded-[16px] bg-surface-soft px-4 py-3 text-ink-muted shadow-card hover:bg-surface hover:text-foreground sm:min-h-[82px] sm:rounded-[18px] sm:px-5 sm:py-3.5"
+              className="min-h-[64px] w-full rounded-[14px] border border-dashed border-line bg-transparent px-4 py-3 text-ink-muted shadow-none hover:border-foreground/28 hover:bg-transparent hover:text-foreground sm:min-h-[82px] sm:rounded-[18px] sm:px-5 sm:py-3.5"
               size={null}
               type="button"
               variant="secondary"
@@ -167,7 +141,7 @@ export function MinimalLanding() {
               <div className="flex flex-col items-center text-center">
                 <Plus className="h-5 w-5 sm:h-7 sm:w-7" />
                 <span className="mt-1 text-[0.74rem] font-semibold uppercase tracking-[0.14em] sm:mt-2 sm:text-[0.82rem]">
-                  Create semester
+                  New semester
                 </span>
               </div>
             </Button>
@@ -226,9 +200,9 @@ export function MinimalLanding() {
 
               <Button
                 asChild
-                className="w-full sm:w-auto sm:self-center sm:rounded-full sm:border-white/28 sm:bg-white/62 sm:px-4 sm:py-2 sm:text-sm sm:font-medium sm:backdrop-blur-sm sm:hover:bg-white/82"
+                className="w-full sm:w-auto sm:self-center sm:rounded-full sm:px-4 sm:py-2 sm:text-sm sm:font-medium"
                 size="sm"
-                variant="outline"
+                variant="glass-panel"
               >
                 <a
                   href="https://ko-fi.com/kefasaleck"
