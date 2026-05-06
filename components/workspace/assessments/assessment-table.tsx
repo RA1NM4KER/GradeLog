@@ -169,7 +169,12 @@ export function AssessmentTable({
                     ? "Exit experiment mode"
                     : "Start experiment mode"
                 }
-                className={`inline-flex h-9 items-center justify-center gap-1.5 rounded-full border border-line bg-surface-soft px-3 text-[0.78rem] font-medium text-ink-soft shadow-none transition hover:bg-surface-muted ${experimentTheme.hoverText}`}
+                className={cn(
+                  "inline-flex h-9 items-center justify-center gap-1.5 rounded-full border px-3 text-[0.78rem] font-medium shadow-none transition",
+                  isExperimenting
+                    ? `border-white/24 bg-white/16 ${experimentTheme.accentTextStrong} dark:border-white/10 dark:bg-white/10`
+                    : "border-line bg-surface-soft text-ink-soft",
+                )}
                 onClick={onToggleExperiment}
                 title={
                   isExperimenting ? "Exit experiment mode" : "Experiment mode"
