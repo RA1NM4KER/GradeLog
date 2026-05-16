@@ -89,7 +89,7 @@ export function GradeBandPanel({
           />
         </div>
         <div className="relative h-[320px] overflow-hidden rounded-[20px] border border-line bg-surface-soft sm:h-[500px] sm:rounded-[24px]">
-          {hasAssessments ? (
+          {hasRecordedGrade ? (
             <>
               <div
                 className="absolute inset-x-0 top-0 transition-[height] duration-500 ease-out"

@@ -33,10 +33,12 @@ export function CourseMobileOverviewChart({
   const theme = getCourseTheme(module, resolvedTheme);
   const experimentTheme = getExperimentTheme(resolvedTheme);
   const isLockedRange = Math.abs(ceiling - guaranteedGrade) < 0.01;
+  const currentGradeLinePosition = Math.min(Math.max(currentGrade, 0), 100);
+  const currentGradePillPosition = Math.min(Math.max(currentGrade, 8), 92);
 
   return (
     <div className="relative h-20 overflow-hidden rounded-[18px] border border-line bg-surface-soft">
-      {hasAssessments ? (
+      {hasRecordedGrade ? (
         <>
           <div
             className="pointer-events-none absolute inset-y-0 left-0"
@@ -98,22 +100,26 @@ export function CourseMobileOverviewChart({
       <div className="absolute inset-y-0 left-[80%] border-l border-line-strong" />
       <div className="absolute inset-y-0 left-[90%] border-l border-line" />
       <div className="absolute inset-y-0 right-0 border-r border-line-strong" />
-      <div
-        className={`absolute bottom-0 left-0 top-0 border-l-2 ${
-          isExperimenting ? experimentTheme.accentLine : theme.chartAccentLine
-        }`}
-        style={{ left: `${Math.min(Math.max(currentGrade, 0), 100)}%` }}
-      />
-      <div
-        className={`absolute top-2 -translate-x-1/2 rounded-full border bg-surface-soft px-2 py-1 text-sm font-semibold shadow-sm ${
-          isExperimenting
-            ? `${experimentTheme.accentBorder} ${experimentTheme.accentText}`
-            : `${theme.chartAccentBorder} ${theme.chartAccentText}`
-        }`}
-        style={{ left: `${Math.min(Math.max(currentGrade, 8), 92)}%` }}
-      >
-        {hasRecordedGrade ? formatPercent(currentGrade) : "--"}
-      </div>
+      {hasRecordedGrade ? (
+        <div
+          className={`absolute bottom-0 top-0 border-l-2 transition-[left] duration-500 ease-out ${
+            isExperimenting ? experimentTheme.accentLine : theme.chartAccentLine
+          }`}
+          style={{ left: `${currentGradeLinePosition}%` }}
+        />
+      ) : null}
+      {hasRecordedGrade ? (
+        <div
+          className={`absolute top-2 -translate-x-1/2 rounded-full border bg-surface-soft px-2 py-1 text-sm font-semibold shadow-sm transition-[left] duration-500 ease-out ${
+            isExperimenting
+              ? `${experimentTheme.accentBorder} ${experimentTheme.accentText}`
+              : `${theme.chartAccentBorder} ${theme.chartAccentText}`
+          }`}
+          style={{ left: `${currentGradePillPosition}%` }}
+        >
+          {formatPercent(currentGrade)}
+        </div>
+      ) : null}
       <div className="pointer-events-none absolute inset-x-0 top-1/2 -translate-y-1/2">
         {bands.map((band) => {
           const state = getGradeBandState(module, band);

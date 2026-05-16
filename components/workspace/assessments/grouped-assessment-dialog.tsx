@@ -55,6 +55,7 @@ export function GroupedAssessmentDialog({
   renderTrigger = true,
 }: GroupedAssessmentDialogProps) {
   const [internalOpen, setInternalOpen] = useState(false);
+  const [showValidation, setShowValidation] = useState(false);
   const isControlled = open !== undefined;
   const dialogOpen = isControlled ? open : internalOpen;
   const [form, setForm] = useState(
@@ -62,13 +63,10 @@ export function GroupedAssessmentDialog({
       ? getGroupedAssessmentEditorValue(assessment)
       : getGroupedAssessmentDefaults(category),
   );
-  const isSubmitEnabled =
-    form.name.trim().length > 0 &&
-    Number(form.weight || 0) > 0 &&
-    form.itemCount > 0;
 
   useEffect(() => {
     if (dialogOpen) {
+      setShowValidation(false);
       setForm(
         assessment
           ? getGroupedAssessmentEditorValue(assessment)
@@ -87,6 +85,16 @@ export function GroupedAssessmentDialog({
 
   function submit(event: SyntheticEvent<HTMLFormElement, SubmitEvent>) {
     event.preventDefault();
+
+    const isValid =
+      form.name.trim().length > 0 &&
+      Number(form.weight || 0) > 0 &&
+      form.itemCount > 0;
+
+    if (!isValid) {
+      setShowValidation(true);
+      return;
+    }
 
     onSaveAssessment(
       moduleId,
@@ -135,6 +143,7 @@ export function GroupedAssessmentDialog({
           <GroupedAssessmentEditor
             category={assessment?.category ?? category}
             onChange={setForm}
+            showValidation={showValidation}
             value={form}
           />
           <DialogFooter className="grid grid-cols-2 gap-2 pt-4 sm:flex sm:flex-row sm:items-center sm:justify-between">
@@ -161,9 +170,8 @@ export function GroupedAssessmentDialog({
             )}
             <Button
               className="w-full min-w-0 px-3 sm:w-auto"
-              disabled={!isSubmitEnabled}
               type="submit"
-              variant={isSubmitEnabled ? "dialog-primary" : "dialog-muted"}
+              variant="dialog-primary"
             >
               {assessment ? "Save changes" : "Create category"}
             </Button>

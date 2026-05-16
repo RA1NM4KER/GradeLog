@@ -48,11 +48,13 @@ export function AssessmentComposerDialog({
   const [groupForm, setGroupForm] = useState(
     getGroupedAssessmentDefaults("tutorials"),
   );
+  const [showGroupValidation, setShowGroupValidation] = useState(false);
 
   useEffect(() => {
     if (open) {
       setSingleForm(getDefaultSingleForm());
       setGroupForm(getGroupedAssessmentDefaults("tutorials"));
+      setShowGroupValidation(false);
       setMode("single");
     }
   }, [open]);
@@ -84,6 +86,11 @@ export function AssessmentComposerDialog({
 
       onSaveAssessment(module.id, nextAssessment);
     } else {
+      if (!isGroupValid) {
+        setShowGroupValidation(true);
+        return;
+      }
+
       onSaveAssessment(
         module.id,
         buildGroupedAssessment("tutorials", {
@@ -121,13 +128,19 @@ export function AssessmentComposerDialog({
               <ModeCard
                 description="Create a single weighted assignment with one score."
                 isActive={mode === "single"}
-                onClick={() => setMode("single")}
+                onClick={() => {
+                  setMode("single");
+                  setShowGroupValidation(false);
+                }}
                 title="Single assignment"
               />
               <ModeCard
                 description="Create one weighted category containing smaller marks."
                 isActive={mode === "group"}
-                onClick={() => setMode("group")}
+                onClick={() => {
+                  setMode("group");
+                  setShowGroupValidation(false);
+                }}
                 title="Grouped category"
               />
             </div>
@@ -208,6 +221,7 @@ export function AssessmentComposerDialog({
               <GroupedAssessmentEditor
                 category="tutorials"
                 onChange={setGroupForm}
+                showValidation={showGroupValidation}
                 value={groupForm}
               />
             )}
@@ -216,11 +230,15 @@ export function AssessmentComposerDialog({
           <DialogFooter className="shrink-0 pt-3">
             <Button
               className="w-full sm:w-auto"
-              disabled={!isSubmitEnabled}
+              disabled={mode === "single" ? !isSubmitEnabled : false}
               type="submit"
-              variant={isSubmitEnabled ? "default" : "dialog-muted"}
+              variant={
+                mode === "single" && !isSubmitEnabled
+                  ? "dialog-muted"
+                  : "default"
+              }
             >
-              {mode === "single" ? "Save assignment" : "Create Tutorials"}
+              {mode === "single" ? "Save assignment" : "Create category"}
             </Button>
           </DialogFooter>
         </form>

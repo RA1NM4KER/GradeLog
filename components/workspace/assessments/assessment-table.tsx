@@ -8,7 +8,14 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { FlaskConical, GripVertical, Pencil, Plus } from "lucide-react";
+import {
+  Check,
+  FlaskConical,
+  GripVertical,
+  Pencil,
+  Plus,
+  X,
+} from "lucide-react";
 
 import { useTheme } from "@/components/theme/theme-provider";
 import { Button } from "@/components/ui/button";
@@ -875,6 +882,22 @@ function InlineAssessmentResult({
     }
   }, [editing]);
 
+  function resetDraft() {
+    setDraft(
+      assessment.scoreAchieved === null
+        ? ""
+        : formatEditablePercent(
+            assessment.scoreAchieved,
+            assessment.totalPossible,
+          ),
+    );
+  }
+
+  function commitDraft() {
+    setEditing(false);
+    onCommit(parseGradeInput(draft));
+  }
+
   if (!editing) {
     const percent = getAssessmentPercent(assessment);
     const failedSubminimum =
@@ -920,37 +943,74 @@ function InlineAssessmentResult({
   }
 
   return (
-    <Input
-      className={align === "center" ? "text-center" : "text-left"}
-      inputMode="text"
-      onBlur={() => {
-        setEditing(false);
-        onCommit(parseGradeInput(draft));
-      }}
-      onChange={(event) =>
-        setDraft(sanitizeScoreExpressionInput(event.target.value))
-      }
-      onKeyDown={(event) => {
-        if (event.key === "Enter") {
-          inputRef.current?.blur();
-        }
-        if (event.key === "Escape") {
-          setDraft(
-            assessment.scoreAchieved === null
-              ? ""
-              : formatEditablePercent(
-                  assessment.scoreAchieved,
-                  assessment.totalPossible,
-                ),
-          );
+    <div className="flex items-center gap-1">
+      <Input
+        className={cn(
+          "min-w-0 flex-1",
+          align === "center" ? "text-center" : "text-left",
+        )}
+        enterKeyHint="done"
+        inputMode="text"
+        onBlur={() => {
           setEditing(false);
+          onCommit(parseGradeInput(draft));
+        }}
+        onChange={(event) =>
+          setDraft(sanitizeScoreExpressionInput(event.target.value))
         }
-      }}
-      ref={inputRef}
-      type="text"
-      variant="inline-number"
-      value={draft}
-    />
+        onKeyDown={(event) => {
+          if (event.key === "Enter") {
+            inputRef.current?.blur();
+          }
+          if (event.key === "Escape") {
+            resetDraft();
+            setEditing(false);
+          }
+        }}
+        ref={inputRef}
+        type="text"
+        variant="inline-number"
+        value={draft}
+      />
+      <div className="flex shrink-0 items-center gap-0.5 sm:hidden">
+        <InlineEditIconButton
+          ariaLabel="Save grade"
+          icon={<Check className="h-3.5 w-3.5" />}
+          onClick={commitDraft}
+        />
+        <InlineEditIconButton
+          ariaLabel="Cancel grade edit"
+          icon={<X className="h-3.5 w-3.5" />}
+          onClick={() => {
+            resetDraft();
+            setEditing(false);
+          }}
+        />
+      </div>
+    </div>
+  );
+}
+
+function InlineEditIconButton({
+  ariaLabel,
+  icon,
+  onClick,
+}: {
+  ariaLabel: string;
+  icon: ReactNode;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      aria-label={ariaLabel}
+      className="inline-flex h-7 w-7 items-center justify-center rounded-full text-ink-soft transition hover:bg-surface-muted hover:text-foreground"
+      onMouseDown={(event) => event.preventDefault()}
+      onTouchStart={(event) => event.preventDefault()}
+      onClick={onClick}
+      type="button"
+    >
+      {icon}
+    </button>
   );
 }
 

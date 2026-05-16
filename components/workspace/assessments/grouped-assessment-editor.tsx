@@ -27,9 +27,11 @@ import {
   GroupedAssessmentCategory,
   GroupedAssessmentItem,
 } from "@/lib/shared/types";
+import { cn } from "@/lib/shared/utils";
 
 interface GroupedAssessmentEditorProps {
   category: GroupedAssessmentCategory;
+  showValidation?: boolean;
   value: {
     name: string;
     weight: string;
@@ -44,10 +46,14 @@ export function GroupedAssessmentEditor({
   category,
   value,
   onChange,
+  showValidation = false,
 }: GroupedAssessmentEditorProps) {
   const dropLowest = normalizeDropLowest(value.dropLowest, value.itemCount);
   const [itemCountDraft, setItemCountDraft] = useState(String(value.itemCount));
   const [dropLowestDraft, setDropLowestDraft] = useState(String(dropLowest));
+  const isNameInvalid = showValidation && value.name.trim().length === 0;
+  const isWeightInvalid = showValidation && Number(value.weight || 0) <= 0;
+  const isItemCountInvalid = showValidation && value.itemCount <= 0;
 
   useEffect(() => {
     setItemCountDraft(String(value.itemCount));
@@ -136,17 +142,26 @@ export function GroupedAssessmentEditor({
         <div className="space-y-2">
           <Label htmlFor={`${category}-name`}>Category name *</Label>
           <Input
-            className="text-center"
+            className={cn(
+              "text-center",
+              isNameInvalid && "border-danger ring-2 ring-danger/30",
+            )}
             id={`${category}-name`}
             onChange={(event) => updateCategoryName(event.target.value)}
             placeholder="e.g. Tutorials, quizzes"
             value={value.name}
           />
+          {isNameInvalid ? (
+            <p className="text-sm text-danger">Enter a category name.</p>
+          ) : null}
         </div>
         <div className="space-y-2">
           <Label htmlFor={`${category}-weight`}>Total weight (%) *</Label>
           <Input
-            className="text-center"
+            className={cn(
+              "text-center",
+              isWeightInvalid && "border-danger ring-2 ring-danger/30",
+            )}
             id={`${category}-weight`}
             min={0}
             onChange={(event) =>
@@ -156,11 +171,17 @@ export function GroupedAssessmentEditor({
             type="text"
             value={value.weight}
           />
+          {isWeightInvalid ? (
+            <p className="text-sm text-danger">Enter a weight above 0%.</p>
+          ) : null}
         </div>
         <div className="space-y-2">
           <Label htmlFor={`${category}-count`}>Number of items *</Label>
           <Input
-            className="text-center"
+            className={cn(
+              "text-center",
+              isItemCountInvalid && "border-danger ring-2 ring-danger/30",
+            )}
             id={`${category}-count`}
             inputMode="numeric"
             onBlur={() => commitItemCount(itemCountDraft)}
@@ -179,6 +200,9 @@ export function GroupedAssessmentEditor({
             type="text"
             value={itemCountDraft}
           />
+          {isItemCountInvalid ? (
+            <p className="text-sm text-danger">Enter at least 1 item.</p>
+          ) : null}
         </div>
         <div className="space-y-2">
           <Label htmlFor={`${category}-drop`}>Drop lowest</Label>
@@ -325,17 +349,20 @@ function GroupedScoreInput({
     setDraft(formatGroupedScoreInput(value));
   }, [value]);
 
+  function commitDraft() {
+    const parsed = parseGroupedScoreInput(draft);
+    setDraft(formatGroupedScoreInput(parsed));
+    onCommit(parsed);
+  }
+
   return (
     <div className="relative ml-auto w-[88px] sm:mx-auto">
       <Input
         className="pr-5 text-center"
+        enterKeyHint="done"
         id={id}
         inputMode="text"
-        onBlur={() => {
-          const parsed = parseGroupedScoreInput(draft);
-          setDraft(formatGroupedScoreInput(parsed));
-          onCommit(parsed);
-        }}
+        onBlur={commitDraft}
         onChange={(event) =>
           setDraft(sanitizeScoreExpressionInput(event.target.value))
         }

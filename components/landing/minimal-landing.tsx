@@ -3,7 +3,13 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { ExternalLink, HeartHandshake, Plus, Trash2 } from "lucide-react";
+import {
+  ChevronDown,
+  ExternalLink,
+  HeartHandshake,
+  Plus,
+  Trash2,
+} from "lucide-react";
 
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -21,6 +27,7 @@ export function MinimalLanding() {
   const { addSemester, deleteSemester, semesters, selectSemester } =
     useCourses();
   const [suggestionNames, setSuggestionNames] = useState<string[]>([]);
+  const [isSupportPanelOpen, setIsSupportPanelOpen] = useState(false);
 
   const existingNames = new Set(semesters.map((semester) => semester.name));
   const suggestions = getSuggestedSemesters().filter(
@@ -157,15 +164,33 @@ export function MinimalLanding() {
           <CardContent className="p-4 sm:px-6 sm:py-5">
             <div className="flex flex-col gap-3.5 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
               <div className="min-w-0">
-                <div className="flex items-center gap-3">
+                <button
+                  aria-controls="support-panel-content"
+                  aria-expanded={isSupportPanelOpen}
+                  className="flex w-full items-center gap-3 text-left sm:pointer-events-none"
+                  onClick={() => setIsSupportPanelOpen((current) => !current)}
+                  type="button"
+                >
                   <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-2xl border border-white/22 bg-white/50 text-foreground shadow-none backdrop-blur-sm dark:border-white/10 dark:bg-white/10 sm:h-11 sm:w-11 sm:border-white/28 sm:bg-white/58 sm:shadow-[0_8px_24px_-18px_rgba(15,23,42,0.2)]">
                     <HeartHandshake className="h-5 w-5 sm:h-6 sm:w-6" />
                   </div>
-                  <p className="min-w-0 text-[0.96rem] font-semibold text-foreground sm:text-[0.98rem]">
+                  <p className="min-w-0 flex-1 text-[0.96rem] font-semibold text-foreground sm:text-[0.98rem]">
                     Keep GradeLog independent
                   </p>
-                </div>
-                <div className="mt-2.5 sm:mt-1 sm:ml-14 ">
+                  <span className="inline-flex items-center justify-center text-ink-soft transition sm:hidden">
+                    <ChevronDown
+                      className={`h-4 w-4 transition-transform duration-200 ${
+                        isSupportPanelOpen ? "rotate-180" : ""
+                      }`}
+                    />
+                  </span>
+                </button>
+                <div
+                  className={`mt-2.5 sm:mt-1 sm:ml-14 ${
+                    isSupportPanelOpen ? "block" : "hidden"
+                  } sm:block`}
+                  id="support-panel-content"
+                >
                   <p className="max-w-xl text-[0.88rem] leading-6 text-ink-soft sm:max-w-2xl sm:text-sm sm:leading-6">
                     GradeLog stays free, local-first, and account-free. If it
                     has been useful to you, you can help support development.
@@ -200,7 +225,9 @@ export function MinimalLanding() {
 
               <Button
                 asChild
-                className="w-full sm:w-auto sm:self-center sm:rounded-full sm:px-4 sm:py-2 sm:text-sm sm:font-medium"
+                className={`w-full sm:w-auto sm:self-center sm:rounded-full sm:px-4 sm:py-2 sm:text-sm sm:font-medium ${
+                  isSupportPanelOpen ? "flex" : "hidden"
+                } sm:flex`}
                 size="sm"
                 variant="glass-panel"
               >
