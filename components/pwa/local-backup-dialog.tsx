@@ -35,6 +35,8 @@ export function LocalBackupDialog({
   const inputRef = useRef<HTMLInputElement | null>(null);
   const [importError, setImportError] = useState<string | null>(null);
   const [isImporting, setIsImporting] = useState(false);
+  const [exportError, setExportError] = useState<string | null>(null);
+  const [isExporting, setIsExporting] = useState(false);
   const [pendingImport, setPendingImport] = useState<{
     fileName: string;
     lastModified: string | null;
@@ -51,7 +53,30 @@ export function LocalBackupDialog({
   function resetImportState() {
     setImportError(null);
     setIsImporting(false);
+    setExportError(null);
+    setIsExporting(false);
     setPendingImport(null);
+  }
+
+  async function handleExportBackup() {
+    setExportError(null);
+    setIsExporting(true);
+
+    try {
+      await downloadAppStateBackup(appState);
+    } catch (error) {
+      if (error instanceof Error && error.name === "AbortError") {
+        return;
+      }
+
+      setExportError(
+        error instanceof Error
+          ? error.message
+          : "This backup could not be exported from GradeLog.",
+      );
+    } finally {
+      setIsExporting(false);
+    }
   }
 
   async function handleFileChange(event: ChangeEvent<HTMLInputElement>) {
@@ -146,11 +171,15 @@ export function LocalBackupDialog({
               </p>
               <Button
                 className="mt-4"
-                onClick={() => downloadAppStateBackup(appState)}
+                disabled={isExporting}
+                onClick={() => void handleExportBackup()}
                 type="button"
               >
-                Export JSON
+                {isExporting ? "Preparing file…" : "Export JSON"}
               </Button>
+              {exportError ? (
+                <p className="mt-3 text-sm text-danger">{exportError}</p>
+              ) : null}
             </CardContent>
           </Card>
 

@@ -4,6 +4,7 @@ import {
   serializePersistedAppState,
 } from "@/lib/app/app-state";
 import { AppState, AppStateBackupSummary } from "@/lib/app/types";
+import { isNativeApp } from "@/lib/platform/platform";
 
 function buildBackupFileName(date = new Date()) {
   const timestamp = date.toISOString().replaceAll(":", "-");
@@ -36,15 +37,43 @@ export function getAppStateBackupSummary(
   };
 }
 
-export function downloadAppStateBackup(state: AppState) {
-  const blob = new Blob([serializePersistedAppState(state)], {
+export async function downloadAppStateBackup(state: AppState) {
+  const fileName = buildBackupFileName();
+  const serializedState = serializePersistedAppState(state);
+  const blob = new Blob([serializedState], {
     type: "application/json",
   });
+
+  if (isNativeApp()) {
+    const file = new File([blob], fileName, {
+      type: "application/json",
+    });
+    const shareData = {
+      files: [file],
+      text: "GradeLog local backup",
+      title: fileName,
+    };
+
+    if (
+      typeof navigator !== "undefined" &&
+      typeof navigator.share === "function" &&
+      typeof navigator.canShare === "function" &&
+      navigator.canShare(shareData)
+    ) {
+      await navigator.share(shareData);
+      return;
+    }
+
+    throw new Error(
+      "This device cannot export backup files yet. Try from the web app on this device instead.",
+    );
+  }
+
   const objectUrl = URL.createObjectURL(blob);
   const anchor = document.createElement("a");
 
   anchor.href = objectUrl;
-  anchor.download = buildBackupFileName();
+  anchor.download = fileName;
   anchor.click();
 
   URL.revokeObjectURL(objectUrl);

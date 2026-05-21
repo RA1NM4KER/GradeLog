@@ -1,6 +1,6 @@
 "use client";
 
-import { ReactNode, SyntheticEvent, useEffect, useState } from "react";
+import { ReactNode, SyntheticEvent, useEffect, useRef, useState } from "react";
 
 import { Button, type ButtonProps } from "@/components/ui/button";
 import {
@@ -49,6 +49,8 @@ export function AssessmentComposerDialog({
     getGroupedAssessmentDefaults("tutorials"),
   );
   const [showGroupValidation, setShowGroupValidation] = useState(false);
+  const [useTextDateInput, setUseTextDateInput] = useState(false);
+  const formScrollAreaRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     if (open) {
@@ -59,6 +61,10 @@ export function AssessmentComposerDialog({
     }
   }, [open]);
 
+  useEffect(() => {
+    setUseTextDateInput(window.matchMedia("(pointer: coarse)").matches);
+  }, []);
+
   const isSingleValid =
     singleForm.name.trim().length > 0 && Number(singleForm.weight) > 0;
   const isGroupValid =
@@ -66,6 +72,29 @@ export function AssessmentComposerDialog({
     Number(groupForm.weight) > 0 &&
     groupForm.itemCount > 0;
   const isSubmitEnabled = mode === "single" ? isSingleValid : isGroupValid;
+
+  function scrollFormToBottom() {
+    if (!useTextDateInput) {
+      return;
+    }
+
+    const scrollArea = formScrollAreaRef.current;
+    if (!scrollArea) {
+      return;
+    }
+
+    const scrollToBottom = () => {
+      scrollArea.scrollTo({
+        top: scrollArea.scrollHeight,
+        behavior: "smooth",
+      });
+    };
+
+    requestAnimationFrame(() => {
+      scrollToBottom();
+      window.setTimeout(scrollToBottom, 180);
+    });
+  }
 
   function submit(event: SyntheticEvent<HTMLFormElement, SubmitEvent>) {
     event.preventDefault();
@@ -123,7 +152,10 @@ export function AssessmentComposerDialog({
           className="flex min-h-0 flex-1 flex-col overflow-hidden"
           onSubmit={submit}
         >
-          <div className="grid min-h-0 content-start gap-4 overflow-y-auto pr-1 pb-4 sm:gap-5">
+          <div
+            className="grid min-h-0 content-start gap-4 overflow-y-auto pr-1 pb-4 sm:gap-5"
+            ref={formScrollAreaRef}
+          >
             <div className="grid grid-cols-2 gap-2.5 sm:gap-3">
               <ModeCard
                 description="Create a single weighted assignment with one score."
@@ -211,7 +243,10 @@ export function AssessmentComposerDialog({
                           dueDate: event.target.value,
                         }))
                       }
-                      type="date"
+                      onFocus={scrollFormToBottom}
+                      inputMode={useTextDateInput ? "numeric" : undefined}
+                      placeholder={useTextDateInput ? "YYYY-MM-DD" : "Optional"}
+                      type={useTextDateInput ? "text" : "date"}
                       value={singleForm.dueDate}
                     />
                   </div>
@@ -260,13 +295,26 @@ function ModeCard({
 }) {
   return (
     <SelectableCardButton
+      className={
+        isActive
+          ? "border-foreground/18 bg-surface shadow-[0_18px_34px_-26px_rgba(28,25,23,0.28)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring dark:border-white/10 dark:bg-white/10"
+          : "shadow-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+      }
       onClick={onClick}
       tone={isActive ? "active" : "inactive"}
     >
-      <p className="text-[0.9rem] font-semibold leading-5 sm:text-sm">
+      <p
+        className={`text-[0.9rem] font-semibold leading-5 sm:text-sm ${
+          isActive ? "text-foreground" : ""
+        }`}
+      >
         {title}
       </p>
-      <p className="mt-1 text-[0.8rem] leading-5 text-ink-muted sm:text-sm">
+      <p
+        className={`mt-1 text-[0.8rem] leading-5 sm:text-sm ${
+          isActive ? "text-ink-soft" : "text-ink-muted"
+        }`}
+      >
         {description}
       </p>
     </SelectableCardButton>

@@ -638,7 +638,7 @@ body {
   }
 
   .border-loader-sand-right {
-    border-right-color: rgb(232 219 195 / 0.8);
+    border-right-color: #e8dbc3;
   }
 
   .border-loader-sand-bottom {
@@ -646,7 +646,7 @@ body {
   }
 
   .border-loader-sand-left {
-    border-left-color: rgb(232 219 195 / 0.7);
+    border-left-color: #e8dbc3;
   }
 
   .border-loader-coral {
@@ -657,8 +657,12 @@ body {
     border-top-color: #ff6b6b;
   }
 
+  .border-loader-coral-bottom {
+    border-bottom-color: #ff6b6b;
+  }
+
   .border-loader-coral-left {
-    border-left-color: rgb(255 107 107 / 0.75);
+    border-left-color: #ff6b6b;
   }
 
   .shadow-loader-coral {

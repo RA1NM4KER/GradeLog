@@ -19,7 +19,6 @@ import { Label } from "@/components/ui/label";
 import { LoadingMessage } from "@/components/ui/loading-message";
 import { NoticePanel } from "@/components/ui/notice-panel";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
-import { SelectableCardButton } from "@/components/ui/selectable-card-button";
 import { useSyncConnection } from "@/components/sync/sync-provider";
 import { formatLastSyncedAt, getSyncStatusLabel } from "@/lib/sync/sync-status";
 import { cn } from "@/lib/shared/utils";
@@ -52,7 +51,7 @@ export function ConnectDevicesDialog({
     user,
   } = useSyncConnection();
   const [open, setOpen] = useState(false);
-  const [mode, setMode] = useState<AuthMode>("sign-up");
+  const [mode, setMode] = useState<AuthMode>("sign-in");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -393,34 +392,20 @@ export function ConnectDevicesDialog({
             </>
           ) : (
             <form className="grid gap-4" onSubmit={handleSubmit}>
-              <div className="grid grid-cols-2 gap-1.5 sm:gap-2">
-                <SelectableCardButton
-                  className={cn("text-left text-sm font-medium")}
-                  onClick={() => {
-                    setMode("sign-up");
-                    setSubmitError(null);
-                    setResetNotice(null);
-                  }}
-                  size="compact"
-                  tone={mode === "sign-up" ? "active" : "inactive"}
-                >
-                  Create account
-                </SelectableCardButton>
-                <SelectableCardButton
-                  className={cn("text-left text-sm font-medium")}
-                  onClick={() => {
-                    setMode("sign-in");
-                    setSubmitError(null);
-                    setResetNotice(null);
-                  }}
-                  size="compact"
-                  tone={mode === "sign-in" ? "active" : "inactive"}
-                >
-                  Sign in
-                </SelectableCardButton>
-              </div>
-
               <div className="grid gap-4 rounded-[24px] border border-white/28 bg-white/52 p-4 shadow-card backdrop-blur-sm dark:border-white/10 dark:bg-white/6">
+                <div className="space-y-1">
+                  <p className="text-sm font-semibold text-foreground">
+                    {mode === "sign-in"
+                      ? "Sign in to sync"
+                      : "Create your sync account"}
+                  </p>
+                  <p className="text-sm leading-5 text-ink-soft">
+                    {mode === "sign-in"
+                      ? "Only needed for syncing across devices."
+                      : "Your data stays on this device unless you choose to connect."}
+                  </p>
+                </div>
+
                 <div className="space-y-2">
                   <Label htmlFor="sync-email">Email</Label>
                   <Input
@@ -456,9 +441,7 @@ export function ConnectDevicesDialog({
                 </div>
 
                 <p className="text-sm leading-5 text-ink-soft">
-                  {mode === "sign-in"
-                    ? "Only needed for syncing across devices."
-                    : "Your data stays on this device unless you choose to connect."}
+                  Passwords must be at least 8 characters long.
                 </p>
 
                 {mode === "sign-in" ? (
@@ -501,14 +484,32 @@ export function ConnectDevicesDialog({
               ) : null}
 
               <DialogFooter>
-                <Button
-                  disabled={isSubmitting || !isFormValid}
-                  type="submit"
-                  variant={isFormValid ? "default" : "glass-muted"}
-                >
-                  {isSubmitting ? <LoadingSpinner /> : null}
-                  {mode === "sign-in" ? "Sign in" : "Create account"}
-                </Button>
+                <div className="flex w-full flex-col items-stretch gap-3 sm:items-end">
+                  <Button
+                    disabled={isSubmitting || !isFormValid}
+                    type="submit"
+                    variant={isFormValid ? "default" : "glass-muted"}
+                  >
+                    {isSubmitting ? <LoadingSpinner /> : null}
+                    {mode === "sign-in" ? "Sign in" : "Create account"}
+                  </Button>
+                  <button
+                    className="text-sm font-medium text-foreground underline decoration-line underline-offset-4 transition hover:text-foreground/80"
+                    onClick={() => {
+                      setMode((current) =>
+                        current === "sign-in" ? "sign-up" : "sign-in",
+                      );
+                      setPassword("");
+                      setSubmitError(null);
+                      setResetNotice(null);
+                    }}
+                    type="button"
+                  >
+                    {mode === "sign-in"
+                      ? "Don't have an account yet?"
+                      : "Already have an account?"}
+                  </button>
+                </div>
               </DialogFooter>
             </form>
           )}

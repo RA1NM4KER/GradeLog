@@ -13,10 +13,14 @@ import { ExperimentModePill } from "@/components/workspace/shared/experiment-mod
 import { FloatingStatusPill } from "@/components/workspace/shared/floating-status-pill";
 import { GradeBandPanel } from "@/components/workspace/grades/grade-band-panel";
 import { CourseHeader } from "@/components/workspace/course/module-header";
+import {
+  getCourseDetailsUrl,
+  getSemesterCoursesUrl,
+  navigateCourses,
+} from "@/lib/course/courses-navigation";
 import { getCourseTheme } from "@/lib/course/course-theme";
 import { cn } from "@/lib/shared/utils";
 import { useCourses } from "@/components/workspace/shared/courses-provider";
-import { navigateCourses } from "@/lib/course/courses-navigation";
 import { formatPercent, getAssignedWeight } from "@/lib/grades/grade-utils";
 import { Assessment, Course } from "@/lib/shared/types";
 
@@ -132,7 +136,9 @@ export function CourseScreen({ moduleId }: { moduleId?: string }) {
         <EmptyState
           action={
             <Button
-              onClick={() => navigateCourses("/courses")}
+              onClick={() =>
+                navigateCourses(getSemesterCoursesUrl(semester.id))
+              }
               size="pill"
               type="button"
             >
@@ -155,15 +161,11 @@ export function CourseScreen({ moduleId }: { moduleId?: string }) {
           module={course}
           onMoveCourse={(courseId, targetSemesterId) => {
             moveCourse(courseId, targetSemesterId);
-            navigateCourses(
-              `/courses?semester=${encodeURIComponent(
-                targetSemesterId,
-              )}&course=${encodeURIComponent(courseId)}`,
-            );
+            navigateCourses(getCourseDetailsUrl(targetSemesterId, courseId));
           }}
           onDeleteCourse={(courseId) => {
             deleteCourse(courseId);
-            navigateCourses("/courses");
+            navigateCourses(getSemesterCoursesUrl(semester.id));
           }}
           onToggleExperiment={() => toggleExperimentMode()}
           semesterId={semester.id}
@@ -226,6 +228,7 @@ export function CourseScreen({ moduleId }: { moduleId?: string }) {
       <div className="fixed inset-x-0 bottom-0 z-30 border-t border-line/80 bg-surface-footer/88 backdrop-blur-xl md:hidden">
         <div className="mx-auto max-w-7xl px-4 py-3">
           <CourseSwitcher
+            semesterId={semester.id}
             semesterCourses={semester.courses}
             activeCourseId={course.id}
           />
@@ -257,6 +260,7 @@ export function CourseScreen({ moduleId }: { moduleId?: string }) {
 
       <div className="hidden border-t border-line/80 bg-surface-footer/88 pt-4 backdrop-blur-xl md:mt-4 md:block">
         <CourseSwitcher
+          semesterId={semester.id}
           semesterCourses={semester.courses}
           activeCourseId={course.id}
           className="pb-1"
@@ -269,12 +273,14 @@ export function CourseScreen({ moduleId }: { moduleId?: string }) {
 }
 
 function CourseSwitcher({
+  semesterId,
   semesterCourses,
   activeCourseId,
   className,
   itemClassName,
   indicatorClassName,
 }: {
+  semesterId: string;
   semesterCourses: Course[];
   activeCourseId: string;
   className?: string;
@@ -303,9 +309,7 @@ function CourseSwitcher({
             )}
             key={course.id}
             onClick={() =>
-              navigateCourses(
-                `/courses?course=${encodeURIComponent(course.id)}`,
-              )
+              navigateCourses(getCourseDetailsUrl(semesterId, course.id))
             }
             type="button"
           >

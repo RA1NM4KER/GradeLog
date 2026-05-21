@@ -3,7 +3,10 @@ import { ArrowLeft, Cog, FlaskConical, Share2 } from "lucide-react";
 import { CourseDialog } from "@/components/dashboard/course-dialog";
 import { ShareCourseTemplateDialog } from "@/components/workspace/shared/share-course-template-dialog";
 import { Button } from "@/components/ui/button";
-import { navigateCourses } from "@/lib/course/courses-navigation";
+import {
+  getSemesterCoursesUrl,
+  navigateCourses,
+} from "@/lib/course/courses-navigation";
 import { getExperimentTheme } from "@/lib/grades/experiment-theme";
 import { cn } from "@/lib/shared/utils";
 import { Course, Semester } from "@/lib/shared/types";
@@ -38,7 +41,7 @@ export function CourseHeader({
       <div className="min-w-0">
         <Button
           className="h-auto gap-1.5 p-0 text-[0.82rem] text-ink-muted hover:bg-transparent hover:text-foreground sm:gap-2 sm:text-sm"
-          onClick={() => navigateCourses("/courses")}
+          onClick={() => navigateCourses(getSemesterCoursesUrl(semesterId))}
           size={null}
           type="button"
           variant="ghost"

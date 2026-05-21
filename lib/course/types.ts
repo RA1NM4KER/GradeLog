@@ -96,6 +96,8 @@ export interface CourseTheme {
   id: string;
   name: string;
   band: string;
+  accentText: string;
+  accentColorValue: string;
   chip: string;
   progressFill: string;
   tableHeader: string;

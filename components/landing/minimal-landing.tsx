@@ -73,7 +73,7 @@ export function MinimalLanding() {
   }
 
   return (
-    <PageContainer className="flex min-h-[calc(100vh-5.5rem)] flex-col px-3 pt-7 pb-0 sm:px-8 sm:pt-12 sm:pb-10">
+    <PageContainer className="flex h-[calc(100vh-5.5rem)] flex-col overflow-hidden px-3 pt-7 pb-0 sm:px-8 sm:pt-12 sm:pb-10">
       <PageIntro
         badge="GradeLog"
         descriptionClassName="sm:text-[1.08rem] sm:leading-7"
@@ -108,55 +108,57 @@ export function MinimalLanding() {
         </div>
       ) : null}
 
-      <div className="mt-6 grid gap-2.5 sm:mt-8 sm:gap-3">
-        {semesters.map((semester) => (
-          <div className="relative" key={semester.id}>
-            <button
-              className="grid w-full grid-cols-1 items-center gap-2 rounded-[14px] bg-surface-soft px-4 py-3 pr-14 text-left shadow-card transition hover:bg-surface sm:items-start sm:gap-2.5 sm:rounded-[18px] sm:px-5 sm:py-3.5 sm:pr-16"
-              onClick={() => openSemester(semester.id)}
-              type="button"
-            >
-              <div className="min-w-0">
-                <p className="text-[1rem] font-semibold leading-tight text-foreground sm:text-[1.02rem]">
-                  {semester.name}
-                </p>
-                <p className="mt-1 text-[0.92rem] text-ink-muted sm:text-sm">
-                  {semester.periodLabel}
-                </p>
-              </div>
-            </button>
-            <button
-              aria-label={`Delete ${semester.name}`}
-              className="absolute top-1/2 right-3 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-xl text-ink-subtle transition hover:bg-black/5 hover:text-ink-strong sm:top-4 sm:right-4 sm:h-10 sm:w-10 sm:translate-y-0 dark:hover:bg-white/8"
-              onClick={() => removeSemester(semester.id, semester.name)}
-              type="button"
-            >
-              <Trash2 className="h-4.5 w-4.5" />
-            </button>
-          </div>
-        ))}
-        <SemesterDialog
-          onSaveSemester={addSemester}
-          triggerAsChild
-          triggerChildren={
-            <Button
-              className="min-h-[64px] w-full rounded-[14px] border border-dashed border-line bg-transparent px-4 py-3 text-ink-muted shadow-none hover:border-foreground/28 hover:bg-transparent hover:text-foreground sm:min-h-[82px] sm:rounded-[18px] sm:px-5 sm:py-3.5"
-              size={null}
-              type="button"
-              variant="secondary"
-            >
-              <div className="flex flex-col items-center text-center">
-                <Plus className="h-5 w-5 sm:h-7 sm:w-7" />
-                <span className="mt-1 text-[0.74rem] font-semibold uppercase tracking-[0.14em] sm:mt-2 sm:text-[0.82rem]">
-                  New semester
-                </span>
-              </div>
-            </Button>
-          }
-        />
+      <div className="mt-6 min-h-0 flex-1 overflow-y-auto pb-6 sm:mt-8 sm:pb-8">
+        <div className="grid gap-2.5 sm:gap-3">
+          {semesters.map((semester) => (
+            <div className="relative" key={semester.id}>
+              <button
+                className="grid w-full grid-cols-1 items-center gap-2 rounded-[14px] bg-surface-soft px-4 py-3 pr-14 text-left shadow-card transition hover:bg-surface sm:items-start sm:gap-2.5 sm:rounded-[18px] sm:px-5 sm:py-3.5 sm:pr-16"
+                onClick={() => openSemester(semester.id)}
+                type="button"
+              >
+                <div className="min-w-0">
+                  <p className="text-[1rem] font-semibold leading-tight text-foreground sm:text-[1.02rem]">
+                    {semester.name}
+                  </p>
+                  <p className="mt-1 text-[0.92rem] text-ink-muted sm:text-sm">
+                    {semester.periodLabel}
+                  </p>
+                </div>
+              </button>
+              <button
+                aria-label={`Delete ${semester.name}`}
+                className="absolute top-1/2 right-3 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-xl text-ink-subtle transition hover:bg-black/5 hover:text-ink-strong sm:top-4 sm:right-4 sm:h-10 sm:w-10 sm:translate-y-0 dark:hover:bg-white/8"
+                onClick={() => removeSemester(semester.id, semester.name)}
+                type="button"
+              >
+                <Trash2 className="h-4.5 w-4.5" />
+              </button>
+            </div>
+          ))}
+          <SemesterDialog
+            onSaveSemester={addSemester}
+            triggerAsChild
+            triggerChildren={
+              <Button
+                className="min-h-[64px] w-full rounded-[14px] border border-dashed border-line bg-transparent px-4 py-3 text-ink-muted shadow-none hover:border-foreground/28 hover:bg-transparent hover:text-foreground sm:min-h-[82px] sm:rounded-[18px] sm:px-5 sm:py-3.5"
+                size={null}
+                type="button"
+                variant="secondary"
+              >
+                <div className="flex flex-col items-center text-center">
+                  <Plus className="h-5 w-5 sm:h-7 sm:w-7" />
+                  <span className="mt-1 text-[0.74rem] font-semibold uppercase tracking-[0.14em] sm:mt-2 sm:text-[0.82rem]">
+                    New semester
+                  </span>
+                </div>
+              </Button>
+            }
+          />
+        </div>
       </div>
 
-      <div className="mt-auto pt-7 sm:pt-8">
+      <div className="shrink-0 pt-4 sm:pt-6">
         <Card
           className="rounded-[18px] border border-line/80 p-0 shadow-none sm:rounded-[22px] sm:border-white/24 sm:shadow-card dark:sm:border-white/10"
           variant="glass-panel"

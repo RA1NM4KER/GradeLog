@@ -21,6 +21,16 @@ export interface CoursesLocationState {
   semesterId: string | null;
 }
 
+export function getSemesterCoursesUrl(semesterId: string) {
+  return `/courses?semester=${encodeURIComponent(semesterId)}`;
+}
+
+export function getCourseDetailsUrl(semesterId: string, courseId: string) {
+  return `${getSemesterCoursesUrl(semesterId)}&course=${encodeURIComponent(
+    courseId,
+  )}`;
+}
+
 function warmCoursesRoute(url: string) {
   if (
     typeof window === "undefined" ||

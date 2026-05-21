@@ -1,6 +1,6 @@
 "use client";
 
-import { ReactNode, SyntheticEvent, useEffect, useState } from "react";
+import { ReactNode, SyntheticEvent, useEffect, useRef, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -46,6 +46,7 @@ export function SingleAssessmentDialog({
   const [form, setForm] = useState(getFormState(assessment));
   const [dueDateError, setDueDateError] = useState("");
   const [useTextDateInput, setUseTextDateInput] = useState(false);
+  const formScrollAreaRef = useRef<HTMLDivElement | null>(null);
   const isSubmitEnabled =
     form.name.trim().length > 0 && Number(form.weight || 0) > 0;
 
@@ -59,6 +60,29 @@ export function SingleAssessmentDialog({
   useEffect(() => {
     setUseTextDateInput(window.matchMedia("(pointer: coarse)").matches);
   }, []);
+
+  function scrollFormToBottom() {
+    if (!useTextDateInput) {
+      return;
+    }
+
+    const scrollArea = formScrollAreaRef.current;
+    if (!scrollArea) {
+      return;
+    }
+
+    const scrollToBottom = () => {
+      scrollArea.scrollTo({
+        top: scrollArea.scrollHeight,
+        behavior: "smooth",
+      });
+    };
+
+    requestAnimationFrame(() => {
+      scrollToBottom();
+      window.setTimeout(scrollToBottom, 180);
+    });
+  }
 
   function submit(event: SyntheticEvent<HTMLFormElement, SubmitEvent>) {
     event.preventDefault();
@@ -107,7 +131,10 @@ export function SingleAssessmentDialog({
           className="flex min-h-0 flex-1 flex-col overflow-hidden"
           onSubmit={submit}
         >
-          <div className="grid min-h-0 content-start gap-4 overflow-y-auto pr-1 pb-4">
+          <div
+            className="grid min-h-0 content-start gap-4 overflow-y-auto pr-1 pb-4"
+            ref={formScrollAreaRef}
+          >
             <div className="space-y-2">
               <Label htmlFor={`assignment-name-${assessment.id}`}>
                 Assignment name *
@@ -170,6 +197,7 @@ export function SingleAssessmentDialog({
                 <Input
                   id={`assignment-grade-${assessment.id}`}
                   inputMode="text"
+                  onFocus={scrollFormToBottom}
                   onChange={(event) =>
                     setForm((current) => ({
                       ...current,
@@ -194,6 +222,7 @@ export function SingleAssessmentDialog({
                     }));
                     setDueDateError("");
                   }}
+                  onFocus={scrollFormToBottom}
                   inputMode={useTextDateInput ? "numeric" : undefined}
                   placeholder={useTextDateInput ? "YYYY-MM-DD" : "Optional"}
                   type={useTextDateInput ? "text" : "date"}

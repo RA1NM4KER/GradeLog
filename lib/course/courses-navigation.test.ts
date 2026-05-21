@@ -18,6 +18,16 @@ describe("courses-navigation", () => {
     expect(() => navigateCourses("/courses")).not.toThrow();
   });
 
+  it("builds semester and course URLs with explicit hierarchy", async () => {
+    const { getCourseDetailsUrl, getSemesterCoursesUrl } =
+      await import("@/lib/course/courses-navigation");
+
+    expect(getSemesterCoursesUrl("sem 1")).toBe("/courses?semester=sem%201");
+    expect(getCourseDetailsUrl("sem 1", "course/42")).toBe(
+      "/courses?semester=sem%201&course=course%2F42",
+    );
+  });
+
   it("returns a no-op cleanup when listeners are added without a browser window", async () => {
     const { addCoursesNavigationListener } =
       await import("@/lib/course/courses-navigation");

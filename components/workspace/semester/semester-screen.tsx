@@ -12,6 +12,8 @@ import { SemesterSummaryStat } from "@/components/workspace/semester/semester-su
 import { SemesterSummaryStrip } from "@/components/workspace/semester/semester-summary-strip";
 import { useCourses } from "@/components/workspace/shared/courses-provider";
 import {
+  getCourseDetailsUrl,
+  getSemesterCoursesUrl,
   navigateCourses,
   useCoursesLocation,
 } from "@/lib/course/courses-navigation";
@@ -63,11 +65,7 @@ export function SemesterScreen() {
 
   function handleSaveCourse(course: Course) {
     addCourse(course);
-    navigateCourses(
-      `/courses?semester=${encodeURIComponent(
-        semester.id,
-      )}&course=${encodeURIComponent(course.id)}`,
-    );
+    navigateCourses(getCourseDetailsUrl(semester.id, course.id));
   }
 
   function showAllCourses() {
@@ -75,7 +73,7 @@ export function SemesterScreen() {
   }
 
   function showSemesterCourses(nextSemesterId: string) {
-    navigateCourses(`/courses?semester=${encodeURIComponent(nextSemesterId)}`);
+    navigateCourses(getSemesterCoursesUrl(nextSemesterId));
   }
 
   function handleScopeChange(value: string) {
@@ -182,7 +180,7 @@ export function SemesterScreen() {
 
         <div className="mt-4 sm:mt-6">
           {displayedCourseEntries.length > 0 ? (
-            <div className="grid items-start gap-3.5 sm:gap-5 md:grid-cols-2 xl:grid-cols-3">
+            <div className="grid gap-3.5 md:auto-rows-fr md:grid-cols-2 md:items-stretch sm:gap-5 xl:grid-cols-3">
               {displayedCourseEntries.map((entry) => (
                 <CourseListItem
                   contextLabel={
@@ -193,9 +191,7 @@ export function SemesterScreen() {
                   key={`${entry.semesterId}:${entry.course.id}`}
                   onSelect={() =>
                     navigateCourses(
-                      `/courses?semester=${encodeURIComponent(
-                        entry.semesterId,
-                      )}&course=${encodeURIComponent(entry.course.id)}`,
+                      getCourseDetailsUrl(entry.semesterId, entry.course.id),
                     )
                   }
                 />
@@ -205,72 +201,54 @@ export function SemesterScreen() {
                 triggerAsChild
                 triggerChildren={
                   <button
-                    className="group relative flex w-full overflow-hidden rounded-[20px] border border-line bg-surface text-left shadow-card transition hover:-translate-y-0.5 hover:shadow-soft dark:bg-surface-soft sm:rounded-[24px]"
+                    className="group relative flex h-full w-full overflow-hidden rounded-[20px] border border-line bg-surface text-left shadow-card transition hover:-translate-y-0.5 hover:border-line-strong hover:shadow-soft dark:bg-surface-soft sm:rounded-[24px]"
                     type="button"
                   >
                     <div className="absolute inset-y-0 left-0 w-2.5 bg-surface-strip sm:w-3" />
-                    <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center pl-2.5 text-center text-ink-muted transition group-hover:text-foreground sm:pl-3">
-                      <Plus className="h-6 w-6 sm:h-7 sm:w-7" />
-                      <span className="mt-2.5 text-[0.84rem] font-semibold uppercase tracking-[0.14em] sm:mt-3 sm:text-[0.92rem]">
-                        {isAllCoursesView
-                          ? `Add to ${semester.name}`
-                          : "Add course"}
+                    <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center gap-2 pl-2.5 text-center text-ink-muted transition group-hover:text-foreground sm:gap-2.5 sm:pl-3">
+                      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-surface-muted text-ink-soft transition group-hover:bg-surface group-hover:text-foreground sm:h-11 sm:w-11">
+                        <Plus className="h-5 w-5 sm:h-5.5 sm:w-5.5" />
+                      </span>
+                      <span className="text-[0.84rem] font-semibold uppercase tracking-[0.14em] sm:text-[0.92rem]">
+                        Add course
                       </span>
                     </div>
-                    <div className="flex min-w-0 flex-1 flex-col px-3 py-2 pl-5 sm:px-3.5 sm:py-2.5 sm:pl-6">
-                      <div className="flex items-start justify-between gap-3 sm:gap-4">
-                        <div className="min-w-0 flex-1">
-                          <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1 opacity-0">
-                            <span className="text-[0.95rem] font-semibold leading-[1.05] tracking-[-0.025em] sm:text-[1.1rem] sm:tracking-[-0.03em]">
-                              Placeholder
-                            </span>
-                            <span className="text-[0.65rem] font-medium uppercase tracking-[0.1em] sm:text-[0.72rem] sm:tracking-[0.12em]">
-                              000
-                            </span>
-                          </div>
-                          <p className="mt-0.5 text-[0.82rem] opacity-0 sm:mt-1 sm:text-[0.92rem]">
-                            Placeholder · 00 credits
-                          </p>
+                    <div
+                      aria-hidden="true"
+                      className="invisible grid min-w-0 flex-1 grid-cols-[minmax(0,1fr)_auto] gap-3 px-3 py-2.5 pl-5 sm:gap-4 sm:px-4 sm:py-3 sm:pl-6"
+                    >
+                      <div className="min-w-0">
+                        <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1 pr-2">
+                          <span className="line-clamp-2 max-w-[18ch] text-[0.95rem] font-semibold leading-[1.08] tracking-[-0.03em] sm:text-[1.08rem]">
+                            Placeholder course
+                          </span>
                         </div>
-                        <span className="h-8 w-8 shrink-0 rounded-full opacity-0 sm:h-9 sm:w-9" />
+                        <p className="mt-0.5 text-[0.82rem] sm:text-[0.92rem]">
+                          Placeholder instructor · 00 credits
+                        </p>
+
+                        <div className="mt-2 flex flex-wrap items-center gap-1.5 sm:gap-2">
+                          <span className="inline-flex items-center rounded-full px-2 py-1 text-[9px] font-medium sm:px-2.5 sm:text-[10px]">
+                            Placeholder
+                          </span>
+                          <span className="inline-flex items-center rounded-full px-2 py-1 text-[9px] font-medium sm:px-2.5 sm:text-[10px]">
+                            Placeholder
+                          </span>
+                        </div>
                       </div>
 
-                      <div className="mt-1.5 flex flex-wrap items-center gap-1.5 opacity-0 sm:mt-2 sm:gap-2">
-                        <span className="inline-flex items-center gap-1.5 rounded-full px-2 py-1 text-[9px] font-medium sm:gap-2 sm:px-2.5 sm:text-[10px]">
-                          Placeholder
-                        </span>
-                        <span className="rounded-full px-2 py-1 text-[9px] font-medium sm:px-2.5 sm:text-[10px]">
-                          Placeholder
-                        </span>
-                      </div>
-
-                      <div className="mt-1.5 grid grid-cols-[1fr_auto] gap-2.5 opacity-0 sm:mt-2 sm:gap-3">
+                      <div className="flex min-w-[96px] flex-col items-end justify-between text-right sm:min-w-[110px]">
                         <div>
                           <p className="text-[9px] font-semibold uppercase tracking-[0.16em] sm:text-[10px] sm:tracking-[0.18em]">
                             Current grade
                           </p>
-                          <p className="mt-1 text-[1.28rem] font-semibold tracking-[-0.045em] sm:text-[1.45rem] sm:tracking-[-0.05em]">
+                          <p className="mt-1 text-[1.5rem] font-semibold leading-none tracking-[-0.05em] sm:text-[1.9rem]">
                             00.0%
                           </p>
                         </div>
-                        <div className="self-start rounded-[12px] px-2 py-1.5 text-right sm:rounded-[14px] sm:px-2.5">
-                          <p className="text-[9px] font-semibold uppercase tracking-[0.16em] sm:text-[10px] sm:tracking-[0.18em]">
-                            Assessments
-                          </p>
-                          <p className="mt-1 text-[0.82rem] font-semibold tracking-[-0.025em] sm:text-[0.92rem] sm:tracking-[-0.03em]">
-                            0
-                          </p>
-                        </div>
-                      </div>
-
-                      <div className="pt-2 opacity-0 sm:pt-2.5">
-                        <div className="flex items-center justify-between text-[9px] font-semibold uppercase tracking-[0.14em] sm:text-[10px] sm:tracking-[0.16em]">
-                          <span>Progress</span>
-                          <span>0%</span>
-                        </div>
-                        <div className="mt-1 rounded-full p-[2px] sm:mt-1.5">
-                          <div className="h-1 rounded-full" />
-                        </div>
+                        <span className="rounded-full px-2.5 py-1 text-[9px] font-medium sm:text-[10px]">
+                          0 assessments
+                        </span>
                       </div>
                     </div>
                   </button>
