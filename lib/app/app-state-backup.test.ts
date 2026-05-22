@@ -1,3 +1,28 @@
+const { canShare, share, writeFile } = vi.hoisted(() => ({
+  canShare: vi.fn(),
+  share: vi.fn(),
+  writeFile: vi.fn(),
+}));
+
+vi.mock("@capacitor/filesystem", () => ({
+  Directory: {
+    Cache: "CACHE",
+  },
+  Encoding: {
+    UTF8: "utf8",
+  },
+  Filesystem: {
+    writeFile,
+  },
+}));
+
+vi.mock("@capacitor/share", () => ({
+  Share: {
+    canShare,
+    share,
+  },
+}));
+
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 import { APP_STATE_VERSION, getDefaultAppState } from "@/lib/app/app-state";
@@ -11,6 +36,9 @@ describe("app-state-backup", () => {
   afterEach(() => {
     vi.restoreAllMocks();
     vi.unstubAllGlobals();
+    canShare.mockReset();
+    share.mockReset();
+    writeFile.mockReset();
   });
 
   it("summarizes the app state for backups", () => {
@@ -73,6 +101,44 @@ describe("app-state-backup", () => {
     expect(createElement).toHaveBeenCalledWith("a");
     expect(click).toHaveBeenCalled();
     expect(revokeObjectURL).toHaveBeenCalledWith("blob:backup");
+  });
+
+  it("exports a serialized backup file through Capacitor on native apps", async () => {
+    canShare.mockResolvedValue({ value: true });
+    writeFile.mockResolvedValue({
+      uri: "file:///cache/backups/gradeflow-backup-2026-04-08T10-00-00.000Z.json",
+    });
+    vi.stubGlobal("window", { Capacitor: {} });
+    vi.setSystemTime(new Date("2026-04-08T10:00:00.000Z"));
+
+    await downloadAppStateBackup(getDefaultAppState());
+
+    expect(writeFile).toHaveBeenCalledWith({
+      path: "backups/gradeflow-backup-2026-04-08T10-00-00.000Z.json",
+      data: expect.any(String),
+      directory: "CACHE",
+      encoding: "utf8",
+      recursive: true,
+    });
+    expect(share).toHaveBeenCalledWith({
+      title: "gradeflow-backup-2026-04-08T10-00-00.000Z.json",
+      text: "GradeLog local backup",
+      files: [
+        "file:///cache/backups/gradeflow-backup-2026-04-08T10-00-00.000Z.json",
+      ],
+      dialogTitle: "Export GradeLog backup",
+    });
+  });
+
+  it("fails clearly when native sharing is unavailable", async () => {
+    canShare.mockResolvedValue({ value: false });
+    vi.stubGlobal("window", { Capacitor: {} });
+
+    await expect(downloadAppStateBackup(getDefaultAppState())).rejects.toThrow(
+      "This Android device cannot open the backup share sheet right now.",
+    );
+    expect(writeFile).not.toHaveBeenCalled();
+    expect(share).not.toHaveBeenCalled();
   });
 
   it("imports a backup file through the shared validator", async () => {

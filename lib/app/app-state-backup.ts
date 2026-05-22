@@ -1,3 +1,5 @@
+import { Directory, Encoding, Filesystem } from "@capacitor/filesystem";
+import { Share } from "@capacitor/share";
 import {
   APP_STATE_VERSION,
   validateImportedAppState,
@@ -9,6 +11,34 @@ import { isNativeApp } from "@/lib/platform/platform";
 function buildBackupFileName(date = new Date()) {
   const timestamp = date.toISOString().replaceAll(":", "-");
   return `gradeflow-backup-${timestamp}.json`;
+}
+
+async function exportNativeAppStateBackup(
+  serializedState: string,
+  fileName: string,
+) {
+  const canShareResult = await Share.canShare();
+
+  if (!canShareResult.value) {
+    throw new Error(
+      "This Android device cannot open the backup share sheet right now.",
+    );
+  }
+
+  const { uri } = await Filesystem.writeFile({
+    path: `backups/${fileName}`,
+    data: serializedState,
+    directory: Directory.Cache,
+    encoding: Encoding.UTF8,
+    recursive: true,
+  });
+
+  await Share.share({
+    title: fileName,
+    text: "GradeLog local backup",
+    files: [uri],
+    dialogTitle: "Export GradeLog backup",
+  });
 }
 
 export function getAppStateBackupSummary(
@@ -45,28 +75,8 @@ export async function downloadAppStateBackup(state: AppState) {
   });
 
   if (isNativeApp()) {
-    const file = new File([blob], fileName, {
-      type: "application/json",
-    });
-    const shareData = {
-      files: [file],
-      text: "GradeLog local backup",
-      title: fileName,
-    };
-
-    if (
-      typeof navigator !== "undefined" &&
-      typeof navigator.share === "function" &&
-      typeof navigator.canShare === "function" &&
-      navigator.canShare(shareData)
-    ) {
-      await navigator.share(shareData);
-      return;
-    }
-
-    throw new Error(
-      "This device cannot export backup files yet. Try from the web app on this device instead.",
-    );
+    await exportNativeAppStateBackup(serializedState, fileName);
+    return;
   }
 
   const objectUrl = URL.createObjectURL(blob);

@@ -67,6 +67,20 @@ describe("native back navigation helpers", () => {
     });
   });
 
+  it("falls back to the semester course list before home when a course detail route has no list entry in the stack", () => {
+    expect(resolveNativeBack(["/", "/courses?semester=1&course=abc"])).toEqual({
+      action: "navigate",
+      nextStack: ["/", "/courses?semester=1"],
+      targetUrl: "/courses?semester=1",
+    });
+
+    expect(resolveNativeBack(["/courses?semester=1&course=abc"])).toEqual({
+      action: "navigate",
+      nextStack: ["/courses?semester=1"],
+      targetUrl: "/courses?semester=1",
+    });
+  });
+
   it("falls back to home when there is no prior in-app route", () => {
     expect(resolveNativeBack(["/courses?semester=1"])).toEqual({
       action: "navigate",

@@ -215,29 +215,23 @@ export function SemesterScreen() {
                     </div>
                     <div
                       aria-hidden="true"
-                      className="invisible grid min-w-0 flex-1 grid-cols-[minmax(0,1fr)_auto] gap-3 px-3 py-2.5 pl-5 sm:gap-4 sm:px-4 sm:py-3 sm:pl-6"
+                      className="invisible grid min-w-0 flex-1 grid-cols-[minmax(0,1fr)_auto] items-start gap-x-3 gap-y-2 px-3 py-2.5 pl-5 sm:gap-x-4 sm:px-4 sm:py-3 sm:pl-6"
                     >
                       <div className="min-w-0">
-                        <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1 pr-2">
-                          <span className="line-clamp-2 max-w-[18ch] text-[0.95rem] font-semibold leading-[1.08] tracking-[-0.03em] sm:text-[1.08rem]">
+                        <div className="min-h-[5.2rem] min-w-0 pr-2">
+                          <span className="block line-clamp-2 max-w-[18ch] text-[0.95rem] font-semibold leading-[1.08] tracking-[-0.03em] sm:text-[1.08rem]">
                             Placeholder course
+                          </span>
+                          <span className="mt-1 block text-[0.65rem] font-medium uppercase tracking-[0.1em] text-ink-muted sm:text-[0.72rem] sm:tracking-[0.12em]">
+                            CODE000
                           </span>
                         </div>
                         <p className="mt-0.5 text-[0.82rem] sm:text-[0.92rem]">
                           Placeholder instructor · 00 credits
                         </p>
-
-                        <div className="mt-2 flex flex-wrap items-center gap-1.5 sm:gap-2">
-                          <span className="inline-flex items-center rounded-full px-2 py-1 text-[9px] font-medium sm:px-2.5 sm:text-[10px]">
-                            Placeholder
-                          </span>
-                          <span className="inline-flex items-center rounded-full px-2 py-1 text-[9px] font-medium sm:px-2.5 sm:text-[10px]">
-                            Placeholder
-                          </span>
-                        </div>
                       </div>
 
-                      <div className="flex min-w-[96px] flex-col items-end justify-between text-right sm:min-w-[110px]">
+                      <div className="flex min-w-[96px] flex-col items-end text-right sm:min-w-[110px]">
                         <div>
                           <p className="text-[9px] font-semibold uppercase tracking-[0.16em] sm:text-[10px] sm:tracking-[0.18em]">
                             Current grade
@@ -246,6 +240,18 @@ export function SemesterScreen() {
                             00.0%
                           </p>
                         </div>
+                      </div>
+
+                      <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
+                        <span className="inline-flex items-center rounded-full px-2 py-1 text-[9px] font-medium sm:px-2.5 sm:text-[10px]">
+                          Placeholder
+                        </span>
+                        <span className="inline-flex items-center rounded-full px-2 py-1 text-[9px] font-medium sm:px-2.5 sm:text-[10px]">
+                          Placeholder
+                        </span>
+                      </div>
+
+                      <div className="flex min-w-[96px] justify-end sm:min-w-[110px]">
                         <span className="rounded-full px-2.5 py-1 text-[9px] font-medium sm:text-[10px]">
                           0 assessments
                         </span>

@@ -1,5 +1,24 @@
 const HOME_URL = "/";
 
+function getCoursesListUrl(url: string) {
+  const [pathname, search = ""] = url.split("?");
+
+  if (pathname !== "/courses" || search.length === 0) {
+    return null;
+  }
+
+  const searchParams = new URLSearchParams(search);
+
+  if (!searchParams.has("course")) {
+    return null;
+  }
+
+  searchParams.delete("course");
+
+  const nextSearch = searchParams.toString();
+  return nextSearch.length > 0 ? `${pathname}?${nextSearch}` : pathname;
+}
+
 export interface NativeBackResolution {
   action: "exit" | "navigate";
   nextStack: string[];
@@ -41,6 +60,18 @@ export function resolveNativeBack(
   homeUrl = HOME_URL,
 ): NativeBackResolution {
   const currentUrl = stack[stack.length - 1] ?? homeUrl;
+  const fallbackCoursesListUrl = getCoursesListUrl(currentUrl);
+  const previousUrl = stack[stack.length - 2] ?? null;
+
+  if (fallbackCoursesListUrl && previousUrl !== fallbackCoursesListUrl) {
+    return {
+      action: "navigate",
+      nextStack: previousUrl
+        ? [...stack.slice(0, -1), fallbackCoursesListUrl]
+        : [fallbackCoursesListUrl],
+      targetUrl: fallbackCoursesListUrl,
+    };
+  }
 
   if (currentUrl === homeUrl) {
     return {
@@ -54,7 +85,7 @@ export function resolveNativeBack(
     return {
       action: "navigate",
       nextStack: stack.slice(0, -1),
-      targetUrl: stack[stack.length - 2] ?? homeUrl,
+      targetUrl: previousUrl ?? homeUrl,
     };
   }
 
