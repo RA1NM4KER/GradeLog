@@ -61,132 +61,147 @@ export function GradeBandPanel({
   return (
     <div className="grid gap-3 sm:gap-4 min-[900px]:grid-cols-[280px_minmax(0,1fr)] min-[900px]:items-start">
       <div className="min-w-0">
-        <div className="mb-2.5 flex items-center justify-between gap-3 sm:mb-3">
-          <span className="w-7" />
-          <p className="text-center text-[0.82rem] text-ink-soft sm:text-sm">
-            Current standing
-          </p>
-          <GradeBandDialog
-            bands={bands}
-            onSave={onSaveBandsAction}
-            triggerAsChild
-            triggerChildren={
-              <Button
-                aria-label="Edit cutoffs"
-                className={cn(
-                  "h-7 w-7 rounded-full border bg-surface p-0 transition hover:bg-surface-muted",
-                  isExperimenting
-                    ? `${experimentTheme.accentBorder} ${experimentTheme.accentText}`
-                    : `${theme.chartAccentBorder} ${theme.chartAccentText}`,
-                )}
-                size="icon"
-                type="button"
-                variant="ghost"
-              >
-                <Pencil className="h-3.5 w-3.5" />
-              </Button>
-            }
-          />
-        </div>
-        <div className="relative h-[320px] overflow-hidden rounded-[20px] border border-line bg-surface-soft sm:h-[500px] sm:rounded-[24px]">
-          {hasRecordedGrade ? (
-            <>
-              <div
-                className="absolute inset-x-0 top-0 transition-[height] duration-500 ease-out"
-                style={{
-                  backgroundImage: neutralChartStripe,
-                  height: `${100 - getLinePosition(ceiling)}%`,
-                }}
-              />
-              {isLockedRange && guaranteedGrade > 0 ? (
-                <ChartBoundMarker
-                  description={`Your final grade is now locked at ${formatPercent(
-                    guaranteedGrade,
-                  )}. There is no remaining weighted work that can move it up or down.`}
-                  orientation="vertical"
-                  positionPercent={getLinePosition(guaranteedGrade)}
-                  title={`Locked: ${formatPercent(guaranteedGrade)}`}
-                />
-              ) : null}
-              {!isLockedRange && ceiling < 100 ? (
-                <ChartBoundMarker
-                  description={`You have already lost ${formatPercent(
-                    100 - ceiling,
-                  )}. Even with perfect scores from here, the highest final grade you can still reach is ${formatPercent(
-                    ceiling,
-                  )}.`}
-                  orientation="vertical"
-                  positionPercent={getLinePosition(ceiling)}
-                  title={`Lost: ${formatPercent(100 - ceiling)}`}
-                />
-              ) : null}
-              <div
-                className="absolute inset-x-0 bottom-0 transition-[height] duration-500 ease-out"
-                style={{
-                  backgroundImage: neutralChartStripe,
-                  height: `${getLinePosition(guaranteedGrade)}%`,
-                }}
-              />
-              {!isLockedRange && guaranteedGrade > 0 ? (
-                <ChartBoundMarker
-                  description={`You have already secured ${formatPercent(
-                    guaranteedGrade,
-                  )}. Even if every remaining assessment goes badly, your final grade cannot fall below ${formatPercent(
-                    guaranteedGrade,
-                  )}.`}
-                  orientation="vertical"
-                  positionPercent={getLinePosition(guaranteedGrade)}
-                  title={`Guaranteed: ${formatPercent(guaranteedGrade)}`}
-                />
-              ) : null}
-            </>
-          ) : null}
-
-          {[90, 80, 70, 60, 50, 40, 30, 20, 10].map((line) => (
-            <GuideLine key={line} value={line} />
-          ))}
-
-          {hasAssessments
-            ? bands.map((band) => (
-                <BandLine
-                  band={band}
-                  isExperimenting={isExperimenting}
-                  key={band.id}
-                  state={getGradeBandState(module, band)}
-                  theme={theme}
-                />
-              ))
-            : null}
-
-          {hasRecordedGrade ? (
-            <CurrentLine
-              isExperimenting={isExperimenting}
-              theme={theme}
-              value={animatedCurrentGrade}
+        <Card className="overflow-hidden rounded-[20px] bg-surface-soft sm:rounded-[24px]">
+          <div
+            className={cn(
+              "relative flex items-center justify-center border-b border-line px-3 py-2.5 sm:px-4",
+              "h-[49px]",
+              isExperimenting
+                ? `${experimentTheme.headerBackground} ${experimentTheme.accentText}`
+                : theme.tableHeaderAccent,
+            )}
+          >
+            <span className="text-center text-[0.72rem] font-semibold uppercase tracking-[0.18em]">
+              Current standing
+            </span>
+            <GradeBandDialog
+              bands={bands}
+              onSave={onSaveBandsAction}
+              triggerAsChild
+              triggerChildren={
+                <Button
+                  aria-label="Edit cutoffs"
+                  className={cn(
+                    "absolute right-3 top-1/2 h-7 w-7 -translate-y-1/2 rounded-full border bg-surface p-0 transition hover:bg-surface-muted sm:right-4",
+                    isExperimenting
+                      ? `${experimentTheme.accentBorder} ${experimentTheme.accentText}`
+                      : `${theme.chartAccentBorder} ${theme.chartAccentText}`,
+                  )}
+                  size="icon"
+                  type="button"
+                  variant="ghost"
+                >
+                  <Pencil className="h-3.5 w-3.5" />
+                </Button>
+              }
             />
-          ) : null}
-          {hasRecordedGrade ? (
-            <CurrentPill
-              isExperimenting={isExperimenting}
-              theme={theme}
-              value={animatedCurrentGrade}
-            />
-          ) : null}
+          </div>
+          <div className="relative h-[320px] overflow-hidden bg-surface-soft sm:h-[500px]">
+            {hasRecordedGrade ? (
+              <>
+                <div
+                  className="absolute inset-x-0 top-0 transition-[height] duration-500 ease-out"
+                  style={{
+                    backgroundImage: neutralChartStripe,
+                    height: `${100 - getLinePosition(ceiling)}%`,
+                  }}
+                />
+                {isLockedRange && guaranteedGrade > 0 ? (
+                  <ChartBoundMarker
+                    description={`Your final grade is now locked at ${formatPercent(
+                      guaranteedGrade,
+                    )}. There is no remaining weighted work that can move it up or down.`}
+                    orientation="vertical"
+                    positionPercent={getLinePosition(guaranteedGrade)}
+                    title={`Locked: ${formatPercent(guaranteedGrade)}`}
+                  />
+                ) : null}
+                {!isLockedRange && ceiling < 100 ? (
+                  <ChartBoundMarker
+                    description={`You have already lost ${formatPercent(
+                      100 - ceiling,
+                    )}. Even with perfect scores from here, the highest final grade you can still reach is ${formatPercent(
+                      ceiling,
+                    )}.`}
+                    orientation="vertical"
+                    positionPercent={getLinePosition(ceiling)}
+                    title={`Lost: ${formatPercent(100 - ceiling)}`}
+                  />
+                ) : null}
+                <div
+                  className="absolute inset-x-0 bottom-0 transition-[height] duration-500 ease-out"
+                  style={{
+                    backgroundImage: neutralChartStripe,
+                    height: `${getLinePosition(guaranteedGrade)}%`,
+                  }}
+                />
+                {!isLockedRange && guaranteedGrade > 0 ? (
+                  <ChartBoundMarker
+                    description={`You have already secured ${formatPercent(
+                      guaranteedGrade,
+                    )}. Even if every remaining assessment goes badly, your final grade cannot fall below ${formatPercent(
+                      guaranteedGrade,
+                    )}.`}
+                    orientation="vertical"
+                    positionPercent={getLinePosition(guaranteedGrade)}
+                    title={`Guaranteed: ${formatPercent(guaranteedGrade)}`}
+                  />
+                ) : null}
+              </>
+            ) : null}
 
-          <p className="absolute inset-x-0 bottom-3 text-center text-[0.8rem] text-ink-soft sm:bottom-4 sm:text-sm">
-            {hasRecordedGrade
-              ? `${formatPercent(completion)} complete`
-              : hasAssessments
-                ? "Waiting for first grade"
-                : "Add assignments to start tracking"}
-          </p>
-        </div>
+            {[90, 80, 70, 60, 50, 40, 30, 20, 10].map((line) => (
+              <GuideLine key={line} value={line} />
+            ))}
+
+            {hasAssessments
+              ? bands.map((band) => (
+                  <BandLine
+                    band={band}
+                    isExperimenting={isExperimenting}
+                    key={band.id}
+                    state={getGradeBandState(module, band)}
+                    theme={theme}
+                  />
+                ))
+              : null}
+
+            {hasRecordedGrade ? (
+              <CurrentLine
+                isExperimenting={isExperimenting}
+                theme={theme}
+                value={animatedCurrentGrade}
+              />
+            ) : null}
+            {hasRecordedGrade ? (
+              <CurrentPill
+                isExperimenting={isExperimenting}
+                theme={theme}
+                value={animatedCurrentGrade}
+              />
+            ) : null}
+
+            <p className="absolute inset-x-0 bottom-3 text-center text-[0.8rem] text-ink-soft sm:bottom-4 sm:text-sm">
+              {hasRecordedGrade
+                ? `${formatPercent(completion)} complete`
+                : hasAssessments
+                  ? "Waiting for first grade"
+                  : "Add assignments to start tracking"}
+            </p>
+          </div>
+        </Card>
       </div>
 
       <div className="min-w-0">
         {subminimumRequirements.length > 0 ? (
           <Card className="mb-3 overflow-hidden rounded-[20px] bg-surface-soft sm:mb-4 sm:rounded-[24px]">
-            <div className="border-b border-line px-3 py-2.5 text-[0.72rem] font-semibold uppercase tracking-[0.18em] text-ink-subtle sm:px-4">
+            <div
+              className={cn(
+                "flex h-[49px] items-center justify-center border-b border-line bg-surface-soft px-3 py-2.5 text-center text-[0.72rem] font-semibold uppercase tracking-[0.18em] text-ink-subtle sm:px-4",
+                isExperimenting &&
+                  `${experimentTheme.headerBackground} ${experimentTheme.accentText}`,
+              )}
+            >
               Subminimum rules
             </div>
             <div className="grid gap-0">
@@ -229,10 +244,19 @@ export function GradeBandPanel({
           </Card>
         ) : null}
 
-        <p className="mb-2.5 text-center text-[0.82rem] text-ink-soft sm:mb-3 sm:text-sm">
-          Remainder of grades must average:
-        </p>
         <Card className="overflow-hidden rounded-[20px] bg-surface-soft sm:rounded-[24px]">
+          <div
+            className={cn(
+              "flex h-[49px] items-center justify-center border-b border-line px-2 py-2.5 sm:px-3",
+              isExperimenting
+                ? `${experimentTheme.headerBackground} ${experimentTheme.accentText}`
+                : theme.tableHeaderAccent,
+            )}
+          >
+            <p className="whitespace-nowrap text-center text-[0.82rem] font-semibold sm:text-sm">
+              Remainder of grades must average:
+            </p>
+          </div>
           {bands.map((band) => {
             const result = calculateRequiredScore(module, band.threshold);
             const state = hasAssessments

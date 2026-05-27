@@ -162,7 +162,7 @@ export function ShareCourseTemplateDialog({
           <div className="space-y-4">
             <div className="grid gap-4 md:grid-cols-[220px_minmax(0,1fr)]">
               <Card className="rounded-[24px]" variant="surface-panel">
-                <CardContent className="flex flex-col items-center justify-center p-4">
+                <CardContent className="flex flex-col items-center justify-center px-4 pb-4 pt-6 sm:pt-6">
                   {qrCodeDataUrl ? (
                     <Image
                       alt="QR code for the course template share link"
@@ -185,7 +185,7 @@ export function ShareCourseTemplateDialog({
 
               <div className="space-y-4">
                 <Card className="rounded-[24px]" variant="surface-panel">
-                  <CardContent className="p-4">
+                  <CardContent className="px-4 pb-4 pt-6 sm:pt-6">
                     <SectionLabel>Share link</SectionLabel>
                     <p className="mt-2 break-all text-sm text-foreground">
                       {shareData.shareUrl}
@@ -220,7 +220,7 @@ export function ShareCourseTemplateDialog({
                 </div>
 
                 <Card className="rounded-[24px]" variant="surface-panel">
-                  <CardContent className="p-4 text-sm text-ink-soft">
+                  <CardContent className="px-4 pb-4 pt-6 text-sm text-ink-soft sm:pt-6">
                     This shares the course layout, assignments, and grading
                     scale. It does not share your marks.
                   </CardContent>

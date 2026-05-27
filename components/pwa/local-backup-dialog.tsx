@@ -160,7 +160,7 @@ export function LocalBackupDialog({
 
         <div className="grid gap-5">
           <Card className="rounded-[24px]" variant="glass-panel">
-            <CardContent className="p-4">
+            <CardContent className="px-4 pb-4 pt-6 sm:pt-6">
               <p className="text-sm font-semibold text-foreground">
                 Export current data
               </p>
@@ -184,7 +184,7 @@ export function LocalBackupDialog({
           </Card>
 
           <Card className="rounded-[24px]" variant="glass-panel">
-            <CardContent className="p-4">
+            <CardContent className="px-4 pb-4 pt-6 sm:pt-6">
               <p className="text-sm font-semibold text-foreground">
                 Import backup
               </p>

@@ -288,7 +288,7 @@ export function ConnectDevicesDialog({
           ) : isAuthenticated ? (
             <>
               <Card className="rounded-[24px]" variant="glass-panel">
-                <CardContent className="p-4">
+                <CardContent className="px-4 pb-4 pt-6 sm:pt-6">
                   <p className="text-sm font-semibold text-foreground">
                     Connected devices are enabled
                   </p>

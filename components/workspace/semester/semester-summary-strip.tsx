@@ -103,12 +103,12 @@ export function SemesterOwnedSummaryStrip({
               type="button"
               variant="ghost"
             >
-              <Cog className="h-4.5 w-4.5 transition-transform duration-300 group-hover:rotate-90 sm:h-5 sm:w-5" />
+              <Cog className="h-[1.65rem] w-[1.65rem] transition-transform duration-300 group-hover:rotate-90 sm:h-[1.875rem] sm:w-[1.875rem]" />
             </Button>
           }
         />
       }
-      description="Track all your courses for this semester in one calm view, then open any course to manage grades and assessment progress."
+      description="Track semester courses, then open one to manage grades and progress."
       eyebrow="Semester"
       stats={[
         { label: "Grade Avg", value: formatPercent(average) },

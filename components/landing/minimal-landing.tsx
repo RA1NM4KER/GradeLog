@@ -73,7 +73,7 @@ export function MinimalLanding() {
   }
 
   return (
-    <PageContainer className="flex h-[calc(100vh-5.5rem)] flex-col overflow-hidden px-3 pt-7 pb-0 sm:px-8 sm:pt-12 sm:pb-10">
+    <PageContainer className="flex h-[calc(100vh-5.5rem)] flex-col overflow-hidden px-3 pt-7 pb-0 sm:px-8 sm:pt-12 sm:pb-4">
       <PageIntro
         badge="GradeLog"
         descriptionClassName="sm:text-[1.08rem] sm:leading-7"
@@ -108,7 +108,7 @@ export function MinimalLanding() {
         </div>
       ) : null}
 
-      <div className="mt-6 min-h-0 flex-1 overflow-y-auto pb-6 sm:mt-8 sm:pb-8">
+      <div className="mt-6 min-h-0 flex-1 overflow-y-auto pb-6 sm:mt-8 sm:pb-3">
         <div className="grid gap-2.5 sm:gap-3">
           {semesters.map((semester) => (
             <div className="relative" key={semester.id}>
@@ -158,14 +158,17 @@ export function MinimalLanding() {
         </div>
       </div>
 
-      <div className="shrink-0 pt-4 sm:pt-6">
+      <div className="shrink-0 pt-4 sm:pt-3">
         <Card
           className="rounded-[18px] border border-line/80 p-0 shadow-none sm:rounded-[22px] sm:border-white/24 sm:shadow-card dark:sm:border-white/10"
           variant="glass-panel"
         >
           <CardContent className="p-4 sm:px-6 sm:py-5">
-            <div className="flex flex-col gap-3.5 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
-              <div className="min-w-0">
+            <div className="flex flex-col gap-3.5 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
+              <div className="min-w-0 sm:relative sm:pl-[4.5rem]">
+                <div className="hidden sm:absolute sm:left-0 sm:top-1/2 sm:flex sm:h-14 sm:w-14 sm:-translate-y-1/2 sm:items-center sm:justify-center sm:rounded-2xl sm:border sm:border-white/28 sm:bg-white/58 sm:text-foreground sm:shadow-[0_8px_24px_-18px_rgba(15,23,42,0.2)] sm:backdrop-blur-sm dark:sm:border-white/10 dark:sm:bg-white/10">
+                  <HeartHandshake className="sm:h-7 sm:w-7" />
+                </div>
                 <button
                   aria-controls="support-panel-content"
                   aria-expanded={isSupportPanelOpen}
@@ -173,11 +176,11 @@ export function MinimalLanding() {
                   onClick={() => setIsSupportPanelOpen((current) => !current)}
                   type="button"
                 >
-                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-2xl border border-white/22 bg-white/50 text-foreground shadow-none backdrop-blur-sm dark:border-white/10 dark:bg-white/10 sm:h-11 sm:w-11 sm:border-white/28 sm:bg-white/58 sm:shadow-[0_8px_24px_-18px_rgba(15,23,42,0.2)]">
-                    <HeartHandshake className="h-5 w-5 sm:h-6 sm:w-6" />
+                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-2xl border border-white/22 bg-white/50 text-foreground shadow-none backdrop-blur-sm dark:border-white/10 dark:bg-white/10 sm:hidden">
+                    <HeartHandshake className="h-5 w-5" />
                   </div>
                   <p className="min-w-0 flex-1 text-[0.96rem] font-semibold text-foreground sm:text-[0.98rem]">
-                    Keep GradeLog independent
+                    Built by a student, for students
                   </p>
                   <span className="inline-flex items-center justify-center text-ink-soft transition sm:hidden">
                     <ChevronDown
@@ -188,14 +191,14 @@ export function MinimalLanding() {
                   </span>
                 </button>
                 <div
-                  className={`mt-2.5 sm:mt-1 sm:ml-14 ${
+                  className={`mt-2.5 sm:mt-1 sm:ml-0 ${
                     isSupportPanelOpen ? "block" : "hidden"
                   } sm:block`}
                   id="support-panel-content"
                 >
                   <p className="max-w-xl text-[0.88rem] leading-6 text-ink-soft sm:max-w-2xl sm:text-sm sm:leading-6">
                     GradeLog stays free, local-first, and account-free. If it
-                    has been useful to you, you can help support development.
+                    helps, you can support its development.
                   </p>
                   <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1">
                     <Link

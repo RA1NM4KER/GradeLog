@@ -201,10 +201,10 @@ export function SemesterScreen() {
                     </div>
                     <div
                       aria-hidden="true"
-                      className="invisible grid min-w-0 flex-1 grid-cols-[minmax(0,1fr)_auto] items-start gap-x-3 gap-y-2 px-3 py-2.5 pl-5 sm:content-between sm:gap-x-4 sm:px-4 sm:pb-3 sm:pt-3 sm:pl-6"
+                      className="invisible grid min-w-0 flex-1 grid-cols-[minmax(0,1fr)_auto] items-start gap-x-3 gap-y-2 px-3 py-1.5 pl-5 sm:content-between sm:gap-x-4 sm:px-4 sm:pb-3 sm:pt-3 sm:pl-6"
                     >
                       <div className="min-w-0">
-                        <div className="min-h-[5.2rem] min-w-0 pr-2 sm:min-h-[4rem]">
+                        <div className="min-h-[3.125rem] min-w-0 pr-2 sm:min-h-[4rem]">
                           <span className="block line-clamp-2 max-w-[18ch] text-[0.95rem] font-semibold leading-[1.08] tracking-[-0.03em] sm:text-[1.08rem]">
                             Placeholder course
                           </span>
