@@ -45,9 +45,9 @@ export function CourseListItem({
       <div
         className={cn("absolute inset-y-0 left-0 w-2.5 sm:w-3", theme.band)}
       />
-      <div className="grid min-w-0 flex-1 grid-cols-[minmax(0,1fr)_auto] items-start gap-x-3 gap-y-2 px-3 py-2.5 pl-5 sm:gap-x-4 sm:px-4 sm:py-3 sm:pl-6">
+      <div className="grid min-w-0 flex-1 grid-cols-[minmax(0,1fr)_auto] items-start gap-x-3 gap-y-2 px-3 py-2.5 pl-5 sm:content-between sm:gap-x-4 sm:px-4 sm:pb-3 sm:pt-3 sm:pl-6">
         <div className="min-w-0">
-          <div className="min-h-[5.2rem] min-w-0">
+          <div className="min-h-[5.2rem] min-w-0 sm:min-h-[4rem]">
             {contextLabel ? (
               <p className="mb-1 text-[0.62rem] font-semibold uppercase tracking-[0.12em] text-ink-muted sm:text-[0.68rem]">
                 {contextLabel}
