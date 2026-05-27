@@ -8,8 +8,10 @@ import { EmptyState } from "@/components/dashboard/empty-state";
 import { Card, CardContent } from "@/components/ui/card";
 import { Select } from "@/components/ui/select";
 import { ExperimentModePill } from "@/components/workspace/shared/experiment-mode-pill";
-import { SemesterSummaryStat } from "@/components/workspace/semester/semester-summary-stat";
-import { SemesterSummaryStrip } from "@/components/workspace/semester/semester-summary-strip";
+import {
+  SemesterOwnedSummaryStrip,
+  SemesterSummaryStrip,
+} from "@/components/workspace/semester/semester-summary-strip";
 import { useCourses } from "@/components/workspace/shared/courses-provider";
 import {
   getCourseDetailsUrl,
@@ -96,42 +98,26 @@ export function SemesterScreen() {
       ) : null}
 
       {isAllCoursesView ? (
-        <Card className="rounded-[20px] border border-line/70 bg-[hsl(var(--surface))] px-3 py-3 shadow-none dark:bg-surface-soft sm:rounded-[26px] sm:px-6 sm:py-5">
-          <CardContent className="grid gap-3 p-0 sm:gap-4">
-            <div className="grid gap-3 lg:grid-cols-[minmax(0,1.2fr)_minmax(280px,0.8fr)] lg:items-start">
-              <div>
-                <p className="text-[0.64rem] font-semibold uppercase tracking-[0.14em] text-ink-muted sm:text-[0.7rem]">
-                  Courses
-                </p>
-                <p className="mt-1 text-[1.28rem] font-semibold leading-none tracking-[-0.035em] text-foreground sm:text-[1.95rem] sm:tracking-[-0.04em]">
-                  All courses
-                </p>
-                <p className="mt-2 hidden max-w-2xl text-[0.9rem] leading-6 text-ink-soft sm:block">
-                  Browse every course across your semesters, then jump into any
-                  course without going back home.
-                </p>
-              </div>
-              <div className="grid grid-cols-3 gap-1.5 self-start sm:gap-3">
-                <SemesterSummaryStat
-                  label="Courses"
-                  value={String(allCourseEntries.length)}
-                />
-                <SemesterSummaryStat
-                  label="Complete"
-                  value={String(allCompletedCourses)}
-                />
-                <SemesterSummaryStat
-                  label="Semesters"
-                  value={String(semesters.length)}
-                />
-              </div>
-            </div>
+        <Card className="rounded-[28px] bg-transparent shadow-none sm:rounded-[34px]">
+          <CardContent className="grid gap-4 p-0">
+            <SemesterSummaryStrip
+              description="A quick look at all your semesters together."
+              eyebrow="Courses"
+              hideSubtitleOnMobile
+              stats={[
+                { label: "Courses", value: String(allCourseEntries.length) },
+                { label: "Complete", value: String(allCompletedCourses) },
+                { label: "Semesters", value: String(semesters.length) },
+              ]}
+              subtitle="All courses, all semesters."
+              title="All courses"
+            />
           </CardContent>
         </Card>
       ) : (
         <Card className="rounded-[28px] bg-transparent shadow-none sm:rounded-[34px]">
           <CardContent className="grid gap-4 p-0">
-            <SemesterSummaryStrip
+            <SemesterOwnedSummaryStrip
               average={average}
               credits={totalCredits}
               gpa={gpa}
