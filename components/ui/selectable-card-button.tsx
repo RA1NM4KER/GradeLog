@@ -8,10 +8,9 @@ const selectableCardButtonVariants = cva(
   {
     variants: {
       tone: {
-        active:
-          "border-white/35 bg-white/62 text-foreground shadow-[0_10px_24px_rgba(28,25,23,0.08)] backdrop-blur-sm dark:border-white/10 dark:bg-white/10",
+        active: "border-line-strong bg-surface text-foreground shadow-card",
         inactive:
-          "border-white/22 bg-white/28 text-foreground hover:border-white/35 hover:bg-white/42 dark:border-white/8 dark:bg-white/4 dark:hover:bg-white/8",
+          "border-line bg-surface-soft text-foreground hover:border-line-strong hover:bg-surface",
       },
       size: {
         default: "px-3 py-3 sm:px-4 sm:py-4",

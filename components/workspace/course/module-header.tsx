@@ -7,6 +7,7 @@ import {
   getSemesterCoursesUrl,
   navigateCourses,
 } from "@/lib/course/courses-navigation";
+import { getCourseTheme } from "@/lib/course/course-theme";
 import { getExperimentTheme } from "@/lib/grades/experiment-theme";
 import { cn } from "@/lib/shared/utils";
 import { Course, Semester } from "@/lib/shared/types";
@@ -35,6 +36,7 @@ export function CourseHeader({
 }) {
   const { resolvedTheme } = useTheme();
   const experimentTheme = getExperimentTheme(resolvedTheme);
+  const courseTheme = getCourseTheme(module);
 
   return (
     <div className="flex items-start justify-between gap-3">
@@ -50,6 +52,11 @@ export function CourseHeader({
           {semesterName}
         </Button>
         <div className="mt-1 flex items-start gap-1.5 sm:mt-1.5 sm:items-center sm:gap-2">
+          <span
+            aria-hidden="true"
+            className="mt-2 h-2 w-2 shrink-0 rounded-full sm:mt-2.5"
+            style={{ backgroundColor: courseTheme.accentColorValue }}
+          />
           <h1 className="text-[1.15rem] font-semibold tracking-tight text-foreground sm:text-xl">
             {module.name}
           </h1>

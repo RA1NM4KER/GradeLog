@@ -21,21 +21,21 @@ const buttonVariants = cva(
         ghost: "text-ink-strong ",
         nav: "rounded-md px-3 py-2 text-sm font-medium text-ink-strong hover:bg-surface-muted hover:text-foreground",
         glass:
-          "border border-white/28 bg-white/62 text-foreground shadow-[0_10px_24px_-18px_rgba(15,23,42,0.18)] backdrop-blur-sm hover:bg-white/82 dark:border-white/10 dark:bg-white/10 dark:hover:bg-white/14",
+          "border border-line bg-surface text-foreground shadow-card hover:bg-surface-hover",
         "glass-soft":
-          "border border-white/24 bg-white/52 text-foreground shadow-[0_10px_24px_-18px_rgba(15,23,42,0.18)] backdrop-blur-sm hover:bg-white/72 dark:border-white/10 dark:bg-white/10 dark:hover:bg-white/14",
+          "border border-line/80 bg-surface-soft text-foreground shadow-card hover:bg-surface-hover",
         "glass-panel":
-          "border border-white/24 bg-white/44 text-foreground shadow-card backdrop-blur-sm hover:bg-white/58 dark:border-white/10 dark:bg-white/6 dark:hover:bg-white/10",
+          "border border-line/80 bg-surface-panel text-foreground shadow-card hover:bg-surface-panel-hover",
         "glass-strong":
-          "border border-stone-300/80 bg-stone-900 text-white shadow-[0_10px_24px_-16px_rgba(15,23,42,0.28)] hover:bg-stone-800 dark:border-white/14 dark:bg-white/18 dark:text-white dark:hover:bg-white/24",
+          "border border-transparent bg-foreground text-background shadow-card hover:bg-foreground/90",
         "glass-muted":
-          "border border-white/35 bg-white/82 text-ink-muted shadow-[0_10px_24px_-18px_rgba(15,23,42,0.14)] hover:bg-white/82 dark:border-white/12 dark:bg-white/10 dark:text-ink-muted dark:hover:bg-white/10",
+          "border border-line bg-surface-muted text-ink-muted shadow-none hover:bg-line/60",
         "dialog-primary":
-          "border border-stone-300/80 bg-stone-900 text-white shadow-[0_12px_28px_-16px_rgba(15,23,42,0.4)] hover:bg-stone-800 dark:border-white/14 dark:bg-white/18 dark:text-white dark:hover:bg-white/24",
+          "border border-transparent bg-foreground text-background shadow-card hover:bg-foreground/90",
         "dialog-muted":
-          "border border-white/20 bg-white/40 text-ink-muted shadow-[0_10px_24px_rgba(28,25,23,0.04)] backdrop-blur-sm hover:bg-white/40 dark:border-white/10 dark:bg-white/5 dark:text-ink-muted dark:hover:bg-white/5",
+          "border border-line bg-surface-muted text-ink-muted shadow-none hover:bg-line/60",
         contrast:
-          "border border-black/10 bg-black text-white shadow-[0_10px_24px_rgba(28,25,23,0.12)] hover:bg-black/90 dark:border-white/10 dark:bg-white dark:text-black dark:hover:bg-white/90",
+          "border border-transparent bg-foreground text-background shadow-card hover:bg-foreground/90",
       },
       size: {
         default: "h-10 px-4",

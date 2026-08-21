@@ -9,7 +9,7 @@ const Dialog = DialogPrimitive.Root;
 const DialogTrigger = DialogPrimitive.Trigger;
 const DialogPortal = DialogPrimitive.Portal;
 const dialogContentVariants = cva(
-  "fixed left-[50%] top-[50%] z-50 grid w-[calc(100vw-1rem)] max-w-[640px] translate-x-[-50%] translate-y-[-50%] gap-4 overflow-hidden rounded-[28px] border border-white/30 bg-surface-dialog/82 p-4 shadow-[0_22px_70px_-38px_rgba(15,23,42,0.28),0_1px_0_rgba(255,255,255,0.5)_inset] backdrop-blur-xl duration-200 before:pointer-events-none before:absolute before:inset-x-0 before:top-0 before:h-20 before:bg-gradient-to-b before:from-white/38 before:via-white/12 before:to-transparent sm:w-[min(92vw,640px)] sm:rounded-[32px] sm:p-6 dark:border-white/10 dark:before:from-white/8 dark:before:via-white/2",
+  "fixed left-[50%] top-[50%] z-50 grid w-[calc(100vw-1rem)] max-w-[640px] translate-x-[-50%] translate-y-[-50%] gap-4 overflow-hidden rounded-[26px] border border-line bg-surface-dialog p-4 shadow-[0_24px_60px_-32px_rgba(15,23,42,0.32)] motion-safe:data-[state=open]:animate-sheet-in sm:w-[min(92vw,640px)] sm:rounded-[30px] sm:p-6",
   {
     variants: {
       layout: {
@@ -33,7 +33,7 @@ const DialogOverlay = React.forwardRef<
   <DialogPrimitive.Overlay
     ref={ref}
     className={cn(
-      "fixed inset-0 z-50 bg-overlay/18 backdrop-blur-md",
+      "fixed inset-0 z-50 bg-overlay/24 backdrop-blur-[2px] motion-safe:data-[state=open]:animate-overlay-in",
       className,
     )}
     {...props}
@@ -63,7 +63,7 @@ const DialogContent = React.forwardRef<
     >
       {children}
       <DialogPrimitive.Close
-        className="absolute right-3 top-3 z-10 rounded-full p-2 text-ink-muted transition hover:bg-white/45 hover:text-foreground sm:right-5 sm:top-5 dark:hover:bg-white/8"
+        className="absolute right-3 top-3 z-10 rounded-full p-2 text-ink-muted transition hover:bg-surface-muted hover:text-foreground sm:right-5 sm:top-5"
         type="button"
       >
         <X className="h-4 w-4" />
@@ -90,7 +90,7 @@ const DialogFooter = ({
 }: React.HTMLAttributes<HTMLDivElement>) => (
   <div
     className={cn(
-      "flex flex-col-reverse gap-3 border-t border-white/20 pt-4 sm:flex-row sm:justify-end dark:border-white/8",
+      "flex flex-col-reverse gap-3 border-t border-line pt-4 sm:flex-row sm:justify-end",
       className,
     )}
     {...props}

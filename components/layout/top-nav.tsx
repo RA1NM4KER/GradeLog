@@ -62,7 +62,7 @@ export function TopNav() {
   }
 
   return (
-    <header className="sticky top-0 z-30 border-b border-line/60 bg-surface-overlay/96 backdrop-blur-sm">
+    <header className="sticky top-0 z-30 border-b border-line/60 bg-surface-overlay pt-safe">
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-2.5 sm:gap-6 sm:px-8 sm:py-3.5">
         <Link
           className="flex min-w-0 shrink-0 items-center gap-1 sm:gap-3"
@@ -118,7 +118,7 @@ export function TopNav() {
               />
             </div>
             <Link
-              className="px-1 text-sm font-medium text-ink-strong transition hover:text-foreground sm:ml-1.5 sm:rounded-full sm:border sm:border-white/10 sm:bg-white/6 sm:px-3.5 sm:py-1.5 sm:text-[13px] sm:backdrop-blur-sm dark:sm:border-white/10 dark:sm:bg-white/6"
+              className="px-1 text-sm font-medium text-ink-strong transition hover:text-foreground sm:ml-1.5 sm:rounded-full sm:border sm:border-line sm:bg-surface-muted sm:px-3.5 sm:py-1.5 sm:text-[13px]"
               href="/"
               prefetch={false}
             >
@@ -141,7 +141,7 @@ export function TopNav() {
       </div>
 
       <Dialog onOpenChange={setMobileMenuOpen} open={mobileMenuOpen}>
-        <DialogContent className="left-auto right-0 top-0 grid h-dvh w-[min(86vw,320px)] max-w-none grid-rows-[auto_1fr] translate-x-0 translate-y-0 rounded-none rounded-l-[28px] border-l border-r-0 border-t-0 border-white/18 p-5 before:hidden dark:border-white/10 sm:hidden">
+        <DialogContent className="left-auto right-0 top-0 grid h-dvh w-[min(86vw,320px)] max-w-none grid-rows-[auto_1fr] translate-x-0 translate-y-0 rounded-none rounded-l-[28px] border-l border-r-0 border-t-0 border-line p-5 motion-safe:data-[state=open]:!animate-sheet-in-right sm:hidden">
           <DialogHeader className="pr-10">
             <DialogTitle className="text-lg">Menu</DialogTitle>
             <DialogDescription>

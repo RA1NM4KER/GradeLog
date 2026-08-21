@@ -5,7 +5,6 @@ import { BookMarked, Plus } from "lucide-react";
 import { CourseDialog } from "@/components/dashboard/course-dialog";
 import { CourseListItem } from "@/components/dashboard/course-list-item";
 import { EmptyState } from "@/components/dashboard/empty-state";
-import { Card, CardContent } from "@/components/ui/card";
 import { Select } from "@/components/ui/select";
 import { ExperimentModePill } from "@/components/workspace/shared/experiment-mode-pill";
 import {
@@ -98,41 +97,33 @@ export function SemesterScreen() {
       ) : null}
 
       {isAllCoursesView ? (
-        <Card className="rounded-[28px] bg-transparent shadow-none sm:rounded-[34px]">
-          <CardContent className="grid gap-4 p-0">
-            <SemesterSummaryStrip
-              description="A quick look at all your semesters together."
-              eyebrow="Courses"
-              hideSubtitleOnMobile
-              stats={[
-                { label: "Courses", value: String(allCourseEntries.length) },
-                { label: "Complete", value: String(allCompletedCourses) },
-                { label: "Semesters", value: String(semesters.length) },
-              ]}
-              subtitle="All courses, all semesters."
-              title="All courses"
-            />
-          </CardContent>
-        </Card>
+        <SemesterSummaryStrip
+          description="A quick look at all your semesters together."
+          eyebrow="Courses"
+          hideSubtitleOnMobile
+          stats={[
+            { label: "Courses", value: String(allCourseEntries.length) },
+            { label: "Complete", value: String(allCompletedCourses) },
+            { label: "Semesters", value: String(semesters.length) },
+          ]}
+          subtitle="All courses, all semesters."
+          title="All courses"
+        />
       ) : (
-        <Card className="rounded-[28px] bg-transparent shadow-none sm:rounded-[34px]">
-          <CardContent className="grid gap-4 p-0">
-            <SemesterOwnedSummaryStrip
-              average={average}
-              credits={totalCredits}
-              gpa={gpa}
-              periodLabel={semester.periodLabel}
-              semester={semester}
-              semesterName={semester.name}
-              onSaveSemester={(nextSemester) =>
-                updateSemester(nextSemester.id, {
-                  name: nextSemester.name,
-                  periodLabel: nextSemester.periodLabel,
-                })
-              }
-            />
-          </CardContent>
-        </Card>
+        <SemesterOwnedSummaryStrip
+          average={average}
+          credits={totalCredits}
+          gpa={gpa}
+          periodLabel={semester.periodLabel}
+          semester={semester}
+          semesterName={semester.name}
+          onSaveSemester={(nextSemester) =>
+            updateSemester(nextSemester.id, {
+              name: nextSemester.name,
+              periodLabel: nextSemester.periodLabel,
+            })
+          }
+        />
       )}
 
       <section className="mt-4 px-3 sm:mt-7 sm:px-7">

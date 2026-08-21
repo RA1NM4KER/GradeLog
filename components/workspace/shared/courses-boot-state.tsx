@@ -3,6 +3,7 @@
 import { ReactNode } from "react";
 
 import { PageContainer } from "@/components/ui/page-container";
+import { RingSpinner } from "@/components/ui/ring-motif";
 
 export function CoursesBootState({
   action,
@@ -17,11 +18,7 @@ export function CoursesBootState({
     <PageContainer className="flex min-h-[calc(100vh-5.5rem)] items-center justify-center py-8">
       <div className="w-full max-w-xl">
         <div className="mx-auto flex w-full max-w-md flex-col items-center text-center">
-          <div className="relative mb-5 flex h-24 w-24 items-center justify-center">
-            <span className="border-loader-sand-top border-loader-sand-right border-loader-sand-bottom absolute inset-[5px] rounded-full border-[3px] border-transparent animate-[spin_2.8s_linear_infinite]" />
-            <span className="border-loader-sand-top border-loader-sand-bottom border-loader-sand-left absolute inset-[19px] rounded-full border-[3px] border-transparent animate-[spin_2.2s_linear_infinite_reverse]" />
-            <span className="border-loader-coral-top border-loader-coral-bottom border-loader-coral-left absolute inset-[33px] rounded-full border-[3px] border-transparent animate-[spin_1.6s_linear_infinite]" />
-          </div>
+          <RingSpinner className="mb-5" size={96} />
           <div className="space-y-2">
             <h1 className="text-[1.02rem] font-semibold tracking-tight text-foreground sm:text-lg">
               {title}

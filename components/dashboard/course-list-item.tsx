@@ -36,7 +36,7 @@ export function CourseListItem({
       aria-pressed={isActive}
       className={cn(
         "group relative flex h-full w-full overflow-hidden rounded-[20px] border border-line bg-surface text-left transition-all duration-200 dark:bg-surface-soft sm:rounded-[24px]",
-        "shadow-card hover:-translate-y-0.5 hover:shadow-soft",
+        "shadow-card hover:-translate-y-0.5 hover:shadow-soft active:scale-[0.99] active:translate-y-0",
         isActive && "border-line-strong shadow-soft",
       )}
       onClick={onSelect}
@@ -74,9 +74,7 @@ export function CourseListItem({
               Current grade
             </p>
             <p
-              className={cn(
-                "mt-1 text-[1.5rem] font-semibold leading-none tracking-[-0.05em] sm:text-[1.9rem]",
-              )}
+              className="mt-1 text-[1.5rem] font-semibold leading-none tracking-[-0.05em] sm:text-[1.9rem]"
               style={{ color: theme.accentColorValue }}
             >
               {hasRecordedGrade ? formatPercent(grade) : "--"}

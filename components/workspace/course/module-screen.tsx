@@ -225,7 +225,7 @@ export function CourseScreen({ moduleId }: { moduleId?: string }) {
         />
       </div>
 
-      <div className="fixed inset-x-0 bottom-0 z-30 border-t border-line/80 bg-surface-footer/88 backdrop-blur-xl md:hidden">
+      <div className="fixed inset-x-0 bottom-0 z-30 border-t border-line/80 bg-surface-footer/88 pb-safe backdrop-blur-xl md:hidden">
         <div className="mx-auto max-w-7xl px-4 py-3">
           <CourseSwitcher
             semesterId={semester.id}

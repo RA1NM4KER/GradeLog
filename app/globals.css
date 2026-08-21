@@ -67,8 +67,12 @@
   --surface-muted: 60 4.8% 95.9%;
   --surface-soft: 0 0% 100%;
   --surface-overlay: 0 0% 100%;
-  --brand-rgb: 11 110 230;
-  --brand-hover-rgb: 10 99 206;
+  --brand-rgb: 231 111 81;
+  --brand-hover-rgb: 207 104 77;
+  --brand-gold-rgb: 216 178 83;
+  --brand-gold-hover-rgb: 196 160 70;
+  --brand-teal-rgb: 65 179 162;
+  --brand-teal-hover-rgb: 53 153 138;
   --primary: 20 14.3% 4.1%;
   --primary-hover-rgb: 41 37 36;
   --primary-foreground: 60 9.1% 97.8%;
@@ -142,8 +146,12 @@
   --surface-muted: 220 13% 18%;
   --surface-soft: 220 14% 16%;
   --surface-overlay: 220 16% 14%;
-  --brand-rgb: 91 162 255;
-  --brand-hover-rgb: 75 147 240;
+  --brand-rgb: 235 140 115;
+  --brand-hover-rgb: 245 165 140;
+  --brand-gold-rgb: 224 194 128;
+  --brand-gold-hover-rgb: 236 210 150;
+  --brand-teal-rgb: 90 195 178;
+  --brand-teal-hover-rgb: 110 212 195;
   --primary: 40 20% 92%;
   --primary-hover-rgb: 214 211 209;
   --primary-foreground: 220 16% 11%;
@@ -181,6 +189,14 @@ body {
 }
 
 @layer utilities {
+  .pt-safe {
+    padding-top: max(env(safe-area-inset-top), 0px);
+  }
+
+  .pb-safe {
+    padding-bottom: max(env(safe-area-inset-bottom), 0px);
+  }
+
   .text-success {
     color: hsl(var(--success-foreground));
   }

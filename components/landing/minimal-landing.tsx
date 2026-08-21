@@ -1,20 +1,15 @@
 "use client";
 
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import {
-  ChevronDown,
-  ExternalLink,
-  HeartHandshake,
-  Plus,
-  Trash2,
-} from "lucide-react";
+import { ChevronRight, HeartHandshake, Plus, Trash2 } from "lucide-react";
 
-import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { PageBackground } from "@/components/ui/page-background";
 import { PageContainer } from "@/components/ui/page-container";
 import { PageIntro } from "@/components/ui/page-intro";
+import { RowActionMenu } from "@/components/ui/row-action-menu";
+import { AboutSupportDialog } from "@/components/landing/about-support-dialog";
 import { SemesterDialog } from "@/components/landing/semester-dialog";
 import { useCourses } from "@/components/workspace/shared/courses-provider";
 import {
@@ -27,7 +22,6 @@ export function MinimalLanding() {
   const { addSemester, deleteSemester, semesters, selectSemester } =
     useCourses();
   const [suggestionNames, setSuggestionNames] = useState<string[]>([]);
-  const [isSupportPanelOpen, setIsSupportPanelOpen] = useState(false);
 
   const existingNames = new Set(semesters.map((semester) => semester.name));
   const suggestions = getSuggestedSemesters().filter(
@@ -74,6 +68,7 @@ export function MinimalLanding() {
 
   return (
     <PageContainer className="flex h-[calc(100vh-5.5rem)] flex-col overflow-hidden px-3 pt-7 pb-0 sm:px-8 sm:pt-12 sm:pb-4">
+      <PageBackground variant="landing" />
       <PageIntro
         badge="GradeLog"
         descriptionClassName="sm:text-[1.08rem] sm:leading-7"
@@ -82,7 +77,7 @@ export function MinimalLanding() {
         title="Your semesters"
       >
         <div className="mt-3 inline-flex max-w-full items-center gap-2 rounded-full border border-line/80 bg-surface-soft px-3 py-1.5 text-[0.74rem] font-medium text-ink-soft shadow-none sm:mt-4 sm:bg-surface sm:px-3.5 sm:py-2 sm:text-[0.78rem] sm:shadow-card">
-          <span className="bg-course-teal h-2 w-2 rounded-full" />
+          <span className="bg-brand-teal h-2 w-2 rounded-full" />
           Private. No sign up. Works offline.
         </div>
       </PageIntro>
@@ -113,7 +108,7 @@ export function MinimalLanding() {
           {semesters.map((semester) => (
             <div className="relative" key={semester.id}>
               <button
-                className="grid w-full grid-cols-1 items-center gap-2 rounded-[14px] bg-surface-soft px-4 py-3 pr-14 text-left shadow-card transition hover:bg-surface sm:items-start sm:gap-2.5 sm:rounded-[18px] sm:px-5 sm:py-3.5 sm:pr-16"
+                className="group grid w-full grid-cols-[minmax(0,1fr)_auto] items-center gap-3 rounded-[14px] bg-surface-soft px-4 py-3 pr-24 text-left shadow-card transition active:scale-[0.985] hover:bg-surface sm:gap-3.5 sm:rounded-[18px] sm:px-5 sm:py-3.5 sm:pr-28"
                 onClick={() => openSemester(semester.id)}
                 type="button"
               >
@@ -125,15 +120,21 @@ export function MinimalLanding() {
                     {semester.periodLabel}
                   </p>
                 </div>
+                <ChevronRight className="h-4.5 w-4.5 shrink-0 text-ink-subtle transition group-hover:text-ink-strong" />
               </button>
-              <button
-                aria-label={`Delete ${semester.name}`}
-                className="absolute top-1/2 right-3 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-xl text-ink-subtle transition hover:bg-black/5 hover:text-ink-strong sm:top-4 sm:right-4 sm:h-10 sm:w-10 sm:translate-y-0 dark:hover:bg-white/8"
-                onClick={() => removeSemester(semester.id, semester.name)}
-                type="button"
-              >
-                <Trash2 className="h-4.5 w-4.5" />
-              </button>
+              <RowActionMenu
+                className="absolute top-1/2 right-3 -translate-y-1/2 sm:top-4 sm:right-4 sm:translate-y-0"
+                items={[
+                  {
+                    icon: <Trash2 className="h-4 w-4" />,
+                    id: "delete",
+                    label: "Delete",
+                    onSelect: () => removeSemester(semester.id, semester.name),
+                    tone: "danger",
+                  },
+                ]}
+                label={`More actions for ${semester.name}`}
+              />
             </div>
           ))}
           <SemesterDialog
@@ -158,96 +159,19 @@ export function MinimalLanding() {
         </div>
       </div>
 
-      <div className="shrink-0 pt-4 sm:pt-3">
-        <Card
-          className="rounded-[18px] border border-line/80 p-0 shadow-none sm:rounded-[22px] sm:border-white/24 sm:shadow-card dark:sm:border-white/10"
-          variant="glass-panel"
-        >
-          <CardContent className="p-4 sm:px-6 sm:py-5">
-            <div className="flex flex-col gap-3.5 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
-              <div className="min-w-0 sm:relative sm:pl-[4.5rem]">
-                <div className="hidden sm:absolute sm:left-0 sm:top-1/2 sm:flex sm:h-14 sm:w-14 sm:-translate-y-1/2 sm:items-center sm:justify-center sm:rounded-2xl sm:border sm:border-white/28 sm:bg-white/58 sm:text-foreground sm:shadow-[0_8px_24px_-18px_rgba(15,23,42,0.2)] sm:backdrop-blur-sm dark:sm:border-white/10 dark:sm:bg-white/10">
-                  <HeartHandshake className="sm:h-7 sm:w-7" />
-                </div>
-                <button
-                  aria-controls="support-panel-content"
-                  aria-expanded={isSupportPanelOpen}
-                  className="flex w-full items-center gap-3 text-left sm:pointer-events-none"
-                  onClick={() => setIsSupportPanelOpen((current) => !current)}
-                  type="button"
-                >
-                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-2xl border border-white/22 bg-white/50 text-foreground shadow-none backdrop-blur-sm dark:border-white/10 dark:bg-white/10 sm:hidden">
-                    <HeartHandshake className="h-5 w-5" />
-                  </div>
-                  <p className="min-w-0 flex-1 text-[0.96rem] font-semibold text-foreground sm:text-[0.98rem]">
-                    Built by a student, for students
-                  </p>
-                  <span className="inline-flex items-center justify-center text-ink-soft transition sm:hidden">
-                    <ChevronDown
-                      className={`h-4 w-4 transition-transform duration-200 ${
-                        isSupportPanelOpen ? "rotate-180" : ""
-                      }`}
-                    />
-                  </span>
-                </button>
-                <div
-                  className={`mt-2.5 sm:mt-1 sm:ml-0 ${
-                    isSupportPanelOpen ? "block" : "hidden"
-                  } sm:block`}
-                  id="support-panel-content"
-                >
-                  <p className="max-w-xl text-[0.88rem] leading-6 text-ink-soft sm:max-w-2xl sm:text-sm sm:leading-6">
-                    GradeLog stays free, local-first, and account-free. If it
-                    helps, you can support its development.
-                  </p>
-                  <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1">
-                    <Link
-                      className="text-[0.92rem] font-medium text-foreground/88 underline decoration-foreground/35 underline-offset-4 transition hover:text-foreground hover:decoration-foreground sm:text-sm"
-                      href="/privacy"
-                      prefetch={false}
-                    >
-                      <span className="sm:hidden">Privacy</span>
-                      <span className="hidden sm:inline">Privacy policy</span>
-                    </Link>
-                    <Link
-                      className="text-[0.92rem] font-medium text-foreground/88 underline decoration-foreground/35 underline-offset-4 transition hover:text-foreground hover:decoration-foreground sm:text-sm"
-                      href="/terms"
-                      prefetch={false}
-                    >
-                      <span className="sm:hidden">Terms</span>
-                      <span className="hidden sm:inline">Terms of service</span>
-                    </Link>
-                    <Link
-                      className="text-[0.92rem] font-medium text-foreground/88 underline decoration-foreground/35 underline-offset-4 transition hover:text-foreground hover:decoration-foreground sm:text-sm"
-                      href="/contact"
-                      prefetch={false}
-                    >
-                      Contact
-                    </Link>
-                  </div>
-                </div>
-              </div>
-
-              <Button
-                asChild
-                className={`w-full sm:w-auto sm:self-center sm:rounded-full sm:px-4 sm:py-2 sm:text-sm sm:font-medium ${
-                  isSupportPanelOpen ? "flex" : "hidden"
-                } sm:flex`}
-                size="sm"
-                variant="glass-panel"
-              >
-                <a
-                  href="https://ko-fi.com/kefasaleck"
-                  rel="noreferrer"
-                  target="_blank"
-                >
-                  Support on Ko-fi
-                  <ExternalLink className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-                </a>
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
+      <div className="shrink-0 border-t border-line/70 py-3 pb-safe text-center sm:py-3.5">
+        <AboutSupportDialog
+          triggerAsChild
+          triggerChildren={
+            <button
+              className="inline-flex items-center gap-1.5 text-[0.82rem] font-medium text-ink-muted transition hover:text-foreground"
+              type="button"
+            >
+              <HeartHandshake className="h-3.5 w-3.5" />
+              About &amp; support
+            </button>
+          }
+        />
       </div>
     </PageContainer>
   );

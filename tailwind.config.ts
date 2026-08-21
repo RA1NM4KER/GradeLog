@@ -51,6 +51,10 @@ const config: Config = {
           DEFAULT: "rgb(var(--brand-rgb) / <alpha-value>)",
           hover: "rgb(var(--brand-hover-rgb) / <alpha-value>)",
           foreground: "rgb(255 255 255 / <alpha-value>)",
+          gold: "rgb(var(--brand-gold-rgb) / <alpha-value>)",
+          "gold-hover": "rgb(var(--brand-gold-hover-rgb) / <alpha-value>)",
+          teal: "rgb(var(--brand-teal-rgb) / <alpha-value>)",
+          "teal-hover": "rgb(var(--brand-teal-hover-rgb) / <alpha-value>)",
         },
         surface: {
           DEFAULT: "hsl(var(--surface))",
@@ -88,9 +92,30 @@ const config: Config = {
         sans: ["var(--font-manrope)"],
         display: ["var(--font-newsreader)"],
       },
-      backgroundImage: {
-        "paper-grid":
-          "linear-gradient(to right, rgba(55, 53, 47, 0.03) 1px, transparent 1px), linear-gradient(to bottom, rgba(55, 53, 47, 0.03) 1px, transparent 1px)",
+      keyframes: {
+        "sheet-in": {
+          from: { opacity: "0", transform: "translate(-50%, -46%) scale(0.97)" },
+          to: { opacity: "1", transform: "translate(-50%, -50%) scale(1)" },
+        },
+        "sheet-in-right": {
+          from: { opacity: "0", transform: "translate(2.5%, 0)" },
+          to: { opacity: "1", transform: "translate(0, 0)" },
+        },
+        "overlay-in": {
+          from: { opacity: "0" },
+          to: { opacity: "1" },
+        },
+        "ring-settle": {
+          "0%": { opacity: "0", transform: "scale(0.94)" },
+          "100%": { opacity: "1", transform: "scale(1)" },
+        },
+      },
+      animation: {
+        "sheet-in": "sheet-in 0.28s cubic-bezier(0.22, 1, 0.36, 1)",
+        "sheet-in-right":
+          "sheet-in-right 0.28s cubic-bezier(0.22, 1, 0.36, 1)",
+        "overlay-in": "overlay-in 0.2s ease-out",
+        "ring-settle": "ring-settle 0.5s cubic-bezier(0.22, 1, 0.36, 1)",
       },
     },
   },
