@@ -58,7 +58,7 @@ export function RowActionMenu({
   }, [open]);
 
   return (
-    <div className={cn("relative", className)} ref={containerRef}>
+    <div className={cn("relative z-20", className)} ref={containerRef}>
       <button
         aria-expanded={open}
         aria-haspopup="menu"
