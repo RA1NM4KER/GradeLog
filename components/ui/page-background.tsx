@@ -1,5 +1,7 @@
 "use client";
 
+import type { CSSProperties } from "react";
+
 import { useTheme } from "@/components/theme/theme-provider";
 
 const backgroundAssets = {
@@ -37,11 +39,24 @@ const backgroundAssets = {
 
 export type PageBackgroundVariant = keyof typeof backgroundAssets;
 
+function toWebp(pngPath: string) {
+  return pngPath.replace(/\.png$/, ".webp");
+}
+
+function layerStyle(pngPath: string) {
+  return {
+    "--bg-fallback": `url(${pngPath})`,
+    "--bg-webp": `url(${toWebp(pngPath)})`,
+  } as CSSProperties;
+}
+
 /**
  * Full-viewport, fixed brand background for a screen. Renders behind all
  * content — AppShell's <main> has no background color of its own so this
  * shows through. Picks mobile/desktop art by breakpoint and light/dark art
- * by the active theme; no filters or CSS approximations of dark mode.
+ * by the active theme. Serves WebP with the source PNG as a CSS-level
+ * fallback (`.bg-progressive`) for browsers below the WebP floor — no JS
+ * format sniffing, no filters or CSS approximations of dark mode.
  */
 export function PageBackground({ variant }: { variant: PageBackgroundVariant }) {
   const { resolvedTheme } = useTheme();
@@ -53,12 +68,12 @@ export function PageBackground({ variant }: { variant: PageBackgroundVariant }) 
       className="pointer-events-none fixed inset-0 -z-10 bg-canvas"
     >
       <div
-        className="absolute inset-0 bg-cover bg-center bg-no-repeat sm:hidden"
-        style={{ backgroundImage: `url(${mobile})` }}
+        className="bg-progressive absolute inset-0 bg-cover bg-center bg-no-repeat sm:hidden"
+        style={layerStyle(mobile)}
       />
       <div
-        className="absolute inset-0 hidden bg-cover bg-center bg-no-repeat sm:block"
-        style={{ backgroundImage: `url(${desktop})` }}
+        className="bg-progressive absolute inset-0 hidden bg-cover bg-center bg-no-repeat sm:block"
+        style={layerStyle(desktop)}
       />
     </div>
   );

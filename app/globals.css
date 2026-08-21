@@ -197,6 +197,12 @@ body {
     padding-bottom: max(env(safe-area-inset-bottom), 0px);
   }
 
+  .bg-progressive {
+    background-image: var(--bg-fallback);
+    background-image: -webkit-image-set(var(--bg-webp) 1x);
+    background-image: image-set(var(--bg-webp) 1x);
+  }
+
   .text-success {
     color: hsl(var(--success-foreground));
   }
