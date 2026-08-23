@@ -9,7 +9,7 @@ interface AppShellProps {
 
 export function AppShell({ children, className }: AppShellProps) {
   return (
-    <main className={cn("min-h-screen text-foreground", className)}>
+    <main className={cn("min-h-dvh text-foreground", className)}>
       {children}
     </main>
   );

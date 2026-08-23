@@ -177,7 +177,7 @@ html {
 }
 
 body {
-  min-height: 100vh;
+  min-height: 100dvh;
   background: var(--canvas);
   color: hsl(var(--foreground));
   font-feature-settings: "cv11", "ss01";
