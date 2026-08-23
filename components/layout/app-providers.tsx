@@ -3,6 +3,7 @@ import { ReactNode } from "react";
 import { NativeBackHandler } from "@/components/layout/native-back-handler";
 import { SyncProvider } from "@/components/sync/sync-provider";
 import { ThemeProvider } from "@/components/theme/theme-provider";
+import { ActiveBackgroundProvider } from "@/components/ui/page-background-context";
 import { CoursesProvider } from "@/components/workspace/shared/courses-provider";
 
 export function AppProviders({ children }: { children: ReactNode }) {
@@ -10,8 +11,10 @@ export function AppProviders({ children }: { children: ReactNode }) {
     <ThemeProvider>
       <SyncProvider>
         <CoursesProvider>
-          <NativeBackHandler />
-          {children}
+          <ActiveBackgroundProvider>
+            <NativeBackHandler />
+            {children}
+          </ActiveBackgroundProvider>
         </CoursesProvider>
       </SyncProvider>
     </ThemeProvider>

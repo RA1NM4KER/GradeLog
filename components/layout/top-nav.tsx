@@ -20,6 +20,8 @@ import {
 import { ThemeModePanel, ThemeSelect } from "@/components/theme/theme-select";
 import { Button } from "@/components/ui/button";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
+import { layerStyle } from "@/components/ui/page-background";
+import { useActiveBackground } from "@/components/ui/page-background-context";
 import { useCourses } from "@/components/workspace/shared/courses-provider";
 import {
   SYNC_STATUS_CONNECTING,
@@ -32,6 +34,7 @@ import {
 export function TopNav() {
   const { appState, replaceAppState } = useCourses();
   const { isAuthenticated, lastSyncedAt, status } = useSyncConnection();
+  const { active } = useActiveBackground();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const syncLabel = isAuthenticated
     ? getSyncStatusLabel(status)
@@ -62,7 +65,19 @@ export function TopNav() {
   }
 
   return (
-    <header className="sticky top-0 z-30 border-b border-line/60 bg-surface-overlay pt-safe">
+    <header className="sticky top-0 z-30 bg-canvas pt-safe">
+      {active && (
+        <div aria-hidden="true" className="absolute inset-0 -z-10 overflow-hidden">
+          <div
+            className="bg-progressive absolute inset-0 bg-fixed bg-cover bg-center bg-no-repeat sm:hidden"
+            style={layerStyle(active.mobile)}
+          />
+          <div
+            className="bg-progressive absolute inset-0 hidden bg-fixed bg-cover bg-center bg-no-repeat sm:block"
+            style={layerStyle(active.desktop)}
+          />
+        </div>
+      )}
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-2.5 sm:gap-6 sm:px-8 sm:py-3.5">
         <Link
           className="flex min-w-0 shrink-0 items-center gap-1 sm:gap-3"

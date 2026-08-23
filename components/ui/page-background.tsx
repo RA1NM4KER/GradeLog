@@ -1,8 +1,9 @@
 "use client";
 
-import type { CSSProperties } from "react";
+import { useEffect, type CSSProperties } from "react";
 
 import { useTheme } from "@/components/theme/theme-provider";
+import { useActiveBackground } from "@/components/ui/page-background-context";
 
 const backgroundAssets = {
   landing: {
@@ -43,7 +44,7 @@ function toWebp(pngPath: string) {
   return pngPath.replace(/\.png$/, ".webp");
 }
 
-function layerStyle(pngPath: string) {
+export function layerStyle(pngPath: string) {
   return {
     "--bg-fallback": `url(${pngPath})`,
     "--bg-webp": `url(${toWebp(pngPath)})`,
@@ -61,6 +62,11 @@ function layerStyle(pngPath: string) {
 export function PageBackground({ variant }: { variant: PageBackgroundVariant }) {
   const { resolvedTheme } = useTheme();
   const { mobile, desktop } = backgroundAssets[variant][resolvedTheme];
+  const { setActive } = useActiveBackground();
+
+  useEffect(() => {
+    setActive({ mobile, desktop });
+  }, [mobile, desktop, setActive]);
 
   return (
     <div
