@@ -67,7 +67,7 @@ export function MinimalLanding() {
   }
 
   return (
-    <PageContainer className="flex h-[calc(100vh-5.5rem)] flex-col overflow-hidden px-3 pt-7 pb-0 sm:px-8 sm:pt-12 sm:pb-4">
+    <PageContainer className="flex h-[calc(100dvh-5.5rem)] flex-col overflow-hidden px-3 pt-7 pb-0 sm:px-8 sm:pt-12 sm:pb-4">
       <PageBackground variant="landing" />
       <PageIntro
         badge="GradeLog"

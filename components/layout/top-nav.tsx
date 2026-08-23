@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { DatabaseBackup, Menu, Smartphone } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { InstallAppButton } from "@/components/pwa/install-app-button";
 import { LocalBackupDialog } from "@/components/pwa/local-backup-dialog";
@@ -36,6 +36,21 @@ export function TopNav() {
   const { isAuthenticated, lastSyncedAt, status } = useSyncConnection();
   const { active } = useActiveBackground();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const headerRef = useRef<HTMLElement>(null);
+  const [headerHeight, setHeaderHeight] = useState(0);
+
+  useEffect(() => {
+    const header = headerRef.current;
+    if (!header) return;
+
+    const observer = new ResizeObserver(([entry]) => {
+      const borderBoxHeight = entry.borderBoxSize?.[0]?.blockSize;
+      setHeaderHeight(borderBoxHeight ?? entry.contentRect.height);
+    });
+    observer.observe(header, { box: "border-box" });
+
+    return () => observer.disconnect();
+  }, []);
   const syncLabel = isAuthenticated
     ? getSyncStatusLabel(status)
     : "Connect devices";
@@ -65,15 +80,19 @@ export function TopNav() {
   }
 
   return (
-    <header className="sticky top-0 z-30 bg-canvas pt-safe">
-      {active && (
-        <div aria-hidden="true" className="absolute inset-0 -z-10 overflow-hidden">
+    <header className="sticky top-0 z-30 bg-canvas pt-safe" ref={headerRef}>
+      {active && headerHeight > 0 && (
+        <div
+          aria-hidden="true"
+          className="pointer-events-none fixed inset-0 -z-10"
+          style={{ clipPath: `inset(0 0 calc(100% - ${headerHeight}px) 0)` }}
+        >
           <div
-            className="bg-progressive absolute inset-0 bg-fixed bg-cover bg-center bg-no-repeat sm:hidden"
+            className="bg-progressive absolute inset-0 bg-cover bg-center bg-no-repeat sm:hidden"
             style={layerStyle(active.mobile)}
           />
           <div
-            className="bg-progressive absolute inset-0 hidden bg-fixed bg-cover bg-center bg-no-repeat sm:block"
+            className="bg-progressive absolute inset-0 hidden bg-cover bg-center bg-no-repeat sm:block"
             style={layerStyle(active.desktop)}
           />
         </div>

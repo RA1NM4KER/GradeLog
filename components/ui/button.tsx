@@ -19,7 +19,7 @@ const buttonVariants = cva(
         "destructive-soft":
           "border border-danger-soft bg-danger-soft text-danger hover:brightness-[0.98] disabled:border-line disabled:bg-surface disabled:text-ink-soft disabled:opacity-100",
         ghost: "text-ink-strong ",
-        nav: "rounded-md px-3 py-2 text-sm font-medium text-ink-strong hover:bg-surface-muted hover:text-foreground",
+        nav: "rounded-md px-3 py-2 text-sm font-medium text-ink-strong transition-colors hover:bg-white/35 hover:text-foreground dark:hover:bg-white/10",
         glass:
           "border border-line bg-surface text-foreground shadow-card hover:bg-surface-hover",
         "glass-soft":
