@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
+import { PageBackground } from "@/components/ui/page-background";
 import { PageIntro } from "@/components/ui/page-intro";
 import { LegalSection } from "@/lib/legal/types";
 
@@ -17,6 +18,7 @@ export function LegalPage({
 }) {
   return (
     <div className="mx-auto max-w-4xl px-5 py-12 sm:px-8 sm:py-14">
+      <PageBackground variant="detail" />
       <PageIntro
         badge="GradeLog"
         description={
