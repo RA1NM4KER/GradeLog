@@ -154,7 +154,7 @@ export function CourseScreen({ moduleId }: { moduleId?: string }) {
   }
 
   return (
-    <div className="mx-auto max-w-7xl overflow-auto px-4 py-3 pb-20 sm:h-[calc(100vh-5.5rem)] sm:overflow-hidden sm:px-8 sm:py-4 sm:pb-4 md:pb-6">
+    <div className="mx-auto max-w-7xl overflow-auto px-4 py-3 pb-20 sm:h-[calc(100dvh-var(--app-header-height,5.5rem))] sm:overflow-hidden sm:px-8 sm:py-4 sm:pb-4 md:pb-6">
       <div className="mb-3 sm:mb-4">
         <CourseHeader
           isExperimenting={isExperimenting}
@@ -225,8 +225,8 @@ export function CourseScreen({ moduleId }: { moduleId?: string }) {
         />
       </div>
 
-      <div className="fixed inset-x-0 bottom-0 z-30 border-t border-line/80 bg-surface-footer/88 backdrop-blur-xl md:hidden">
-        <div className="mx-auto max-w-7xl px-4 pb-0 pt-3">
+      <div className="fixed inset-x-0 bottom-0 z-30 border-t border-line/80 bg-surface-footer/88 pb-safe backdrop-blur-xl md:hidden">
+        <div className="mx-auto max-w-7xl px-4 pt-3">
           <CourseSwitcher
             semesterId={semester.id}
             semesterCourses={semester.courses}

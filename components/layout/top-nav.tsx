@@ -51,6 +51,15 @@ export function TopNav() {
 
     return () => observer.disconnect();
   }, []);
+
+  useEffect(() => {
+    if (headerHeight > 0) {
+      document.documentElement.style.setProperty(
+        "--app-header-height",
+        `${headerHeight}px`,
+      );
+    }
+  }, [headerHeight]);
   const syncLabel = isAuthenticated
     ? getSyncStatusLabel(status)
     : "Connect devices";
