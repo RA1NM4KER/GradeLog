@@ -31,6 +31,8 @@ npm run format:check
 
 Run the most relevant checks after changes. For broad TypeScript, route, or
 build changes, run `npm run build` as well.
+Before committing or pushing, run `npm run format:check`, `npm run lint`, and
+`npm test`; CI runs these checks on every push and pull request.
 
 ## Key areas
 

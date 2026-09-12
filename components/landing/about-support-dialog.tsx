@@ -35,8 +35,8 @@ export function AboutSupportDialog({
           </div>
           <DialogTitle>Built by a student, for students</DialogTitle>
           <DialogDescription>
-            GradeLog stays free, local-first, and account-free. If it helps,
-            you can support its development.
+            GradeLog stays free, local-first, and account-free. If it helps, you
+            can support its development.
           </DialogDescription>
         </DialogHeader>
 

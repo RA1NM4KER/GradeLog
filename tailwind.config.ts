@@ -94,7 +94,10 @@ const config: Config = {
       },
       keyframes: {
         "sheet-in": {
-          from: { opacity: "0", transform: "translate(-50%, -46%) scale(0.97)" },
+          from: {
+            opacity: "0",
+            transform: "translate(-50%, -46%) scale(0.97)",
+          },
           to: { opacity: "1", transform: "translate(-50%, -50%) scale(1)" },
         },
         "sheet-in-right": {
@@ -112,8 +115,7 @@ const config: Config = {
       },
       animation: {
         "sheet-in": "sheet-in 0.28s cubic-bezier(0.22, 1, 0.36, 1)",
-        "sheet-in-right":
-          "sheet-in-right 0.28s cubic-bezier(0.22, 1, 0.36, 1)",
+        "sheet-in-right": "sheet-in-right 0.28s cubic-bezier(0.22, 1, 0.36, 1)",
         "overlay-in": "overlay-in 0.2s ease-out",
         "ring-settle": "ring-settle 0.5s cubic-bezier(0.22, 1, 0.36, 1)",
       },

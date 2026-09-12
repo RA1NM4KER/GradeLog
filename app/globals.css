@@ -202,12 +202,25 @@ body {
   --background-ring: #7a4137;
 }
 
-.brand-background-art__canvas { fill: var(--background-canvas); }
-.brand-background-art__coral { fill: var(--background-coral); }
-.brand-background-art__coral-soft { fill: var(--background-coral-soft); }
-.brand-background-art__teal { fill: var(--background-teal); }
-.brand-background-art__teal-soft { fill: var(--background-teal-soft); }
-.brand-background-art__ring { stroke: var(--background-ring); stroke-width: 2; }
+.brand-background-art__canvas {
+  fill: var(--background-canvas);
+}
+.brand-background-art__coral {
+  fill: var(--background-coral);
+}
+.brand-background-art__coral-soft {
+  fill: var(--background-coral-soft);
+}
+.brand-background-art__teal {
+  fill: var(--background-teal);
+}
+.brand-background-art__teal-soft {
+  fill: var(--background-teal-soft);
+}
+.brand-background-art__ring {
+  stroke: var(--background-ring);
+  stroke-width: 2;
+}
 
 ::selection {
   background: hsl(var(--accent) / 0.7);
