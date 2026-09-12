@@ -2,14 +2,22 @@
 
 import { createContext, useContext, useState, type ReactNode } from "react";
 
-type ActiveBackground = { mobile: string; desktop: string };
+type ActiveBackground = {
+  mobile: string;
+  desktop: string;
+  isLoaded?: boolean;
+};
 
 const ActiveBackgroundContext = createContext<{
   active: ActiveBackground | null;
   setActive: (value: ActiveBackground) => void;
 } | null>(null);
 
-export function ActiveBackgroundProvider({ children }: { children: ReactNode }) {
+export function ActiveBackgroundProvider({
+  children,
+}: {
+  children: ReactNode;
+}) {
   const [active, setActive] = useState<ActiveBackground | null>(null);
 
   return (

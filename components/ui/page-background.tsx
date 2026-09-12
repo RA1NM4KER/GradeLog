@@ -1,11 +1,12 @@
 "use client";
 
-import { useEffect, type CSSProperties } from "react";
+import { useEffect, useState, type CSSProperties } from "react";
 
 import { useTheme } from "@/components/theme/theme-provider";
 import { useActiveBackground } from "@/components/ui/page-background-context";
+import { cn } from "@/lib/shared/utils";
 
-const backgroundAssets = {
+export const backgroundAssets = {
   landing: {
     light: {
       mobile: "/backgrounds/gradelog-mobile-01.png",
@@ -40,7 +41,7 @@ const backgroundAssets = {
 
 export type PageBackgroundVariant = keyof typeof backgroundAssets;
 
-function toWebp(pngPath: string) {
+export function toWebp(pngPath: string) {
   return pngPath.replace(/\.png$/, ".webp");
 }
 
@@ -59,14 +60,44 @@ export function layerStyle(pngPath: string) {
  * fallback (`.bg-progressive`) for browsers below the WebP floor — no JS
  * format sniffing, no filters or CSS approximations of dark mode.
  */
-export function PageBackground({ variant }: { variant: PageBackgroundVariant }) {
+export function PageBackground({
+  variant,
+}: {
+  variant: PageBackgroundVariant;
+}) {
   const { resolvedTheme } = useTheme();
   const { mobile, desktop } = backgroundAssets[variant][resolvedTheme];
   const { setActive } = useActiveBackground();
+  const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
-    setActive({ mobile, desktop });
-  }, [mobile, desktop, setActive]);
+    setActive({ desktop, isLoaded, mobile });
+  }, [desktop, isLoaded, mobile, setActive]);
+
+  useEffect(() => {
+    setIsLoaded(false);
+    const isDesktop =
+      typeof window !== "undefined" &&
+      window.matchMedia("(min-width: 640px)").matches;
+    const targetPng = isDesktop ? desktop : mobile;
+    const targetWebp = toWebp(targetPng);
+
+    const img = new window.Image();
+    img.src = targetWebp;
+
+    if (img.complete) {
+      setIsLoaded(true);
+      return;
+    }
+
+    img.onload = () => setIsLoaded(true);
+    img.onerror = () => {
+      const fallback = new window.Image();
+      fallback.src = targetPng;
+      fallback.onload = () => setIsLoaded(true);
+      fallback.onerror = () => setIsLoaded(true);
+    };
+  }, [desktop, mobile]);
 
   return (
     <div
@@ -74,11 +105,17 @@ export function PageBackground({ variant }: { variant: PageBackgroundVariant }) 
       className="pointer-events-none fixed inset-0 -z-10 bg-canvas"
     >
       <div
-        className="bg-progressive absolute inset-0 bg-cover bg-center bg-no-repeat sm:hidden"
+        className={cn(
+          "bg-progressive absolute inset-0 bg-cover bg-center bg-no-repeat transition-opacity duration-300 sm:hidden",
+          isLoaded ? "opacity-100" : "opacity-0",
+        )}
         style={layerStyle(mobile)}
       />
       <div
-        className="bg-progressive absolute inset-0 hidden bg-cover bg-center bg-no-repeat sm:block"
+        className={cn(
+          "bg-progressive absolute inset-0 hidden bg-cover bg-center bg-no-repeat transition-opacity duration-300 sm:block",
+          isLoaded ? "opacity-100" : "opacity-0",
+        )}
         style={layerStyle(desktop)}
       />
     </div>

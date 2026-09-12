@@ -22,6 +22,7 @@ import { Button } from "@/components/ui/button";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { layerStyle } from "@/components/ui/page-background";
 import { useActiveBackground } from "@/components/ui/page-background-context";
+import { cn } from "@/lib/shared/utils";
 import { useCourses } from "@/components/workspace/shared/courses-provider";
 import {
   SYNC_STATUS_CONNECTING,
@@ -97,11 +98,17 @@ export function TopNav() {
           style={{ clipPath: `inset(0 0 calc(100% - ${headerHeight}px) 0)` }}
         >
           <div
-            className="bg-progressive absolute inset-0 bg-cover bg-center bg-no-repeat sm:hidden"
+            className={cn(
+              "bg-progressive absolute inset-0 bg-cover bg-center bg-no-repeat transition-opacity duration-300 sm:hidden",
+              active.isLoaded ? "opacity-100" : "opacity-0",
+            )}
             style={layerStyle(active.mobile)}
           />
           <div
-            className="bg-progressive absolute inset-0 hidden bg-cover bg-center bg-no-repeat sm:block"
+            className={cn(
+              "bg-progressive absolute inset-0 hidden bg-cover bg-center bg-no-repeat transition-opacity duration-300 sm:block",
+              active.isLoaded ? "opacity-100" : "opacity-0",
+            )}
             style={layerStyle(active.desktop)}
           />
         </div>
