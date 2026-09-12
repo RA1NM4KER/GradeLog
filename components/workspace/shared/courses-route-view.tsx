@@ -11,7 +11,6 @@ export function CoursesRouteView() {
   if (location.moduleId) {
     return (
       <>
-        <PageBackground variant="detail" />
         <CourseScreen moduleId={location.moduleId} />
       </>
     );

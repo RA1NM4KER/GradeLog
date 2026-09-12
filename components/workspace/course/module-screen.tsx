@@ -1,12 +1,13 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, type CSSProperties } from "react";
 import { Calculator } from "lucide-react";
 import { AlertTriangle, X } from "lucide-react";
 
 import { EmptyState } from "@/components/dashboard/empty-state";
 import { Button } from "@/components/ui/button";
 import { PageContainer } from "@/components/ui/page-container";
+import { PageBackground } from "@/components/ui/page-background";
 import { AssessmentTable } from "@/components/workspace/assessments/assessment-table";
 import { CourseMobileOverview } from "@/components/workspace/course/course-mobile-overview";
 import { ExperimentModePill } from "@/components/workspace/shared/experiment-mode-pill";
@@ -130,6 +131,28 @@ export function CourseScreen({ moduleId }: { moduleId?: string }) {
     startExperiment();
   }
 
+  const backgroundStyle = useMemo(() => {
+    if (!course) {
+      return undefined;
+    }
+
+    const backgroundAccent = isExperimenting
+      ? "hsl(var(--experiment-accent-line))"
+      : getCourseTheme(course).accentColorValue;
+
+    return {
+      "--background-coral": backgroundAccent,
+      "--background-coral-soft":
+        "color-mix(in srgb, var(--background-coral) 28%, var(--background-canvas))",
+      "--background-teal":
+        "color-mix(in srgb, var(--background-coral) 78%, var(--background-canvas))",
+      "--background-teal-soft":
+        "color-mix(in srgb, var(--background-coral) 20%, var(--background-canvas))",
+      "--background-ring":
+        "color-mix(in srgb, var(--background-coral) 34%, var(--background-canvas))",
+    } as CSSProperties;
+  }, [course, isExperimenting]);
+
   if (!course) {
     return (
       <PageContainer className="pb-10 pt-6">
@@ -154,89 +177,68 @@ export function CourseScreen({ moduleId }: { moduleId?: string }) {
   }
 
   return (
-    <div className="mx-auto max-w-7xl overflow-auto px-4 py-3 pb-20 sm:h-[calc(100dvh-var(--app-header-height,5.5rem))] sm:overflow-hidden sm:px-8 sm:py-4 sm:pb-4 md:pb-6">
-      <div className="mb-3 sm:mb-4">
-        <CourseHeader
-          isExperimenting={isExperimenting}
-          module={course}
-          onMoveCourse={(courseId, targetSemesterId) => {
-            moveCourse(courseId, targetSemesterId);
-            navigateCourses(getCourseDetailsUrl(targetSemesterId, courseId));
-          }}
-          onDeleteCourse={(courseId) => {
-            deleteCourse(courseId);
-            navigateCourses(getSemesterCoursesUrl(semester.id));
-          }}
-          onToggleExperiment={() => toggleExperimentMode()}
-          semesterId={semester.id}
-          semesterName={semester.name}
-          semesters={semesters}
-          onSaveCourse={(nextModule) =>
-            updateCourse(course.id, {
-              accent: nextModule.accent,
-              code: nextModule.code,
-              credits: nextModule.credits,
-              gradeBands: course.gradeBands,
-              instructor: nextModule.instructor,
-              name: nextModule.name,
-            })
-          }
-        />
-      </div>
-
-      {isExperimenting ||
-      (course && hasOverweightAssignments && showWeightWarning) ? (
-        <div className="pointer-events-none fixed left-1/2 top-[4.7rem] z-40 flex w-[calc(100%-2rem)] max-w-[min(100%,44rem)] -translate-x-1/2 flex-col items-center gap-2 sm:top-[5.25rem]">
-          {isExperimenting ? (
-            <div className="pointer-events-auto">
-              <ExperimentModePill onStopAction={stopExperiment} />
-            </div>
-          ) : null}
-          {course && hasOverweightAssignments && showWeightWarning ? (
-            <div className="pointer-events-auto w-full max-w-max">
-              <FloatingStatusPill
-                actionIcon={<X className="h-3.5 w-3.5 sm:h-4 sm:w-4" />}
-                actionLabel="Dismiss"
-                icon={<AlertTriangle className="h-3.5 w-3.5 sm:h-4 sm:w-4" />}
-                onAction={() => setShowWeightWarning(false)}
-                subtitle={`This course is set to ${formatPercent(assignedWeight)} in total. Course weights should usually add up to 100%.`}
-                title="Assignment weights are over 100%"
-                tone="danger"
-              />
-            </div>
-          ) : null}
-        </div>
-      ) : null}
-
-      <div className="grid gap-3 md:hidden">
-        <CourseMobileOverview
-          isExperimenting={isExperimenting}
-          module={course}
-          onSaveBandsAction={saveGradeBands}
-        />
-        <AssessmentTable
-          onDeleteAssessment={deleteAssessment}
-          module={course}
-          isExperimenting={isExperimenting}
-          onRecordGrade={recordGrade}
-          onToggleExperiment={toggleExperimentMode}
-          onReorderAssessments={reorderAssessments}
-          onSaveAssessment={saveAssessment}
-        />
-      </div>
-
-      <div className="fixed inset-x-0 bottom-0 z-30 border-t border-line/80 bg-surface-footer/88 backdrop-blur-xl md:hidden">
-        <div className="mx-auto max-w-7xl px-4 pb-4 pt-3">
-          <CourseSwitcher
+    <>
+      <PageBackground style={backgroundStyle} variant="detail" />
+      <div className="mx-auto max-w-7xl overflow-auto px-4 py-3 pb-20 sm:h-[calc(100dvh-var(--app-header-height,5.5rem))] sm:overflow-hidden sm:px-8 sm:py-4 sm:pb-4 md:pb-6">
+        <div className="mb-3 sm:mb-4">
+          <CourseHeader
+            isExperimenting={isExperimenting}
+            module={course}
+            onMoveCourse={(courseId, targetSemesterId) => {
+              moveCourse(courseId, targetSemesterId);
+              navigateCourses(getCourseDetailsUrl(targetSemesterId, courseId));
+            }}
+            onDeleteCourse={(courseId) => {
+              deleteCourse(courseId);
+              navigateCourses(getSemesterCoursesUrl(semester.id));
+            }}
+            onToggleExperiment={() => toggleExperimentMode()}
             semesterId={semester.id}
-            semesterCourses={semester.courses}
-            activeCourseId={course.id}
+            semesterName={semester.name}
+            semesters={semesters}
+            onSaveCourse={(nextModule) =>
+              updateCourse(course.id, {
+                accent: nextModule.accent,
+                code: nextModule.code,
+                credits: nextModule.credits,
+                gradeBands: course.gradeBands,
+                instructor: nextModule.instructor,
+                name: nextModule.name,
+              })
+            }
           />
         </div>
-      </div>
 
-      <div className="hidden min-h-0 gap-3 md:grid md:h-[calc(100%-9.5rem)] min-[900px]:grid-cols-[minmax(0,1fr)_560px] lg:gap-4">
-        <div className="grid min-h-0">
+        {isExperimenting ||
+        (course && hasOverweightAssignments && showWeightWarning) ? (
+          <div className="pointer-events-none fixed left-1/2 top-[4.7rem] z-40 flex w-[calc(100%-2rem)] max-w-[min(100%,44rem)] -translate-x-1/2 flex-col items-center gap-2 sm:top-[5.25rem]">
+            {isExperimenting ? (
+              <div className="pointer-events-auto">
+                <ExperimentModePill onStopAction={stopExperiment} />
+              </div>
+            ) : null}
+            {course && hasOverweightAssignments && showWeightWarning ? (
+              <div className="pointer-events-auto w-full max-w-max">
+                <FloatingStatusPill
+                  actionIcon={<X className="h-3.5 w-3.5 sm:h-4 sm:w-4" />}
+                  actionLabel="Dismiss"
+                  icon={<AlertTriangle className="h-3.5 w-3.5 sm:h-4 sm:w-4" />}
+                  onAction={() => setShowWeightWarning(false)}
+                  subtitle={`This course is set to ${formatPercent(assignedWeight)} in total. Course weights should usually add up to 100%.`}
+                  title="Assignment weights are over 100%"
+                  tone="danger"
+                />
+              </div>
+            ) : null}
+          </div>
+        ) : null}
+
+        <div className="grid gap-3 md:hidden">
+          <CourseMobileOverview
+            isExperimenting={isExperimenting}
+            module={course}
+            onSaveBandsAction={saveGradeBands}
+          />
           <AssessmentTable
             onDeleteAssessment={deleteAssessment}
             module={course}
@@ -248,27 +250,51 @@ export function CourseScreen({ moduleId }: { moduleId?: string }) {
           />
         </div>
 
-        <div className="grid min-h-0 content-start gap-3 overflow-visible sm:gap-4 sm:overflow-y-auto sm:pr-1">
-          <GradeBandPanel
-            isExperimenting={isExperimenting}
-            module={course}
-            onSaveBandsAction={saveGradeBands}
-            onUpdateGradeBand={updateGradeBand}
+        <div className="fixed inset-x-0 bottom-0 z-30 border-t border-line/80 bg-surface-footer/88 backdrop-blur-xl md:hidden">
+          <div className="mx-auto max-w-7xl px-4 pb-4 pt-3">
+            <CourseSwitcher
+              semesterId={semester.id}
+              semesterCourses={semester.courses}
+              activeCourseId={course.id}
+            />
+          </div>
+        </div>
+
+        <div className="hidden min-h-0 gap-3 md:grid md:h-[calc(100%-10.25rem)] min-[900px]:grid-cols-[minmax(0,1fr)_560px] lg:gap-4">
+          <div className="grid min-h-0">
+            <AssessmentTable
+              onDeleteAssessment={deleteAssessment}
+              module={course}
+              isExperimenting={isExperimenting}
+              onRecordGrade={recordGrade}
+              onToggleExperiment={toggleExperimentMode}
+              onReorderAssessments={reorderAssessments}
+              onSaveAssessment={saveAssessment}
+            />
+          </div>
+
+          <div className="grid min-h-0 content-start gap-3 overflow-visible sm:gap-4 sm:overflow-y-auto sm:pr-1">
+            <GradeBandPanel
+              isExperimenting={isExperimenting}
+              module={course}
+              onSaveBandsAction={saveGradeBands}
+              onUpdateGradeBand={updateGradeBand}
+            />
+          </div>
+        </div>
+
+        <div className="hidden border-t border-line/80 bg-surface-footer/88 pt-4 backdrop-blur-xl md:mt-4 md:block md:pb-2">
+          <CourseSwitcher
+            semesterId={semester.id}
+            semesterCourses={semester.courses}
+            activeCourseId={course.id}
+            className="pb-1"
+            itemClassName="rounded-xl px-5 py-3.5 text-base md:bg-surface md:text-foreground"
+            indicatorClassName="h-2"
           />
         </div>
       </div>
-
-      <div className="hidden border-t border-line/80 bg-surface-footer/88 pt-4 backdrop-blur-xl md:mt-4 md:block">
-        <CourseSwitcher
-          semesterId={semester.id}
-          semesterCourses={semester.courses}
-          activeCourseId={course.id}
-          className="pb-1"
-          itemClassName="rounded-xl px-5 py-3.5 text-base"
-          indicatorClassName="h-2"
-        />
-      </div>
-    </div>
+    </>
   );
 }
 
@@ -304,8 +330,8 @@ function CourseSwitcher({
               "group relative shrink-0 overflow-hidden rounded-lg border px-3.5 py-2.5 text-left text-sm shadow-sm transition-all duration-200",
               itemClassName,
               isActive
-                ? "border-line/70 bg-surface text-foreground shadow-[0_10px_24px_rgba(28,25,23,0.08)]"
-                : "border-line/70 bg-surface/82 text-ink-soft hover:-translate-y-0.5 hover:border-line-strong hover:bg-surface",
+                ? "border-line/70 bg-surface text-foreground shadow-[0_10px_24px_rgba(28,25,23,0.08)] md:border-foreground/35 md:shadow-[0_10px_24px_rgba(28,25,23,0.14)]"
+                : "border-line/70 bg-surface/82 text-ink-soft hover:-translate-y-0.5 hover:border-line-strong hover:bg-surface md:border-line/80",
             )}
             key={course.id}
             onClick={() =>

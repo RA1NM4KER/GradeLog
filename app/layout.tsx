@@ -4,7 +4,6 @@ import React from "react";
 
 import { AppProviders } from "@/components/layout/app-providers";
 import { AppShell } from "@/components/layout/app-shell";
-import { BackgroundPreload } from "@/components/layout/background-preload";
 import { TopNav } from "@/components/layout/top-nav";
 import { RouteCacheWarmup } from "@/components/pwa/route-cache-warmup";
 import { ServiceWorkerRegistration } from "@/components/pwa/service-worker-registration";
@@ -70,7 +69,6 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className="font-sans antialiased" suppressHydrationWarning>
         <script dangerouslySetInnerHTML={{ __html: themeInitializerScript }} />
-        <BackgroundPreload />
         <AppProviders>
           <AppShell>
             <RouteCacheWarmup />

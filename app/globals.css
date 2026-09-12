@@ -183,6 +183,32 @@ body {
   font-feature-settings: "cv11", "ss01";
 }
 
+.brand-background-art {
+  --background-canvas: #f8f5ef;
+  --background-coral: #ff5544;
+  --background-coral-soft: #ffd0c5;
+  --background-teal: #12afb6;
+  --background-teal-soft: #b4ebeb;
+  --background-ring: #f9d5cc;
+  overflow: hidden;
+}
+
+.dark .brand-background-art {
+  --background-canvas: #17181c;
+  --background-coral: #ff5544;
+  --background-coral-soft: #74382f;
+  --background-teal: #269ca2;
+  --background-teal-soft: #29595e;
+  --background-ring: #7a4137;
+}
+
+.brand-background-art__canvas { fill: var(--background-canvas); }
+.brand-background-art__coral { fill: var(--background-coral); }
+.brand-background-art__coral-soft { fill: var(--background-coral-soft); }
+.brand-background-art__teal { fill: var(--background-teal); }
+.brand-background-art__teal-soft { fill: var(--background-teal-soft); }
+.brand-background-art__ring { stroke: var(--background-ring); stroke-width: 2; }
+
 ::selection {
   background: hsl(var(--accent) / 0.7);
   color: hsl(var(--foreground));

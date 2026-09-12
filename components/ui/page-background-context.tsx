@@ -1,16 +1,20 @@
 "use client";
 
-import { createContext, useContext, useState, type ReactNode } from "react";
+import {
+  createContext,
+  useContext,
+  useCallback,
+  useState,
+  type CSSProperties,
+  type ReactNode,
+} from "react";
 
-type ActiveBackground = {
-  mobile: string;
-  desktop: string;
-  isLoaded?: boolean;
-};
+import type { BrandBackgroundVariant } from "@/components/ui/brand-background-art";
 
 const ActiveBackgroundContext = createContext<{
-  active: ActiveBackground | null;
-  setActive: (value: ActiveBackground) => void;
+  active: BrandBackgroundVariant | null;
+  style?: CSSProperties;
+  setActive: (value: BrandBackgroundVariant, style?: CSSProperties) => void;
 } | null>(null);
 
 export function ActiveBackgroundProvider({
@@ -18,20 +22,26 @@ export function ActiveBackgroundProvider({
 }: {
   children: ReactNode;
 }) {
-  const [active, setActive] = useState<ActiveBackground | null>(null);
+  const [active, setActive] = useState<BrandBackgroundVariant | null>(null);
+  const [style, setStyle] = useState<CSSProperties>();
+
+  const setActiveBackground = useCallback(function setActiveBackground(
+    value: BrandBackgroundVariant,
+    nextStyle?: CSSProperties,
+  ) {
+    setActive(value);
+    setStyle(nextStyle);
+  }, []);
 
   return (
-    <ActiveBackgroundContext.Provider value={{ active, setActive }}>
+    <ActiveBackgroundContext.Provider
+      value={{ active, setActive: setActiveBackground, style }}
+    >
       {children}
     </ActiveBackgroundContext.Provider>
   );
 }
 
-/**
- * Lets the page's PageBackground publish which art it's showing so TopNav
- * can paint the same viewport-fixed image behind itself — the nav stays
- * opaque to scrolling content while looking like a window onto the page bg.
- */
 export function useActiveBackground() {
   const ctx = useContext(ActiveBackgroundContext);
   if (!ctx) {

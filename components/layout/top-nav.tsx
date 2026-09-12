@@ -20,7 +20,7 @@ import {
 import { ThemeModePanel, ThemeSelect } from "@/components/theme/theme-select";
 import { Button } from "@/components/ui/button";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
-import { layerStyle } from "@/components/ui/page-background";
+import { BrandBackgroundArt } from "@/components/ui/brand-background-art";
 import { useActiveBackground } from "@/components/ui/page-background-context";
 import { cn } from "@/lib/shared/utils";
 import { useCourses } from "@/components/workspace/shared/courses-provider";
@@ -35,7 +35,7 @@ import {
 export function TopNav() {
   const { appState, replaceAppState } = useCourses();
   const { isAuthenticated, lastSyncedAt, status } = useSyncConnection();
-  const { active } = useActiveBackground();
+  const { active, style } = useActiveBackground();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const headerRef = useRef<HTMLElement>(null);
   const [headerHeight, setHeaderHeight] = useState(0);
@@ -97,19 +97,10 @@ export function TopNav() {
           className="pointer-events-none fixed inset-0 -z-10"
           style={{ clipPath: `inset(0 0 calc(100% - ${headerHeight}px) 0)` }}
         >
-          <div
-            className={cn(
-              "bg-progressive absolute inset-0 bg-cover bg-center bg-no-repeat transition-opacity duration-300 sm:hidden",
-              active.isLoaded ? "opacity-100" : "opacity-0",
-            )}
-            style={layerStyle(active.mobile)}
-          />
-          <div
-            className={cn(
-              "bg-progressive absolute inset-0 hidden bg-cover bg-center bg-no-repeat transition-opacity duration-300 sm:block",
-              active.isLoaded ? "opacity-100" : "opacity-0",
-            )}
-            style={layerStyle(active.desktop)}
+          <BrandBackgroundArt
+            className="absolute inset-0 h-full w-full"
+            style={style}
+            variant={active}
           />
         </div>
       )}
