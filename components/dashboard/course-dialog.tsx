@@ -112,6 +112,8 @@ export function CourseDialog({
         id: ensureUuid(band.id),
       })),
       assessments: course?.assessments ?? [],
+      gradingScale: course?.gradingScale ?? "percentage",
+      bonusPoints: course?.bonusPoints ?? 0,
     };
 
     onSaveCourse(nextCourse);

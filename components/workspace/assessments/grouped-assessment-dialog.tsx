@@ -24,9 +24,11 @@ import {
   GroupedAssessment,
   GroupedAssessmentCategory,
 } from "@/lib/shared/types";
+import type { GradingScale } from "@/lib/course/types";
 
 interface GroupedAssessmentDialogProps {
   moduleId: string;
+  gradingScale: GradingScale;
   category?: GroupedAssessmentCategory;
   assessment?: GroupedAssessment;
   onDeleteAssessment?: (moduleId: string, assessmentId: string) => void;
@@ -42,6 +44,7 @@ interface GroupedAssessmentDialogProps {
 
 export function GroupedAssessmentDialog({
   moduleId,
+  gradingScale,
   category = "tutorials",
   assessment,
   onDeleteAssessment,
@@ -142,6 +145,7 @@ export function GroupedAssessmentDialog({
         <form className="flex min-h-0 flex-1 flex-col gap-5" onSubmit={submit}>
           <GroupedAssessmentEditor
             category={assessment?.category ?? category}
+            gradingScale={gradingScale}
             onChange={setForm}
             showValidation={showValidation}
             value={form}

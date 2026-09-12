@@ -27,6 +27,8 @@ import {
   calculateRequiredScore,
   getAssignedWeight,
   getCourseGuaranteedGrade,
+  getCourseCeilingGrade,
+  getCourseWeightDenominator,
   getCourseCurrentGrade,
   getCourseSubminimumRequirements,
   getGradeBandState,
@@ -42,6 +44,53 @@ import {
 } from "@/lib/grades/grade-utils";
 
 describe("grade-utils", () => {
+  it("normalizes percentage and point scales, applies bonus, and caps final grades", () => {
+    const makeCourse = (
+      gradingScale: "percentage" | "points",
+      bonusPoints = 0,
+    ): Course => {
+      const course: Course = {
+        id: "course", code: "C", name: "Course", instructor: "", credits: 1, accent: "teal", gradeBands: [], gradingScale, bonusPoints,
+        assessments: [
+          { id: "a1", kind: ASSESSMENT_KIND_SINGLE, category: SINGLE_ASSESSMENT_CATEGORY.ASSIGNMENT, dueDate: "", name: "A1", scoreAchieved: 60, subminimumPercent: null, totalPossible: 100, status: ASSESSMENT_STATUS_COMPLETED, weight: gradingScale === "points" ? 55 : 40 },
+          { id: "a2", kind: ASSESSMENT_KIND_SINGLE, category: SINGLE_ASSESSMENT_CATEGORY.ASSIGNMENT, dueDate: "", name: "A2", scoreAchieved: gradingScale === "points" ? 70 : 80, subminimumPercent: null, totalPossible: 100, status: ASSESSMENT_STATUS_COMPLETED, weight: gradingScale === "points" ? 35 : 50 },
+          { id: "a3", kind: ASSESSMENT_KIND_SINGLE, category: SINGLE_ASSESSMENT_CATEGORY.ASSIGNMENT, dueDate: "", name: "A3", scoreAchieved: gradingScale === "points" ? 80 : 70, subminimumPercent: null, totalPossible: 100, status: ASSESSMENT_STATUS_COMPLETED, weight: 10 },
+        ],
+      };
+
+      if (gradingScale === "points") {
+        course.assessments.push({ id: "a4", kind: ASSESSMENT_KIND_SINGLE, category: SINGLE_ASSESSMENT_CATEGORY.ASSIGNMENT, dueDate: "", name: "A4", scoreAchieved: 50, subminimumPercent: null, totalPossible: 100, status: ASSESSMENT_STATUS_COMPLETED, weight: 55 });
+      }
+
+      return course;
+    };
+    expect(getCourseGuaranteedGrade(makeCourse("percentage"))).toBe(71);
+    expect(getCourseGuaranteedGrade(makeCourse("percentage", 2))).toBe(73);
+    expect(getCourseWeightDenominator(makeCourse("points"))).toBe(155);
+    expect(getCourseGuaranteedGrade(makeCourse("points"))).toBe(60);
+    expect(getCourseGuaranteedGrade(makeCourse("points", 2))).toBe(62);
+    expect(getCourseGuaranteedGrade(makeCourse("percentage", 50))).toBe(100);
+    expect(getCourseCeilingGrade(makeCourse("points"))).toBe(60);
+  });
+  it("handles incomplete point courses and a zero denominator safely", () => {
+    const course = {
+      id: "points", code: "P", name: "Points", instructor: "", credits: 1, accent: "teal", gradeBands: [], gradingScale: "points", bonusPoints: 2,
+      assessments: [
+        { id: "done", kind: ASSESSMENT_KIND_SINGLE, category: SINGLE_ASSESSMENT_CATEGORY.ASSIGNMENT, dueDate: "", name: "Done", scoreAchieved: 60, subminimumPercent: null, totalPossible: 100, status: ASSESSMENT_STATUS_COMPLETED, weight: 55 },
+        { id: "left", kind: ASSESSMENT_KIND_SINGLE, category: SINGLE_ASSESSMENT_CATEGORY.ASSIGNMENT, dueDate: "", name: "Left", scoreAchieved: null, subminimumPercent: null, totalPossible: 100, status: ASSESSMENT_STATUS_ONGOING, weight: 45 },
+      ],
+    } as Course;
+    expect(getCourseCurrentGrade(course)).toBe(62);
+    expect(getCourseGuaranteedGrade(course)).toBe(35);
+    expect(getRemainingWeight(course)).toBe(45);
+    expect(getCourseCeilingGrade(course)).toBe(80);
+    expect(calculateRequiredScore(course, 80)).toMatchObject({ neededAverage: 100, neededPoints: 45 });
+    const empty = { ...course, assessments: [], bonusPoints: 0 };
+    expect(getCourseWeightDenominator(empty)).toBe(0);
+    expect(getCourseGuaranteedGrade(empty)).toBe(0);
+    expect(getCourseCeilingGrade(empty)).toBe(0);
+    expect(calculateRequiredScore(empty, 80).achievable).toBe(false);
+  });
   it("parses percent inputs and editable percents", () => {
     expect(parsePercentInput("")).toBeNull();
     expect(parsePercentInput("8/10")).toBe(80);
@@ -183,6 +232,8 @@ describe("grade-utils", () => {
       code: "CHE101",
       credits: 12,
       gradeBands: [],
+      gradingScale: "percentage",
+      bonusPoints: 0,
       instructor: "Dr. Kim",
       name: "Chemistry",
     };
@@ -238,6 +289,8 @@ describe("grade-utils", () => {
       code: "BIO101",
       credits: 12,
       gradeBands: [{ id: "band-a", label: "A", threshold: 80 }],
+      gradingScale: "percentage",
+      bonusPoints: 0,
       instructor: "Dr. Rivera",
       name: "Biology",
     };
@@ -272,6 +325,8 @@ describe("grade-utils", () => {
       code: "ENG101",
       credits: 12,
       gradeBands: [],
+      gradingScale: "percentage",
+      bonusPoints: 0,
       instructor: "Dr. Shah",
       name: "English",
     };
@@ -364,6 +419,8 @@ describe("grade-utils", () => {
       code: "LAW101",
       credits: 16,
       gradeBands: [],
+      gradingScale: "percentage",
+      bonusPoints: 0,
       instructor: "Dr. Ndlovu",
       name: "Law",
     };
@@ -407,6 +464,8 @@ describe("grade-utils", () => {
       code: "PHY101",
       credits: 16,
       gradeBands: [],
+      gradingScale: "percentage",
+      bonusPoints: 0,
       instructor: "Dr. Lee",
       name: "Physics",
     };
@@ -452,6 +511,8 @@ describe("grade-utils", () => {
         { id: "c", label: "C", threshold: 60 },
         { id: "a", label: "A", threshold: 80 },
       ],
+      gradingScale: "percentage",
+      bonusPoints: 0,
       instructor: "Dr. Khan",
       name: "Statistics",
     };
@@ -475,6 +536,8 @@ describe("grade-utils", () => {
       code: "HIS101",
       credits: 8,
       gradeBands: [],
+      gradingScale: "percentage",
+      bonusPoints: 0,
       instructor: "Dr. Gomez",
       name: "History",
     };

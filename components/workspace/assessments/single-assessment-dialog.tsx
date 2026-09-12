@@ -24,9 +24,12 @@ import {
   sanitizeScoreExpressionInput,
 } from "@/lib/assessments/numeric-input";
 import { SingleAssessment } from "@/lib/shared/types";
+import type { GradingScale } from "@/lib/course/types";
+import { getAssessmentWeightInputLabel } from "@/lib/grades/grading-display";
 
 interface SingleAssessmentDialogProps {
   assessment: SingleAssessment;
+  gradingScale: GradingScale;
   moduleId: string;
   onDeleteAssessment: (courseId: string, assessmentId: string) => void;
   onSaveAssessment: (moduleId: string, assessment: SingleAssessment) => void;
@@ -36,6 +39,7 @@ interface SingleAssessmentDialogProps {
 
 export function SingleAssessmentDialog({
   assessment,
+  gradingScale,
   moduleId,
   onDeleteAssessment,
   onSaveAssessment,
@@ -153,7 +157,7 @@ export function SingleAssessmentDialog({
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="space-y-2">
                 <Label htmlFor={`assignment-weight-${assessment.id}`}>
-                  Weight (%) *
+                  {getAssessmentWeightInputLabel({ gradingScale })} *
                 </Label>
                 <Input
                   id={`assignment-weight-${assessment.id}`}

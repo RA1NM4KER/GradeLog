@@ -15,12 +15,12 @@ import { sanitizePlainNumberInput } from "@/lib/assessments/numeric-input";
 import {
   calculateRequiredScore,
   formatPercent,
-  getCompletedWeight,
+  getCourseCeilingGrade,
+  getCourseCompletionPercent,
   getModuleCurrentGrade,
   getModuleGuaranteedGrade,
   getCourseSubminimumRequirements,
   getGradeBandState,
-  getRemainingWeight,
   getSortedGradeBands,
   hasRecordedModuleGrade,
 } from "@/lib/grades/grade-utils";
@@ -48,10 +48,9 @@ export function GradeBandPanel({
   const currentGrade = getModuleCurrentGrade(module);
   const animatedCurrentGrade = useAnimatedNumber(currentGrade);
   const guaranteedGrade = getModuleGuaranteedGrade(module);
-  const remainingWeight = getRemainingWeight(module);
-  const ceiling = guaranteedGrade + remainingWeight;
+  const ceiling = getCourseCeilingGrade(module);
   const isLockedRange = Math.abs(ceiling - guaranteedGrade) < 0.01;
-  const completion = getCompletedWeight(module);
+  const completion = getCourseCompletionPercent(module);
   const bands = getSortedGradeBands(module);
   const subminimumRequirements = getCourseSubminimumRequirements(module);
   const { resolvedTheme } = useTheme();

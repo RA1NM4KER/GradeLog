@@ -99,6 +99,8 @@ export interface SyncCourseRecord {
   credits: Course["credits"];
   accent: Course["accent"];
   gradeBands: GradeBand[];
+  gradingScale?: Course["gradingScale"];
+  bonusPoints?: Course["bonusPoints"];
 }
 
 export interface AssessmentPatch {
@@ -163,7 +165,14 @@ export interface CourseUpdateOperation extends SyncOperationBase {
     changes: Partial<
       Pick<
         SyncCourseRecord,
-        "code" | "name" | "instructor" | "credits" | "accent" | "gradeBands"
+        | "code"
+        | "name"
+        | "instructor"
+        | "credits"
+        | "accent"
+        | "gradeBands"
+        | "gradingScale"
+        | "bonusPoints"
       >
     >;
   };

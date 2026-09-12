@@ -14,7 +14,11 @@ export interface Course {
   accent: string;
   gradeBands: GradeBand[];
   assessments: Assessment[];
+  gradingScale: GradingScale;
+  bonusPoints: number;
 }
+
+export type GradingScale = "percentage" | "points";
 
 export type Module = Course;
 
@@ -71,6 +75,7 @@ export interface CourseTemplatePayload {
   code: string;
   credits: number;
   gradeBands: CourseTemplateBand[];
+  gradingScale: GradingScale;
   instructor: string;
   name: string;
 }

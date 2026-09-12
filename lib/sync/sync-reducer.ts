@@ -253,7 +253,19 @@ function applyCourseCreate(state: AppState, operation: CourseCreateOperation) {
     ...current,
     courses: [
       ...current.courses,
-      { ...operation.payload.course, assessments: [] },
+      {
+        ...operation.payload.course,
+        assessments: [],
+        gradingScale:
+          operation.payload.course.gradingScale === "points"
+            ? "points"
+            : "percentage",
+        bonusPoints:
+          typeof operation.payload.course.bonusPoints === "number" &&
+          Number.isFinite(operation.payload.course.bonusPoints)
+            ? Math.max(operation.payload.course.bonusPoints, 0)
+            : 0,
+      },
     ],
   }));
 }

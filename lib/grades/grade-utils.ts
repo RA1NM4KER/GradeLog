@@ -228,6 +228,36 @@ export function getSecuredContribution(course: Course) {
   }, 0);
 }
 
+export function getCourseWeightDenominator(course: Course) {
+  return course.gradingScale === "points" ? getAssignedWeight(course) : 100;
+}
+
+export function getCourseCompletionPercent(course: Course) {
+  const denominator = getCourseWeightDenominator(course);
+  if (denominator <= 0) {
+    return 0;
+  }
+
+  return round(Math.min((getCompletedWeight(course) / denominator) * 100, 100));
+}
+
+export function isCourseComplete(course: Course) {
+  return course.assessments.length > 0 && getRemainingWeight(course) <= 0;
+}
+
+function getCourseBonus(course: Course) {
+  return Math.max(course.bonusPoints ?? 0, 0);
+}
+
+function normalizeCourseContribution(course: Course, contribution: number) {
+  const denominator = getCourseWeightDenominator(course);
+  if (denominator <= 0) return 0;
+  return Math.min(
+    (contribution / denominator) * 100 + getCourseBonus(course),
+    100,
+  );
+}
+
 export function hasRecordedCourseGrade(course: Course) {
   return getCompletedWeight(course) > 0;
 }
@@ -238,10 +268,27 @@ export function getCourseCurrentGrade(course: Course) {
     return 0;
   }
 
-  return round((getSecuredContribution(course) / completedWeight) * 100);
+  return round(
+    Math.min(
+      (getSecuredContribution(course) / completedWeight) * 100 +
+        getCourseBonus(course),
+      100,
+    ),
+  );
 }
 export function getCourseGuaranteedGrade(course: Course) {
-  return round(getSecuredContribution(course));
+  return round(
+    normalizeCourseContribution(course, getSecuredContribution(course)),
+  );
+}
+
+export function getCourseCeilingGrade(course: Course) {
+  return round(
+    normalizeCourseContribution(
+      course,
+      getSecuredContribution(course) + getRemainingWeight(course),
+    ),
+  );
 }
 
 export function getRemainingWeight(course: Course) {
@@ -292,7 +339,10 @@ export function calculateRequiredScore(
   );
   const securedContribution = getSecuredContribution(course);
   const remainingWeight = getRemainingWeight(course);
-  const neededPoints = targetGrade - securedContribution;
+  const denominator = getCourseWeightDenominator(course);
+  const targetBeforeBonus = Math.max(targetGrade - getCourseBonus(course), 0);
+  const neededPoints =
+    (targetBeforeBonus / 100) * denominator - securedContribution;
 
   if (hasFailedSubminimums) {
     const failedRequirements = subminimumRequirements.filter(
@@ -318,7 +368,7 @@ export function calculateRequiredScore(
   }
 
   if (remainingWeight <= 0) {
-    const achieved = round(securedContribution);
+    const achieved = getCourseGuaranteedGrade(course);
     return {
       achievable: achieved >= targetGrade && !hasFailedSubminimums,
       hasFailedSubminimums,
@@ -335,6 +385,10 @@ export function calculateRequiredScore(
   }
 
   const neededAverage = round((neededPoints / remainingWeight) * 100);
+  const remainingWorkLabel =
+    course.gradingScale === "points"
+      ? `${remainingWeight} weighting points`
+      : `${remainingWeight}% of the course`;
 
   if (neededAverage <= 0) {
     return {
@@ -373,8 +427,8 @@ export function calculateRequiredScore(
     remainingWeight,
     subminimumRequirements,
     message: hasPendingSubminimums
-      ? `You need an average of ${neededAverage}% across the remaining ${remainingWeight}% of the course, while still meeting the subminimum rules.`
-      : `You need an average of ${neededAverage}% across the remaining ${remainingWeight}% of the course.`,
+      ? `You need an average of ${neededAverage}% across the remaining ${remainingWorkLabel}, while still meeting the subminimum rules.`
+      : `You need an average of ${neededAverage}% across the remaining ${remainingWorkLabel}.`,
   };
 }
 

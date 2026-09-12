@@ -105,6 +105,8 @@ function createRichState(): AppState {
             credits: 16,
             accent: "teal",
             gradeBands: [{ id: "band-1", label: "A", threshold: 80 }],
+            gradingScale: "percentage",
+            bonusPoints: 0,
             assessments: [],
           },
         ],

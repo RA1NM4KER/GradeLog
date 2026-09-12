@@ -9,6 +9,7 @@ import {
   getRemainingWeight,
   hasRecordedCourseGrade,
 } from "@/lib/grades/grade-utils";
+import { formatCourseRemainingWeight } from "@/lib/grades/grading-display";
 import { Course } from "@/lib/shared/types";
 
 interface CourseListItemProps {
@@ -98,7 +99,7 @@ export function CourseListItem({
               ? "Not started"
               : remainingWeight === 0
                 ? "Complete"
-                : `${formatPercent(remainingWeight)} remaining`}
+                : formatCourseRemainingWeight(course, remainingWeight)}
           </span>
           <span className="rounded-full bg-surface-muted px-2 py-1 text-[9px] font-medium text-ink-soft sm:px-2.5 sm:text-[10px]">
             {getAssessmentPace(course)}

@@ -99,6 +99,7 @@ export function buildCourseTemplatePayload(
       label: band.label,
       threshold: band.threshold,
     })),
+    gradingScale: course.gradingScale,
     instructor: course.instructor,
     name: course.name,
   });
@@ -222,6 +223,8 @@ export function instantiateCourseFromTemplate(
             weight: assessment.weight,
           },
     ),
+    gradingScale: payload.gradingScale,
+    bonusPoints: 0,
     code: payload.code,
     credits: payload.credits,
     gradeBands: payload.gradeBands.map((band) => ({

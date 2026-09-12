@@ -25,6 +25,8 @@ function createState(): AppState {
             credits: 16,
             accent: "teal",
             gradeBands: [{ id: "band-1", label: "A", threshold: 80 }],
+            gradingScale: "percentage",
+            bonusPoints: 0,
             assessments: [
               {
                 id: "assessment-1",
@@ -137,6 +139,120 @@ describe("sync-reducer", () => {
         getSyncEntityKey("semester", "semester-2"),
       ),
     ).toBeDefined();
+  });
+
+  it("roundtrips course grading fields and defaults legacy sync records", () => {
+    const created = applyRemoteSyncOperation(
+      createState(),
+      {
+        opType: "course.create",
+        clientOpId: "op-course-create",
+        deviceId: "device-a",
+        lamport: 1,
+        serverOrder: 1,
+        entityType: "course",
+        entityId: "course-points",
+        parentEntityType: "semester",
+        parentEntityId: "semester-1",
+        fieldMask: [
+          "code",
+          "name",
+          "instructor",
+          "credits",
+          "accent",
+          "gradeBands",
+          "gradingScale",
+          "bonusPoints",
+        ],
+        payload: {
+          semesterId: "semester-1",
+          course: {
+            id: "course-points",
+            code: "PHY101",
+            name: "Physics",
+            instructor: "Dr. Lee",
+            credits: 16,
+            accent: "teal",
+            gradeBands: [],
+            gradingScale: "points",
+            bonusPoints: 2.5,
+          },
+        },
+      },
+      createContext(),
+    );
+
+    expect(created.state.semesters[0]?.courses[1]).toMatchObject({
+      gradingScale: "points",
+      bonusPoints: 2.5,
+    });
+
+    const updated = applyRemoteSyncOperation(
+      created.state,
+      {
+        opType: "course.update",
+        clientOpId: "op-course-update",
+        deviceId: "device-b",
+        lamport: 2,
+        serverOrder: 2,
+        entityType: "course",
+        entityId: "course-points",
+        parentEntityType: "semester",
+        parentEntityId: "semester-1",
+        fieldMask: ["gradingScale", "bonusPoints"],
+        payload: {
+          semesterId: "semester-1",
+          changes: { gradingScale: "percentage", bonusPoints: 1.25 },
+        },
+      },
+      created.context,
+    );
+
+    expect(updated.state.semesters[0]?.courses[1]).toMatchObject({
+      gradingScale: "percentage",
+      bonusPoints: 1.25,
+    });
+
+    const legacyCreated = applyRemoteSyncOperation(
+      updated.state,
+      {
+        opType: "course.create",
+        clientOpId: "op-legacy-course-create",
+        deviceId: "device-c",
+        lamport: 1,
+        serverOrder: 3,
+        entityType: "course",
+        entityId: "course-legacy",
+        parentEntityType: "semester",
+        parentEntityId: "semester-1",
+        fieldMask: [
+          "code",
+          "name",
+          "instructor",
+          "credits",
+          "accent",
+          "gradeBands",
+        ],
+        payload: {
+          semesterId: "semester-1",
+          course: {
+            id: "course-legacy",
+            code: "HIS101",
+            name: "History",
+            instructor: "Dr. Gomez",
+            credits: 12,
+            accent: "blue",
+            gradeBands: [],
+          },
+        },
+      },
+      updated.context,
+    );
+
+    expect(legacyCreated.state.semesters[0]?.courses[2]).toMatchObject({
+      gradingScale: "percentage",
+      bonusPoints: 0,
+    });
   });
 
   it("rejects stale field updates using field clocks", () => {

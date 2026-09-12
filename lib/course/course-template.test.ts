@@ -12,6 +12,7 @@ import {
   SINGLE_ASSESSMENT_CATEGORY,
 } from "@/lib/assessments/types";
 import type { Course, CourseTemplatePayload } from "@/lib/course/types";
+import { courseTemplatePayloadSchema } from "@/lib/course/schemas";
 
 describe("course-template", () => {
   const payload: CourseTemplatePayload = {
@@ -45,6 +46,7 @@ describe("course-template", () => {
       { label: "A", threshold: 80 },
       { label: "B", threshold: 70 },
     ],
+    gradingScale: "points",
     instructor: "Dr. Maya Patel",
     name: "Calculus I",
   };
@@ -58,6 +60,8 @@ describe("course-template", () => {
     expect(course.code).toBe("MAT101");
     expect(course.gradeBands).toHaveLength(2);
     expect(course.gradeBands[0]?.id).toBeDefined();
+    expect(course.gradingScale).toBe("points");
+    expect(course.bonusPoints).toBe(0);
 
     expect(course.assessments[0]).toMatchObject({
       kind: ASSESSMENT_KIND_SINGLE,
@@ -91,6 +95,16 @@ describe("course-template", () => {
         totalPossible: 10,
       }),
     ]);
+  });
+
+  it("defaults old templates to percentage weighting", () => {
+    const { gradingScale: _gradingScale, ...oldPayload } = payload;
+    const normalizedPayload = courseTemplatePayloadSchema.parse(oldPayload);
+    const course = instantiateCourseFromTemplate(normalizedPayload);
+
+    expect(normalizedPayload.gradingScale).toBe("percentage");
+    expect(course.gradingScale).toBe("percentage");
+    expect(course.bonusPoints).toBe(0);
   });
 
   it("normalizes zero and missing subminimum values to null", () => {
@@ -129,6 +143,8 @@ describe("course-template", () => {
     const course: Course = {
       id: "course-1",
       accent: "teal",
+      gradingScale: "points",
+      bonusPoints: 2.5,
       assessments: [
         {
           id: "a1",
@@ -166,6 +182,7 @@ describe("course-template", () => {
       code: "CSC101",
       credits: 12,
       gradeBands: [{ label: "A", threshold: 80 }],
+      gradingScale: "points",
       instructor: "Prof. Chen",
       name: "Intro to CS",
     });
@@ -175,6 +192,8 @@ describe("course-template", () => {
     const groupedCourse: Course = {
       id: "course-2",
       accent: "blue",
+      gradingScale: "percentage",
+      bonusPoints: 0,
       assessments: [
         {
           id: "group-1",
@@ -218,6 +237,7 @@ describe("course-template", () => {
       code: "PHY101",
       credits: 16,
       gradeBands: [{ label: "A", threshold: 80 }],
+      gradingScale: "percentage",
       instructor: "Dr. Lee",
       name: "Physics",
     });

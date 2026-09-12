@@ -59,6 +59,8 @@ const rawCourseSchema = z.object({
   accent: z.string().optional(),
   gradeBands: z.array(rawGradeBandSchema).optional(),
   assessments: z.array(rawAssessmentSchema).optional(),
+  gradingScale: z.enum(["percentage", "points"]).optional(),
+  bonusPoints: z.number().optional(),
 });
 
 const rawSemesterSchema = z.object({

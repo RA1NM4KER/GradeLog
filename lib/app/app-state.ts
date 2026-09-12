@@ -25,7 +25,7 @@ import { ensureUuid } from "@/lib/shared/uuid";
 import { ZodError } from "zod";
 
 const UNVERSIONED_APP_STATE_VERSION = 1;
-export const APP_STATE_VERSION = 2;
+export const APP_STATE_VERSION = 3;
 
 export function getDefaultAppState(): AppState {
   return {
@@ -174,6 +174,8 @@ function normalizeCourse(rawCourse: unknown, index: number): Course {
       (assessment, assessmentIndex) =>
         normalizeAssessment(assessment, assessmentIndex),
     ),
+    gradingScale: course.gradingScale === "points" ? "points" : "percentage",
+    bonusPoints: Math.max(getNumber(course.bonusPoints, 0), 0),
   };
 }
 
@@ -265,6 +267,28 @@ function migrateUnversionedAppState(
 function migrateVersion2AppState(
   rawState: Record<string, unknown>,
 ): PersistedAppState {
+  const semesters = getArray(rawState.semesters).map((rawSemester) => {
+    const semester = isRecord(rawSemester) ? rawSemester : {};
+    const courses = getArray(
+      Array.isArray(semester.courses) ? semester.courses : semester.modules,
+    ).map((rawCourse) => {
+      const course = isRecord(rawCourse) ? rawCourse : {};
+      return {
+        ...course,
+        gradingScale: course.gradingScale === "points" ? "points" : "percentage",
+        bonusPoints: Math.max(getNumber(course.bonusPoints, 0), 0),
+      };
+    });
+
+    return { ...semester, courses, modules: courses };
+  });
+
+  return toPersistedAppState(
+    normalizePersistedAppState({ ...rawState, semesters }),
+  );
+}
+
+function migrateVersion3AppState(rawState: Record<string, unknown>) {
   return toPersistedAppState(normalizePersistedAppState(rawState));
 }
 
@@ -320,6 +344,8 @@ export function migrateAppState(
     case UNVERSIONED_APP_STATE_VERSION:
       return migrateUnversionedAppState(rawState);
     case APP_STATE_VERSION:
+      return migrateVersion3AppState(rawState);
+    case 2:
       return migrateVersion2AppState(rawState);
     default:
       throw new Error(`Unsupported GradeLog state version: ${rawVersion}.`);

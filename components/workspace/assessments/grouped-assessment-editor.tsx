@@ -28,9 +28,12 @@ import {
   GroupedAssessmentItem,
 } from "@/lib/shared/types";
 import { cn } from "@/lib/shared/utils";
+import type { GradingScale } from "@/lib/course/types";
+import { getAssessmentWeightInputLabel } from "@/lib/grades/grading-display";
 
 interface GroupedAssessmentEditorProps {
   category: GroupedAssessmentCategory;
+  gradingScale: GradingScale;
   showValidation?: boolean;
   value: {
     name: string;
@@ -44,6 +47,7 @@ interface GroupedAssessmentEditorProps {
 
 export function GroupedAssessmentEditor({
   category,
+  gradingScale,
   value,
   onChange,
   showValidation = false,
@@ -156,7 +160,9 @@ export function GroupedAssessmentEditor({
           ) : null}
         </div>
         <div className="space-y-2">
-          <Label htmlFor={`${category}-weight`}>Total weight (%) *</Label>
+          <Label htmlFor={`${category}-weight`}>
+            {getAssessmentWeightInputLabel({ gradingScale })} *
+          </Label>
           <Input
             className={cn(
               "text-center",
@@ -172,7 +178,9 @@ export function GroupedAssessmentEditor({
             value={value.weight}
           />
           {isWeightInvalid ? (
-            <p className="text-sm text-danger">Enter a weight above 0%.</p>
+            <p className="text-sm text-danger">
+              Enter {gradingScale === "points" ? "points" : "a weight"} above 0.
+            </p>
           ) : null}
         </div>
         <div className="space-y-2">

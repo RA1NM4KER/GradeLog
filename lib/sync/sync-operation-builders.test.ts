@@ -59,6 +59,8 @@ function createState(): AppState {
             credits: 16,
             accent: "teal",
             gradeBands: [{ id: "band-1", label: "A", threshold: 80 }],
+            gradingScale: "points",
+            bonusPoints: 2.5,
             assessments: [
               {
                 id: "assessment-1",
@@ -149,7 +151,16 @@ describe("sync-operation-builders", () => {
         "credits",
         "accent",
         "gradeBands",
+        "gradingScale",
+        "bonusPoints",
       ],
+    });
+    if (courseCreate.operation.opType !== "course.create") {
+      throw new Error("Expected a course create operation");
+    }
+    expect(courseCreate.operation.payload.course).toMatchObject({
+      gradingScale: "points",
+      bonusPoints: 2.5,
     });
 
     const courseUpdate = buildCourseUpdateOperation(
@@ -159,13 +170,25 @@ describe("sync-operation-builders", () => {
       {
         name: "Calculus I",
         credits: 18,
+        gradingScale: "percentage",
+        bonusPoints: 1.5,
         instructor: undefined,
       },
     );
-    expect(courseUpdate.operation.fieldMask).toEqual(["credits", "name"]);
+    expect(courseUpdate.operation.fieldMask).toEqual([
+      "credits",
+      "gradingScale",
+      "bonusPoints",
+      "name",
+    ]);
     expect(courseUpdate.operation.payload).toEqual({
       semesterId: semester.id,
-      changes: { credits: 18, name: "Calculus I" },
+      changes: {
+        credits: 18,
+        gradingScale: "percentage",
+        bonusPoints: 1.5,
+        name: "Calculus I",
+      },
     });
 
     const courseDelete = buildCourseDeleteOperation(

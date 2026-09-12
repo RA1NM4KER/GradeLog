@@ -19,9 +19,9 @@ import {
   useCoursesLocation,
 } from "@/lib/course/courses-navigation";
 import {
-  getCompletedWeight,
   getSemesterAverage,
   getSemesterGpa,
+  isCourseComplete,
 } from "@/lib/grades/grade-utils";
 import { Course } from "@/lib/shared/types";
 
@@ -43,9 +43,7 @@ export function SemesterScreen() {
     (sum, course) => sum + course.credits,
     0,
   );
-  const completedCourses = semester.courses.filter(
-    (course) => getCompletedWeight(course) >= 100,
-  ).length;
+  const completedCourses = semester.courses.filter(isCourseComplete).length;
   const allCourseEntries = semesters.flatMap((item) =>
     item.courses.map((course) => ({
       course,
@@ -60,8 +58,8 @@ export function SemesterScreen() {
         semesterId: semester.id,
         semesterName: semester.name,
       }));
-  const allCompletedCourses = allCourseEntries.filter(
-    ({ course }) => getCompletedWeight(course) >= 100,
+  const allCompletedCourses = allCourseEntries.filter(({ course }) =>
+    isCourseComplete(course),
   ).length;
 
   function handleSaveCourse(course: Course) {

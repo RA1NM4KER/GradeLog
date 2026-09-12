@@ -52,6 +52,7 @@ export const courseTemplatePayloadSchema: z.ZodType<CourseTemplatePayload> =
     code: z.string(),
     credits: z.number(),
     gradeBands: z.array(courseTemplateBandSchema),
+    gradingScale: z.enum(["percentage", "points"]).default("percentage"),
     instructor: z.string(),
     name: z.string(),
   });

@@ -22,8 +22,10 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { AssessmentComposerDialog } from "@/components/workspace/assessments/assessment-composer-dialog";
+import { BonusPointsDialog } from "@/components/workspace/assessments/bonus-points-dialog";
 import { GroupedAssessmentDialog } from "@/components/workspace/assessments/grouped-assessment-dialog";
 import { SingleAssessmentDialog } from "@/components/workspace/assessments/single-assessment-dialog";
+import { WeightingScaleControl } from "@/components/workspace/assessments/weighting-scale-control";
 import {
   CoursesTable,
   WorkspaceTableCell,
@@ -53,6 +55,11 @@ import {
   SingleAssessment,
 } from "@/lib/shared/types";
 import { cn } from "@/lib/shared/utils";
+import {
+  formatCourseBonusPoints,
+  getAssessmentWeightColumnLabel,
+  getCourseWeightingTotalLabel,
+} from "@/lib/grades/grading-display";
 
 interface AssessmentTableProps {
   module: Module;
@@ -66,6 +73,10 @@ interface AssessmentTableProps {
     totalPossible: number,
   ) => void;
   onSaveAssessment: (moduleId: string, assessment: Assessment) => void;
+  onUpdateCourse: (
+    courseId: string,
+    updates: Partial<Pick<Module, "gradingScale" | "bonusPoints">>,
+  ) => void;
   onReorderAssessments: (
     moduleId: string,
     fromAssessmentId: string,
@@ -80,17 +91,39 @@ export function AssessmentTable({
   onDeleteAssessment,
   onRecordGrade,
   onSaveAssessment,
+  onUpdateCourse,
   onReorderAssessments,
 }: AssessmentTableProps) {
   const [draggingId, setDraggingId] = useState<string | null>(null);
+  const [bonusDialogOpen, setBonusDialogOpen] = useState(false);
   const { resolvedTheme } = useTheme();
   const theme = getCourseTheme(module, resolvedTheme);
   const experimentTheme = getExperimentTheme(resolvedTheme);
+  const weightColumnLabel = getAssessmentWeightColumnLabel(module);
+  const weightingTotalLabel = getCourseWeightingTotalLabel(module);
 
   return (
     <div className="grid min-h-0 content-start">
       <div className="hidden md:block">
         <WorkspaceTableFrame>
+          <div className="flex min-h-12 items-center justify-between gap-3 border-b border-line/70 bg-surface-soft px-4 py-2 lg:px-5">
+            <span className="text-xs font-semibold uppercase tracking-[0.14em] text-ink-soft">
+              Assignments
+            </span>
+            <div className="flex items-center gap-3">
+              {weightingTotalLabel ? (
+                <span className="text-xs text-ink-subtle">
+                  {weightingTotalLabel}
+                </span>
+              ) : null}
+              <WeightingScaleControl
+                onChange={(gradingScale) =>
+                  onUpdateCourse(module.id, { gradingScale })
+                }
+                value={module.gradingScale}
+              />
+            </div>
+          </div>
           <CoursesTable>
             <WorkspaceTableHeader
               className={
@@ -112,7 +145,7 @@ export function AssessmentTable({
                   Due date
                 </WorkspaceTableHeaderCell>
                 <WorkspaceTableHeaderCell className="w-[14%] min-[1024px]:max-[1120px]:px-2">
-                  Weight
+                  {weightColumnLabel}
                 </WorkspaceTableHeaderCell>
                 <WorkspaceTableHeaderCell className="w-[18%] min-[1024px]:max-[1120px]:px-2">
                   Grade
@@ -157,6 +190,10 @@ export function AssessmentTable({
                   />
                 ),
               )}
+              <DesktopBonusRow
+                bonusPoints={module.bonusPoints}
+                onEdit={() => setBonusDialogOpen(true)}
+              />
               <AddAssessmentRow
                 module={module}
                 onSaveAssessment={onSaveAssessment}
@@ -168,7 +205,7 @@ export function AssessmentTable({
 
       <div className="grid max-h-full gap-3 overflow-auto md:hidden">
         <Card className="overflow-hidden rounded-[22px] bg-surface-soft">
-          <div className="flex items-center justify-between gap-3 px-4 py-4">
+          <div className="flex flex-wrap items-center justify-between gap-2.5 px-4 py-4">
             <div className="flex items-center gap-2">
               <Button
                 aria-label={
@@ -207,6 +244,19 @@ export function AssessmentTable({
                 }
               />
             </div>
+            <div className="ml-auto flex items-center gap-2.5">
+              {weightingTotalLabel ? (
+                <span className="text-[0.7rem] text-ink-subtle">
+                  {weightingTotalLabel}
+                </span>
+              ) : null}
+              <WeightingScaleControl
+                onChange={(gradingScale) =>
+                  onUpdateCourse(module.id, { gradingScale })
+                }
+                value={module.gradingScale}
+              />
+            </div>
           </div>
 
           <div
@@ -218,7 +268,7 @@ export function AssessmentTable({
             )}
           >
             <span>Assignment</span>
-            <span className="text-center">Weight</span>
+            <span className="text-center">{weightColumnLabel}</span>
             <span className="text-right">Grade</span>
           </div>
 
@@ -226,6 +276,7 @@ export function AssessmentTable({
             {module.assessments.map((assessment) => (
               <MobileAssessmentRow
                 assessment={assessment}
+                gradingScale={module.gradingScale}
                 isExperimenting={isExperimenting}
                 key={assessment.id}
                 moduleId={module.id}
@@ -234,6 +285,10 @@ export function AssessmentTable({
                 onSaveAssessment={onSaveAssessment}
               />
             ))}
+            <MobileBonusRow
+              bonusPoints={module.bonusPoints}
+              onEdit={() => setBonusDialogOpen(true)}
+            />
           </div>
 
           <div className="border-t border-line p-4">
@@ -254,6 +309,13 @@ export function AssessmentTable({
           </div>
         </Card>
       </div>
+
+      <BonusPointsDialog
+        bonusPoints={module.bonusPoints}
+        onOpenChange={setBonusDialogOpen}
+        onSave={(bonusPoints) => onUpdateCourse(module.id, { bonusPoints })}
+        open={bonusDialogOpen}
+      />
     </div>
   );
 }
@@ -261,6 +323,7 @@ export function AssessmentTable({
 function MobileAssessmentRow({
   moduleId,
   assessment,
+  gradingScale,
   isExperimenting,
   onDeleteAssessment,
   onRecordGrade,
@@ -268,6 +331,7 @@ function MobileAssessmentRow({
 }: {
   moduleId: string;
   assessment: Assessment;
+  gradingScale: Module["gradingScale"];
   isExperimenting: boolean;
   onDeleteAssessment: (courseId: string, assessmentId: string) => void;
   onRecordGrade: (
@@ -305,6 +369,7 @@ function MobileAssessmentRow({
           </div>
           <SingleAssessmentDialog
             assessment={assessment}
+            gradingScale={gradingScale}
             moduleId={moduleId}
             onDeleteAssessment={onDeleteAssessment}
             onSaveAssessment={onSaveAssessment}
@@ -343,6 +408,7 @@ function MobileAssessmentRow({
   return (
     <MobileGroupedAssessmentRow
       assessment={assessment}
+      gradingScale={gradingScale}
       isExperimenting={isExperimenting}
       moduleId={moduleId}
       onDeleteAssessment={onDeleteAssessment}
@@ -354,12 +420,14 @@ function MobileAssessmentRow({
 function MobileGroupedAssessmentRow({
   moduleId,
   assessment,
+  gradingScale,
   isExperimenting,
   onDeleteAssessment,
   onSaveAssessment,
 }: {
   moduleId: string;
   assessment: GroupedAssessment;
+  gradingScale: Module["gradingScale"];
   isExperimenting: boolean;
   onDeleteAssessment: (courseId: string, assessmentId: string) => void;
   onSaveAssessment: (moduleId: string, assessment: Assessment) => void;
@@ -421,6 +489,7 @@ function MobileGroupedAssessmentRow({
       </div>
       <GroupedAssessmentDialog
         assessment={assessment}
+        gradingScale={gradingScale}
         moduleId={moduleId}
         onDeleteAssessment={onDeleteAssessment}
         onOpenChange={setOpen}
@@ -429,6 +498,61 @@ function MobileGroupedAssessmentRow({
         renderTrigger={false}
       />
     </>
+  );
+}
+
+function DesktopBonusRow({
+  bonusPoints,
+  onEdit,
+}: {
+  bonusPoints: number;
+  onEdit: () => void;
+}) {
+  return (
+    <WorkspaceTableRow className="bg-surface-muted/45 text-ink-soft">
+      <WorkspaceTableCell className="px-1 py-2 lg:px-2" />
+      <WorkspaceTableCell className="p-0" colSpan={5}>
+        <button
+          aria-label="Edit bonus points"
+          className="flex w-full items-center justify-between gap-3 px-3 py-3 text-left transition hover:bg-surface-muted/70 lg:px-5"
+          onClick={onEdit}
+          type="button"
+        >
+          <span className="text-sm font-medium text-ink-soft">Bonus</span>
+          <span className="flex items-center gap-2.5">
+            <span className="text-sm font-semibold text-foreground">
+              {formatCourseBonusPoints(bonusPoints)}
+            </span>
+            <Pencil className="h-3.5 w-3.5 text-ink-subtle" />
+          </span>
+        </button>
+      </WorkspaceTableCell>
+    </WorkspaceTableRow>
+  );
+}
+
+function MobileBonusRow({
+  bonusPoints,
+  onEdit,
+}: {
+  bonusPoints: number;
+  onEdit: () => void;
+}) {
+  return (
+    <button
+      aria-label="Edit bonus points"
+      className="flex w-full items-center justify-between gap-3 border-t border-line bg-surface-muted/45 px-4 py-3 text-left transition hover:bg-surface-muted/70"
+      onClick={onEdit}
+      type="button"
+    >
+      <span className="text-sm font-medium text-ink-soft">Bonus</span>
+      <span className="flex items-center gap-2.5">
+        <span className="text-sm font-semibold text-foreground">
+          {formatCourseBonusPoints(bonusPoints)}
+        </span>
+        <Pencil className="h-3.5 w-3.5 text-ink-subtle" />
+      </span>
+    </button>
   );
 }
 
@@ -569,6 +693,7 @@ function SingleAssessmentRow({
       <WorkspaceTableCell className="px-1 py-3 text-center lg:px-2 lg:py-4 min-[1024px]:max-[1120px]:px-1">
         <SingleAssessmentDialog
           assessment={assessment}
+          gradingScale={module.gradingScale}
           moduleId={module.id}
           onDeleteAssessment={onDeleteAssessment}
           onSaveAssessment={onSaveAssessment}
@@ -696,6 +821,7 @@ function GroupedAssessmentRow({
       </WorkspaceTableCell>
       <GroupedAssessmentDialog
         assessment={assessment}
+        gradingScale={module.gradingScale}
         moduleId={module.id}
         onDeleteAssessment={onDeleteAssessment}
         onOpenChange={setOpen}

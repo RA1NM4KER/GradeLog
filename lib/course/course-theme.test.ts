@@ -20,6 +20,8 @@ describe("course-theme", () => {
     const course: Course = {
       id: "course-1",
       accent: "teal",
+      gradingScale: "percentage",
+      bonusPoints: 0,
       assessments: [],
       code: "MAT101",
       credits: 16,
@@ -53,6 +55,8 @@ describe("course-theme", () => {
     const course: Course = {
       id: "abc",
       accent: "missing",
+      gradingScale: "percentage",
+      bonusPoints: 0,
       assessments: [],
       code: "BIO101",
       credits: 12,

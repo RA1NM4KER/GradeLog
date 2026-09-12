@@ -52,6 +52,8 @@ describe("course-template browser flows", () => {
     const result = await createCourseTemplateShare({
       id: "course-1",
       accent: "teal",
+      gradingScale: "percentage",
+      bonusPoints: 0,
       assessments: [],
       code: "CSC101",
       credits: 12,
@@ -68,6 +70,7 @@ describe("course-template browser flows", () => {
         code: "CSC101",
         credits: 12,
         gradeBands: [],
+        gradingScale: "percentage",
         instructor: "Prof. Chen",
         name: "Intro to CS",
       },
@@ -92,6 +95,8 @@ describe("course-template browser flows", () => {
       createCourseTemplateShare({
         id: "course-1",
         accent: "teal",
+        gradingScale: "percentage",
+        bonusPoints: 0,
         assessments: [],
         code: "CSC101",
         credits: 12,
@@ -108,6 +113,8 @@ describe("course-template browser flows", () => {
       createCourseTemplateShare({
         id: "course-1",
         accent: "teal",
+        gradingScale: "percentage",
+        bonusPoints: 0,
         assessments: [],
         code: "CSC101",
         credits: 12,
@@ -133,6 +140,8 @@ describe("course-template browser flows", () => {
       createCourseTemplateShare({
         id: "course-1",
         accent: "teal",
+        gradingScale: "percentage",
+        bonusPoints: 0,
         assessments: [],
         code: "CSC101",
         credits: 12,
@@ -154,6 +163,8 @@ describe("course-template browser flows", () => {
       createCourseTemplateShare({
         id: "course-1",
         accent: "teal",
+        gradingScale: "percentage",
+        bonusPoints: 0,
         assessments: [],
         code: "CSC101",
         credits: 12,
@@ -197,6 +208,7 @@ describe("course-template browser flows", () => {
         code: "CSC101",
         credits: 12,
         gradeBands: [],
+        gradingScale: "percentage",
         instructor: "Prof. Chen",
         name: "Intro to CS",
       },

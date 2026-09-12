@@ -16,6 +16,7 @@ import {
   updateSemester,
 } from "@/lib/app/app-state-actions";
 import type { AppState } from "@/lib/app/types";
+import type { Course } from "@/lib/course/types";
 
 function createState(): AppState {
   return {
@@ -34,6 +35,8 @@ function createState(): AppState {
             credits: 16,
             accent: "teal",
             gradeBands: [{ id: "band-1", label: "A", threshold: 80 }],
+            gradingScale: "percentage",
+            bonusPoints: 0,
             assessments: [
               {
                 id: "assessment-1",
@@ -109,7 +112,7 @@ describe("app-state-actions", () => {
   });
 
   it("adds, updates, moves, and deletes courses while keeping modules mirrored", () => {
-    const nextCourse = {
+    const nextCourse: Course = {
       id: "course-2",
       code: "PHY101",
       name: "Physics",
@@ -117,6 +120,8 @@ describe("app-state-actions", () => {
       credits: 12,
       accent: "blue",
       gradeBands: [{ id: "band-2", label: "A", threshold: 80 }],
+      gradingScale: "percentage",
+      bonusPoints: 0,
       assessments: [],
     };
 

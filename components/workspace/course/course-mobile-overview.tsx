@@ -2,8 +2,8 @@
 
 import {
   getCourseCurrentGrade,
+  getCourseCeilingGrade,
   getCourseGuaranteedGrade,
-  getRemainingWeight,
   getSortedGradeBands,
   hasRecordedCourseGrade,
 } from "@/lib/grades/grade-utils";
@@ -23,8 +23,7 @@ export function CourseMobileOverview({
   const hasRecordedGrade = hasRecordedCourseGrade(module);
   const currentGrade = getCourseCurrentGrade(module);
   const guaranteedGrade = getCourseGuaranteedGrade(module);
-  const remainingWeight = getRemainingWeight(module);
-  const ceiling = guaranteedGrade + remainingWeight;
+  const ceiling = getCourseCeilingGrade(module);
   const bands = getSortedGradeBands(module);
 
   return (

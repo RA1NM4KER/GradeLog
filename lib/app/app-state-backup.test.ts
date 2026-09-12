@@ -25,7 +25,11 @@ vi.mock("@capacitor/share", () => ({
 
 import { afterEach, describe, expect, it, vi } from "vitest";
 
-import { APP_STATE_VERSION, getDefaultAppState } from "@/lib/app/app-state";
+import {
+  APP_STATE_VERSION,
+  getDefaultAppState,
+  serializePersistedAppState,
+} from "@/lib/app/app-state";
 import {
   downloadAppStateBackup,
   getAppStateBackupSummary,
@@ -58,6 +62,8 @@ describe("app-state-backup", () => {
           credits: 16,
           accent: "teal",
           gradeBands: [],
+          gradingScale: "percentage",
+          bonusPoints: 0,
           assessments: [
             {
               id: "a1",
@@ -165,5 +171,41 @@ describe("app-state-backup", () => {
 
     expect(imported.selectedSemesterId).toBe(imported.semesters[0]?.id);
     expect(imported.semesters).toHaveLength(1);
+  });
+
+  it("preserves course grading fields through backup export and import", async () => {
+    const state = getDefaultAppState();
+    state.selectedSemesterId = "00000000-0000-4000-8000-000000000001";
+    state.semesters.push({
+      id: "00000000-0000-4000-8000-000000000001",
+      name: "Semester 1",
+      periodLabel: "January to June",
+      modules: [],
+      courses: [
+        {
+          id: "00000000-0000-4000-8000-000000000002",
+          code: "MAT101",
+          name: "Calculus",
+          instructor: "Dr. Maya Patel",
+          credits: 16,
+          accent: "teal",
+          gradeBands: [],
+          gradingScale: "points",
+          bonusPoints: 2.5,
+          assessments: [],
+        },
+      ],
+    });
+
+    const imported = await importAppStateBackup(
+      new File([serializePersistedAppState(state)], "backup.json", {
+        type: "application/json",
+      }),
+    );
+
+    expect(imported.semesters[0]?.courses[0]).toMatchObject({
+      gradingScale: "points",
+      bonusPoints: 2.5,
+    });
   });
 });

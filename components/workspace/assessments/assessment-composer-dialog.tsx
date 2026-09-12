@@ -22,6 +22,7 @@ import {
   getGroupedAssessmentDefaults,
 } from "@/lib/assessments/grouped-assessment-utils";
 import { sanitizePlainNumberInput } from "@/lib/assessments/numeric-input";
+import { getAssessmentWeightInputLabel } from "@/lib/grades/grading-display";
 import { Assessment, Module, SingleAssessment } from "@/lib/shared/types";
 import { createUuid } from "@/lib/shared/uuid";
 
@@ -195,7 +196,9 @@ export function AssessmentComposerDialog({
                 </div>
                 <div className="grid gap-4 sm:grid-cols-2">
                   <div className="space-y-2">
-                    <Label htmlFor="single-weight">Weight (%) *</Label>
+                    <Label htmlFor="single-weight">
+                      {getAssessmentWeightInputLabel(module)} *
+                    </Label>
                     <Input
                       id="single-weight"
                       min={0}
@@ -255,6 +258,7 @@ export function AssessmentComposerDialog({
             ) : (
               <GroupedAssessmentEditor
                 category="tutorials"
+                gradingScale={module.gradingScale}
                 onChange={setGroupForm}
                 showValidation={showGroupValidation}
                 value={groupForm}

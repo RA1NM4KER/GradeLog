@@ -22,7 +22,8 @@ import {
 import { getCourseTheme } from "@/lib/course/course-theme";
 import { cn } from "@/lib/shared/utils";
 import { useCourses } from "@/components/workspace/shared/courses-provider";
-import { formatPercent, getAssignedWeight } from "@/lib/grades/grade-utils";
+import { getAssignedWeight } from "@/lib/grades/grade-utils";
+import { shouldShowCourseOverweightWarning } from "@/lib/grades/grading-display";
 import { Assessment, Course } from "@/lib/shared/types";
 
 export function CourseScreen({ moduleId }: { moduleId?: string }) {
@@ -48,7 +49,9 @@ export function CourseScreen({ moduleId }: { moduleId?: string }) {
     () => (course ? getAssignedWeight(course) : 0),
     [course],
   );
-  const hasOverweightAssignments = assignedWeight > 100;
+  const hasOverweightAssignments = course
+    ? shouldShowCourseOverweightWarning(course, assignedWeight)
+    : false;
 
   useEffect(() => {
     if (!hasOverweightAssignments) {
@@ -64,6 +67,11 @@ export function CourseScreen({ moduleId }: { moduleId?: string }) {
     previousAssessments: Course["assessments"],
     nextAssessments: Course["assessments"],
   ) {
+    if (!course || course.gradingScale !== "percentage") {
+      setShowWeightWarning(false);
+      return;
+    }
+
     const previousAssignedWeight = previousAssessments.reduce(
       (sum, assessment) => {
         return sum + assessment.weight;
@@ -96,6 +104,17 @@ export function CourseScreen({ moduleId }: { moduleId?: string }) {
     }
 
     maybeShowWeightWarning(course?.assessments ?? [], nextAssessments);
+  }
+
+  function updateCourseGrading(
+    courseId: string,
+    updates: Partial<Pick<Course, "gradingScale" | "bonusPoints">>,
+  ) {
+    if (updates.gradingScale === "percentage" && assignedWeight > 100) {
+      setShowWeightWarning(true);
+    }
+
+    updateCourse(courseId, updates);
   }
 
   function updateGradeBand(bandId: string, threshold: number) {
@@ -224,7 +243,7 @@ export function CourseScreen({ moduleId }: { moduleId?: string }) {
                   actionLabel="Dismiss"
                   icon={<AlertTriangle className="h-3.5 w-3.5 sm:h-4 sm:w-4" />}
                   onAction={() => setShowWeightWarning(false)}
-                  subtitle={`This course is set to ${formatPercent(assignedWeight)} in total. Course weights should usually add up to 100%.`}
+                  subtitle={`This course is set to ${assignedWeight}% in total. Course weights should usually add up to 100%.`}
                   title="Assignment weights are over 100%"
                   tone="danger"
                 />
@@ -247,6 +266,7 @@ export function CourseScreen({ moduleId }: { moduleId?: string }) {
             onToggleExperiment={toggleExperimentMode}
             onReorderAssessments={reorderAssessments}
             onSaveAssessment={saveAssessment}
+            onUpdateCourse={updateCourseGrading}
           />
         </div>
 
@@ -270,6 +290,7 @@ export function CourseScreen({ moduleId }: { moduleId?: string }) {
               onToggleExperiment={toggleExperimentMode}
               onReorderAssessments={reorderAssessments}
               onSaveAssessment={saveAssessment}
+              onUpdateCourse={updateCourseGrading}
             />
           </div>
 
