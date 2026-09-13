@@ -8,13 +8,13 @@ function formatCompactNumber(value: number) {
 export function getAssessmentWeightColumnLabel(
   course: Pick<Course, "gradingScale">,
 ) {
-  return course.gradingScale === "points" ? "Points" : "Weight";
+  return course.gradingScale === "points" ? "Weight pts" : "Weight";
 }
 
 export function getAssessmentWeightInputLabel(
   course: Pick<Course, "gradingScale">,
 ) {
-  return course.gradingScale === "points" ? "Points" : "Weight (%)";
+  return course.gradingScale === "points" ? "Weight points" : "Weight (%)";
 }
 
 export function getCourseWeightingTotalLabel(course: Course) {
@@ -33,7 +33,7 @@ export function shouldShowCourseOverweightWarning(
 }
 
 export function formatCourseBonusPoints(bonusPoints: number) {
-  return `+${formatCompactNumber(Math.max(bonusPoints, 0))} pts`;
+  return `+${formatCompactNumber(Math.max(bonusPoints, 0))}%`;
 }
 
 export function formatCourseRemainingWeight(

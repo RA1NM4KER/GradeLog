@@ -29,6 +29,7 @@ import { createUuid } from "@/lib/shared/uuid";
 interface AssessmentComposerDialogProps {
   module: Module;
   onSaveAssessment: (moduleId: string, assessment: Assessment) => void;
+  initialMode?: "single" | "group";
   triggerLabel?: string;
   triggerVariant?: ButtonProps["variant"];
   triggerAsChild?: boolean;
@@ -38,13 +39,14 @@ interface AssessmentComposerDialogProps {
 export function AssessmentComposerDialog({
   module,
   onSaveAssessment,
+  initialMode = "single",
   triggerLabel = "Add assignment",
   triggerVariant = "outline",
   triggerAsChild = false,
   triggerChildren,
 }: AssessmentComposerDialogProps) {
   const [open, setOpen] = useState(false);
-  const [mode, setMode] = useState<"single" | "group">("single");
+  const [mode, setMode] = useState<"single" | "group">(initialMode);
   const [singleForm, setSingleForm] = useState(getDefaultSingleForm());
   const [groupForm, setGroupForm] = useState(
     getGroupedAssessmentDefaults("tutorials"),
@@ -58,9 +60,9 @@ export function AssessmentComposerDialog({
       setSingleForm(getDefaultSingleForm());
       setGroupForm(getGroupedAssessmentDefaults("tutorials"));
       setShowGroupValidation(false);
-      setMode("single");
+      setMode(initialMode);
     }
-  }, [open]);
+  }, [initialMode, open]);
 
   useEffect(() => {
     setUseTextDateInput(window.matchMedia("(pointer: coarse)").matches);
@@ -146,7 +148,9 @@ export function AssessmentComposerDialog({
       </DialogTriggerAction>
       <DialogContent layout="workspace-wide">
         <DialogHeader className="shrink-0">
-          <DialogTitle>Add assignment</DialogTitle>
+          <DialogTitle>
+            {mode === "single" ? "Add assignment" : "Add category"}
+          </DialogTitle>
           <DialogDescription>{module.code}</DialogDescription>
         </DialogHeader>
         <form

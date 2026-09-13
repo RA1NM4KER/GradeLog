@@ -44,15 +44,14 @@ export function BonusPointsDialog({
     <Dialog onOpenChange={onOpenChange} open={open}>
       <DialogContent layout="workspace-compact">
         <DialogHeader>
-          <DialogTitle>Bonus points</DialogTitle>
+          <DialogTitle>Bonus to final grade</DialogTitle>
           <DialogDescription>
-            Added to your final course grade after weighting. This does not
-            change the course weighting.
+            Adds percentage points to your final course grade after weighting.
           </DialogDescription>
         </DialogHeader>
         <form className="grid gap-4" onSubmit={submit}>
           <div className="space-y-2">
-            <Label htmlFor="course-bonus-points">Bonus points</Label>
+            <Label htmlFor="course-bonus-points">Bonus (%)</Label>
             <Input
               autoFocus
               id="course-bonus-points"

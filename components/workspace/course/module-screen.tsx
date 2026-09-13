@@ -232,7 +232,7 @@ export function CourseScreen({ moduleId }: { moduleId?: string }) {
         (course && hasOverweightAssignments && showWeightWarning) ? (
           <div className="pointer-events-none fixed left-1/2 top-[4.7rem] z-40 flex w-[calc(100%-2rem)] max-w-[min(100%,44rem)] -translate-x-1/2 flex-col items-center gap-2 sm:top-[5.25rem]">
             {isExperimenting ? (
-              <div className="pointer-events-auto">
+              <div className="pointer-events-auto hidden sm:block">
                 <ExperimentModePill onStopAction={stopExperiment} />
               </div>
             ) : null}
@@ -270,7 +270,16 @@ export function CourseScreen({ moduleId }: { moduleId?: string }) {
           />
         </div>
 
-        <div className="fixed inset-x-0 bottom-0 z-30 border-t border-line/80 bg-surface-footer/88 backdrop-blur-xl md:hidden">
+        <div
+          aria-hidden={isExperimenting}
+          className={cn(
+            "fixed inset-x-0 bottom-0 z-30 border-t border-line/80 bg-surface-footer/88 backdrop-blur-xl transition-[transform,opacity] duration-[600ms] ease-in-out will-change-transform motion-reduce:transition-none md:hidden",
+            isExperimenting
+              ? "pointer-events-none translate-y-full opacity-0"
+              : "translate-y-0 opacity-100",
+          )}
+          inert={isExperimenting}
+        >
           <div className="mx-auto max-w-7xl px-4 pb-4 pt-3">
             <CourseSwitcher
               semesterId={semester.id}

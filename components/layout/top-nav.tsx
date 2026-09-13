@@ -2,7 +2,13 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { DatabaseBackup, Menu, Smartphone } from "lucide-react";
+import {
+  DatabaseBackup,
+  FlaskConical,
+  Menu,
+  Smartphone,
+  Undo2,
+} from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
 import { InstallAppButton } from "@/components/pwa/install-app-button";
@@ -33,7 +39,8 @@ import {
 } from "@/lib/sync/types";
 
 export function TopNav() {
-  const { appState, replaceAppState } = useCourses();
+  const { appState, isExperimenting, replaceAppState, stopExperiment } =
+    useCourses();
   const { isAuthenticated, lastSyncedAt, status } = useSyncConnection();
   const { active, style } = useActiveBackground();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -61,6 +68,12 @@ export function TopNav() {
       );
     }
   }, [headerHeight]);
+
+  useEffect(() => {
+    if (isExperimenting) {
+      setMobileMenuOpen(false);
+    }
+  }, [isExperimenting]);
   const syncLabel = isAuthenticated
     ? getSyncStatusLabel(status)
     : "Connect devices";
@@ -104,62 +117,21 @@ export function TopNav() {
           />
         </div>
       )}
-      <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-2.5 sm:gap-6 sm:px-8 sm:py-3.5">
-        <Link
-          className="flex min-w-0 shrink-0 items-center gap-1 sm:gap-3"
-          href="/"
-          prefetch={false}
+      <div className="relative mx-auto h-14 max-w-7xl overflow-hidden sm:hidden">
+        <div
+          aria-hidden={isExperimenting}
+          className={cn(
+            "absolute inset-0 flex items-center justify-between gap-3 px-4 transition-[transform,opacity] duration-[600ms] ease-in-out motion-reduce:transition-none",
+            isExperimenting
+              ? "pointer-events-none -translate-y-full opacity-0"
+              : "translate-y-0 opacity-100",
+          )}
+          inert={isExperimenting}
         >
-          <div className="relative h-9 w-9 shrink-0 sm:h-10 sm:w-10">
-            <Image
-              alt="GradeLog logo"
-              className="object-contain"
-              fill
-              sizes="40px"
-              src="/logo.svg"
-            />
-          </div>
-          <div className="min-w-0">
-            <p className="truncate text-[0.84rem] font-semibold text-foreground sm:text-[0.92rem]">
-              GradeLog
-            </p>
-            <p className="text-xs hidden sm:block text-ink-muted">
-              Local-first grade tracking.
-            </p>
-          </div>
-        </Link>
-
-        <div className="flex min-w-0 flex-1 items-center justify-end">
-          <nav className="flex items-center gap-1 sm:gap-2">
-            <div className="hidden sm:block">
-              <ThemeSelect />
-            </div>
-            <div className="hidden sm:block">
-              <ConnectDevicesDialog
-                triggerAsChild
-                triggerChildren={
-                  <Button
-                    size={null}
-                    variant="nav"
-                    type="button"
-                    title={syncDetail ?? undefined}
-                  >
-                    <span className="inline-flex items-center gap-2">
-                      {renderSyncIndicator()}
-                      {syncLabel}
-                    </span>
-                  </Button>
-                }
-              />
-            </div>
-            <div className="hidden sm:block">
-              <LocalBackupDialog
-                appState={appState}
-                onRestoreAppStateAction={replaceAppState}
-              />
-            </div>
+          <BrandLink />
+          <nav className="flex items-center gap-1">
             <Link
-              className="px-1 text-sm font-medium text-ink-strong transition hover:text-foreground sm:ml-1.5 sm:rounded-full sm:border sm:border-line sm:bg-surface-muted sm:px-3.5 sm:py-1.5 sm:text-[13px]"
+              className="px-1 text-sm font-medium text-ink-strong transition hover:text-foreground"
               href="/"
               prefetch={false}
             >
@@ -169,7 +141,6 @@ export function TopNav() {
               aria-expanded={mobileMenuOpen}
               aria-haspopup="dialog"
               aria-label="Open menu"
-              className="sm:hidden"
               onClick={() => setMobileMenuOpen(true)}
               size="icon-responsive"
               type="button"
@@ -177,6 +148,74 @@ export function TopNav() {
             >
               <Menu className="h-4.5 w-4.5" />
             </Button>
+          </nav>
+        </div>
+
+        <div
+          aria-hidden={!isExperimenting}
+          aria-live="polite"
+          className={cn(
+            "absolute inset-0 flex items-center justify-between gap-3 px-4 transition-[transform,opacity] duration-[600ms] ease-in-out motion-reduce:transition-none",
+            isExperimenting
+              ? "translate-y-0 opacity-100"
+              : "pointer-events-none translate-y-full opacity-0",
+          )}
+          inert={!isExperimenting}
+        >
+          <div className="flex min-w-0 items-center gap-2 text-experiment-accent-strong">
+            <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-experiment-accent-soft bg-experiment-accent-soft">
+              <FlaskConical className="h-4 w-4" />
+            </span>
+            <span className="truncate text-sm font-semibold">
+              Experiment mode is on
+            </span>
+          </div>
+          <Button
+            className="h-8 shrink-0 rounded-full border border-white/60 bg-white/75 px-3 text-xs font-semibold text-[hsl(277_44%_16%)] shadow-[0_10px_28px_-18px_rgba(38,20,76,0.5),inset_0_1px_0_rgba(255,255,255,0.72)] backdrop-blur-xl hover:bg-white/90 dark:border-white/20 dark:bg-white/[0.18] dark:hover:bg-white/[0.24]"
+            onClick={stopExperiment}
+            size="sm"
+            type="button"
+            variant="ghost"
+          >
+            <Undo2 className="h-3.5 w-3.5" strokeWidth={2.75} />
+            Exit
+          </Button>
+        </div>
+      </div>
+
+      <div className="mx-auto hidden max-w-7xl items-center justify-between gap-6 px-8 py-3.5 sm:flex">
+        <BrandLink />
+
+        <div className="flex min-w-0 flex-1 items-center justify-end">
+          <nav className="flex items-center gap-2">
+            <ThemeSelect />
+            <ConnectDevicesDialog
+              triggerAsChild
+              triggerChildren={
+                <Button
+                  size={null}
+                  variant="nav"
+                  type="button"
+                  title={syncDetail ?? undefined}
+                >
+                  <span className="inline-flex items-center gap-2">
+                    {renderSyncIndicator()}
+                    {syncLabel}
+                  </span>
+                </Button>
+              }
+            />
+            <LocalBackupDialog
+              appState={appState}
+              onRestoreAppStateAction={replaceAppState}
+            />
+            <Link
+              className="ml-1.5 rounded-full border border-line bg-surface-muted px-3.5 py-1.5 text-[13px] font-medium text-ink-strong transition hover:text-foreground"
+              href="/"
+              prefetch={false}
+            >
+              Semesters
+            </Link>
           </nav>
         </div>
       </div>
@@ -238,5 +277,33 @@ export function TopNav() {
         </DialogContent>
       </Dialog>
     </header>
+  );
+}
+
+function BrandLink() {
+  return (
+    <Link
+      className="flex min-w-0 shrink-0 items-center gap-1 sm:gap-3"
+      href="/"
+      prefetch={false}
+    >
+      <div className="relative h-9 w-9 shrink-0 sm:h-10 sm:w-10">
+        <Image
+          alt="GradeLog logo"
+          className="object-contain"
+          fill
+          sizes="40px"
+          src="/logo.svg"
+        />
+      </div>
+      <div className="min-w-0">
+        <p className="truncate text-[0.84rem] font-semibold text-foreground sm:text-[0.92rem]">
+          GradeLog
+        </p>
+        <p className="hidden text-xs text-ink-muted sm:block">
+          Local-first grade tracking.
+        </p>
+      </div>
+    </Link>
   );
 }

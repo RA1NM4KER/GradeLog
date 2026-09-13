@@ -41,14 +41,44 @@ export function CourseHeader({
   return (
     <div className="flex items-start justify-between gap-3">
       <div className="min-w-0">
+        <div className="relative h-5 overflow-hidden sm:hidden">
+          <Button
+            aria-hidden={isExperimenting}
+            className={cn(
+              "absolute inset-y-0 left-0 h-auto gap-1.5 p-0 text-[0.82rem] text-ink-muted transition-[transform,opacity] duration-[600ms] ease-in-out hover:bg-transparent hover:text-foreground motion-reduce:transition-none",
+              isExperimenting
+                ? "pointer-events-none -translate-x-full opacity-0"
+                : "translate-x-0 opacity-100",
+            )}
+            inert={isExperimenting}
+            onClick={() => navigateCourses(getSemesterCoursesUrl(semesterId))}
+            size={null}
+            type="button"
+            variant="ghost"
+          >
+            <ArrowLeft className="h-3.5 w-3.5" />
+            {semesterName}
+          </Button>
+          <p
+            aria-hidden={!isExperimenting}
+            className={cn(
+              "absolute inset-y-0 left-0 flex items-center truncate text-[0.72rem] font-medium text-experiment-accent-muted transition-[transform,opacity] duration-[600ms] ease-in-out motion-reduce:transition-none",
+              isExperimenting
+                ? "translate-x-0 opacity-100"
+                : "translate-x-full opacity-0",
+            )}
+          >
+            Changes won&apos;t affect your real grades
+          </p>
+        </div>
         <Button
-          className="h-auto gap-1.5 p-0 text-[0.82rem] text-ink-muted hover:bg-transparent hover:text-foreground sm:gap-2 sm:text-sm"
+          className="hidden h-auto gap-2 p-0 text-sm text-ink-muted hover:bg-transparent hover:text-foreground sm:inline-flex"
           onClick={() => navigateCourses(getSemesterCoursesUrl(semesterId))}
           size={null}
           type="button"
           variant="ghost"
         >
-          <ArrowLeft className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+          <ArrowLeft className="h-4 w-4" />
           {semesterName}
         </Button>
         <div className="mt-1 flex items-start gap-1.5 sm:mt-1.5 sm:items-center sm:gap-2">

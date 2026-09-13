@@ -1,7 +1,13 @@
 // @vitest-environment jsdom
 
 import React from "react";
-import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import {
+  cleanup,
+  fireEvent,
+  render,
+  screen,
+  within,
+} from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 vi.mock("@/components/theme/theme-provider", () => ({
@@ -88,9 +94,24 @@ describe("course weighting UI", () => {
       />,
     );
 
+    expect(screen.getAllByText("Weighting").length).toBeGreaterThan(0);
     expect(screen.getAllByText("Weight").length).toBeGreaterThan(0);
     expect(screen.queryByText("155 pts total")).toBeNull();
-    expect(screen.getAllByText("+0 pts").length).toBeGreaterThan(0);
+    expect(
+      within(
+        screen.getByRole("toolbar", {
+          name: "Assessment actions and weighting",
+        }),
+      ).queryByText(/pts total/),
+    ).toBeNull();
+    expect(
+      within(
+        screen.getByRole("toolbar", {
+          name: "Assessment actions and weighting",
+        }),
+      ).queryByRole("button", { name: "Add" }),
+    ).toBeNull();
+    expect(screen.getAllByText("+0%").length).toBeGreaterThan(0);
   });
 
   it("shows point labels, the dynamic total, and a decimal bonus", () => {
@@ -102,19 +123,42 @@ describe("course weighting UI", () => {
       />,
     );
 
-    expect(screen.getAllByText("Points").length).toBeGreaterThan(0);
-    expect(screen.getAllByText("155 pts total").length).toBeGreaterThan(0);
-    expect(screen.getAllByText("+2.5 pts").length).toBeGreaterThan(0);
+    expect(screen.getAllByText("Weighting").length).toBeGreaterThan(0);
+    const desktopWeightHeading = screen.getByText("Weight pts");
+    expect(desktopWeightHeading.closest("th")?.className).toContain(
+      "whitespace-nowrap",
+    );
+    expect(desktopWeightHeading.closest("th")?.className).toContain("w-40");
+    const weightingTotals = screen.getAllByText("155 pts total");
+    expect(weightingTotals.length).toBe(1);
+    const mobileInlineTotal = screen.getByText(/· 155 pts/);
+    expect(mobileInlineTotal.parentElement?.textContent).toBe(
+      "Weight · 155 pts",
+    );
+    expect(
+      within(
+        screen.getByRole("toolbar", {
+          name: "Assessment actions and weighting",
+        }),
+      ).queryByText("155 pts total"),
+    ).toBeNull();
+    expect(screen.getAllByText("+2.5%").length).toBeGreaterThan(0);
 
     fireEvent.click(screen.getAllByRole("button", { name: "PTS" })[0]!);
     expect(tableCallbacks.onUpdateCourse).toHaveBeenCalledWith("course-1", {
       gradingScale: "points",
     });
 
-    fireEvent.click(
-      screen.getAllByRole("button", { name: "Edit bonus points" })[0]!,
-    );
-    fireEvent.change(screen.getByRole("textbox", { name: "Bonus points" }), {
+    fireEvent.click(screen.getAllByRole("button", { name: "Edit bonus" })[0]!);
+    expect(
+      screen.getByRole("heading", { name: "Bonus to final grade" }),
+    ).toBeTruthy();
+    expect(
+      screen.getByText(
+        "Adds percentage points to your final course grade after weighting.",
+      ),
+    ).toBeTruthy();
+    fireEvent.change(screen.getByRole("textbox", { name: "Bonus (%)" }), {
       target: { value: "3.25" },
     });
     fireEvent.click(screen.getByRole("button", { name: "Save bonus" }));
@@ -135,7 +179,15 @@ describe("course weighting UI", () => {
       />,
     );
 
-    fireEvent.change(screen.getByRole("textbox", { name: "Bonus points" }), {
+    expect(
+      screen.getByRole("heading", { name: "Bonus to final grade" }),
+    ).toBeTruthy();
+    expect(
+      screen.getByText(
+        "Adds percentage points to your final course grade after weighting.",
+      ),
+    ).toBeTruthy();
+    fireEvent.change(screen.getByRole("textbox", { name: "Bonus (%)" }), {
       target: { value: "2.5" },
     });
     fireEvent.click(screen.getByRole("button", { name: "Save bonus" }));
@@ -149,11 +201,55 @@ describe("course weighting UI", () => {
         open
       />,
     );
-    fireEvent.change(screen.getByRole("textbox", { name: "Bonus points" }), {
+    fireEvent.change(screen.getByRole("textbox", { name: "Bonus (%)" }), {
       target: { value: "" },
     });
     fireEvent.click(screen.getByRole("button", { name: "Save bonus" }));
     expect(onSave).toHaveBeenLastCalledWith(0);
+  });
+
+  it.each([
+    ["New Assignment", "Add assignment", "Save assignment"],
+    ["New Category", "Add category", "Create category"],
+  ])("opens %s in its matching composer mode", (trigger, heading, submit) => {
+    render(
+      <AssessmentTable
+        {...tableCallbacks}
+        isExperimenting={false}
+        module={makeCourse("percentage")}
+      />,
+    );
+
+    const footerTrigger = screen
+      .getAllByRole("button", { name: trigger })
+      .find((button) => button.closest("table"));
+
+    expect(footerTrigger).toBeTruthy();
+    expect(footerTrigger?.closest("td")?.className).toContain("lg:p-0");
+    fireEvent.click(footerTrigger!);
+    expect(screen.getByRole("heading", { name: heading })).toBeTruthy();
+    expect(screen.getByRole("button", { name: submit })).toBeTruthy();
+  });
+
+  it("opens the mobile category footer action in grouped mode", () => {
+    render(
+      <AssessmentTable
+        {...tableCallbacks}
+        isExperimenting={false}
+        module={makeCourse("percentage")}
+      />,
+    );
+
+    const mobileCategoryAction = screen
+      .getAllByRole("button", { name: "New Category" })
+      .find((button) => !button.closest("table"));
+
+    expect(mobileCategoryAction).toBeTruthy();
+    fireEvent.click(mobileCategoryAction!);
+    expect(screen.getByRole("heading", { name: "Add category" })).toBeTruthy();
+    expect(
+      screen.getByRole("button", { name: "Create category" }),
+    ).toBeTruthy();
   });
 
   it("passes a normalized points-mode ceiling to the course overview", () => {

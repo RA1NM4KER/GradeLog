@@ -83,33 +83,32 @@ export function CourseListItem({
           </div>
         </div>
 
-        <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
+        <div className="col-span-2 flex min-w-0 flex-nowrap items-center gap-1 sm:gap-1.5">
           <span
             className={cn(
-              "inline-flex items-center gap-1.5 rounded-full px-2 py-1 text-[9px] font-medium sm:gap-2 sm:px-2.5 sm:text-[10px] dark:!border dark:!border-white/10 dark:!bg-surface-muted dark:!text-foreground",
+              "inline-flex min-w-0 items-center gap-1 rounded-full px-1.5 py-1 text-[8px] font-medium sm:gap-1.5 sm:px-2 sm:text-[9px] dark:!border dark:!border-white/10 dark:!bg-surface-muted dark:!text-foreground",
               theme.chip,
             )}
           >
             {hasAssignments && remainingWeight === 0 ? (
-              <CheckCircle2 className="h-2.5 w-2.5 text-foreground dark:text-foreground sm:h-3 sm:w-3" />
+              <CheckCircle2 className="h-2.5 w-2.5 shrink-0 text-foreground dark:text-foreground sm:h-3 sm:w-3" />
             ) : (
-              <CircleDashed className="h-2.5 w-2.5 text-ink-muted dark:text-ink-subtle sm:h-3 sm:w-3" />
+              <CircleDashed className="h-2.5 w-2.5 shrink-0 text-ink-muted dark:text-ink-subtle sm:h-3 sm:w-3" />
             )}
-            {!hasAssignments
-              ? "Not started"
-              : remainingWeight === 0
-                ? "Complete"
-                : formatCourseRemainingWeight(course, remainingWeight)}
+            <span className="truncate whitespace-nowrap">
+              {!hasAssignments
+                ? "Not started"
+                : remainingWeight === 0
+                  ? "Complete"
+                  : formatCourseRemainingWeight(course, remainingWeight)}
+            </span>
           </span>
-          <span className="rounded-full bg-surface-muted px-2 py-1 text-[9px] font-medium text-ink-soft sm:px-2.5 sm:text-[10px]">
+          <span className="shrink-0 whitespace-nowrap rounded-full bg-surface-muted px-1.5 py-1 text-[8px] font-medium text-ink-soft sm:px-2 sm:text-[9px]">
             {getAssessmentPace(course)}
           </span>
-        </div>
-
-        <div className="flex min-w-[96px] justify-end sm:min-w-[110px]">
           <span
             className={cn(
-              "rounded-full px-2.5 py-1 text-[9px] font-medium sm:text-[10px]",
+              "ml-auto shrink-0 whitespace-nowrap rounded-full px-2 py-1 text-[8px] font-medium sm:text-[9px]",
               isActive
                 ? "bg-surface text-foreground"
                 : "bg-surface-muted text-ink-soft",

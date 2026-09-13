@@ -88,7 +88,7 @@ export function SemesterScreen() {
     <div className="mx-auto max-w-7xl overflow-auto px-4 py-4 sm:px-8 sm:py-6 ">
       {isExperimenting ? (
         <div className="pointer-events-none fixed left-1/2 top-[4.7rem] z-40 w-[calc(100%-2rem)] max-w-max -translate-x-1/2 sm:top-[5.25rem]">
-          <div className="pointer-events-auto">
+          <div className="pointer-events-auto hidden sm:block">
             <ExperimentModePill onStopAction={stopExperiment} />
           </div>
         </div>

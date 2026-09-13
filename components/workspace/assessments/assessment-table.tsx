@@ -12,6 +12,7 @@ import {
   Check,
   FlaskConical,
   GripVertical,
+  List,
   Pencil,
   Plus,
   X,
@@ -138,13 +139,13 @@ export function AssessmentTable({
                     <span className="sr-only">Experiment mode</span>
                   </div>
                 </WorkspaceTableHeaderCell>
-                <WorkspaceTableHeaderCell className="w-[40%] min-[1024px]:max-[1120px]:px-2">
+                <WorkspaceTableHeaderCell className="min-[1024px]:max-[1120px]:px-2">
                   Assignment
                 </WorkspaceTableHeaderCell>
                 <WorkspaceTableHeaderCell className="w-[20%] min-[1024px]:max-[1120px]:px-2">
                   Due date
                 </WorkspaceTableHeaderCell>
-                <WorkspaceTableHeaderCell className="w-[14%] min-[1024px]:max-[1120px]:px-2">
+                <WorkspaceTableHeaderCell className="w-40 whitespace-nowrap min-[1024px]:max-[1120px]:px-2">
                   {weightColumnLabel}
                 </WorkspaceTableHeaderCell>
                 <WorkspaceTableHeaderCell className="w-[18%] min-[1024px]:max-[1120px]:px-2">
@@ -205,8 +206,12 @@ export function AssessmentTable({
 
       <div className="grid max-h-full gap-3 overflow-auto md:hidden">
         <Card className="overflow-hidden rounded-[22px] bg-surface-soft">
-          <div className="flex flex-wrap items-center justify-between gap-2.5 px-4 py-4">
-            <div className="flex items-center gap-2">
+          <div
+            aria-label="Assessment actions and weighting"
+            className="flex flex-nowrap items-center justify-between gap-2.5 px-4 py-4"
+            role="toolbar"
+          >
+            <div className="flex shrink-0 items-center gap-2">
               <Button
                 aria-label={
                   isExperimenting
@@ -229,27 +234,8 @@ export function AssessmentTable({
                 <FlaskConical className="-scale-x-100 h-3.5 w-3.5" />
                 What-if
               </Button>
-              <AssessmentComposerDialog
-                module={module}
-                onSaveAssessment={onSaveAssessment}
-                triggerAsChild
-                triggerChildren={
-                  <button
-                    className="inline-flex h-9 items-center justify-center gap-1.5 rounded-full border border-line bg-surface-soft px-3.5 text-[0.82rem] font-semibold text-foreground transition hover:bg-surface-muted"
-                    type="button"
-                  >
-                    <Plus className="h-3.5 w-3.5" />
-                    Add
-                  </button>
-                }
-              />
             </div>
-            <div className="ml-auto flex items-center gap-2.5">
-              {weightingTotalLabel ? (
-                <span className="text-[0.7rem] text-ink-subtle">
-                  {weightingTotalLabel}
-                </span>
-              ) : null}
+            <div className="ml-auto flex shrink-0 items-center">
               <WeightingScaleControl
                 onChange={(gradingScale) =>
                   onUpdateCourse(module.id, { gradingScale })
@@ -268,7 +254,14 @@ export function AssessmentTable({
             )}
           >
             <span>Assignment</span>
-            <span className="text-center">{weightColumnLabel}</span>
+            <span className="whitespace-nowrap text-center">
+              {module.gradingScale === "points" ? "Weight" : weightColumnLabel}
+              {weightingTotalLabel ? (
+                <span className="inline text-[0.6rem] font-medium tracking-normal opacity-70">
+                  {` · ${weightingTotalLabel.replace(" total", "")}`}
+                </span>
+              ) : null}
+            </span>
             <span className="text-right">Grade</span>
           </div>
 
@@ -291,20 +284,10 @@ export function AssessmentTable({
             />
           </div>
 
-          <div className="border-t border-line p-4">
-            <AssessmentComposerDialog
+          <div className="border-t border-line">
+            <AssessmentFooterActions
               module={module}
               onSaveAssessment={onSaveAssessment}
-              triggerAsChild
-              triggerChildren={
-                <button
-                  className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-full border border-dashed border-line-strong bg-surface-soft text-sm font-medium text-ink-soft transition hover:border-line-strong hover:text-foreground"
-                  type="button"
-                >
-                  <Plus className="h-4 w-4" />
-                  New assignment
-                </button>
-              }
             />
           </div>
         </Card>
@@ -509,22 +492,26 @@ function DesktopBonusRow({
   onEdit: () => void;
 }) {
   return (
-    <WorkspaceTableRow className="bg-surface-muted/45 text-ink-soft">
-      <WorkspaceTableCell className="px-1 py-2 lg:px-2" />
-      <WorkspaceTableCell className="p-0" colSpan={5}>
+    <WorkspaceTableRow className="bg-surface-muted/20 text-ink-soft">
+      <WorkspaceTableCell className="px-1 py-2 lg:px-2 lg:py-2" />
+      <WorkspaceTableCell className="py-2 lg:py-2" colSpan={3}>
+        <span className="text-xs font-medium uppercase tracking-[0.08em] text-ink-subtle">
+          Bonus
+        </span>
+      </WorkspaceTableCell>
+      <WorkspaceTableCell className="py-2 lg:py-2">
+        <span className="text-sm font-semibold text-foreground">
+          {formatCourseBonusPoints(bonusPoints)}
+        </span>
+      </WorkspaceTableCell>
+      <WorkspaceTableCell className="px-1 py-1 lg:px-2 lg:py-1">
         <button
-          aria-label="Edit bonus points"
-          className="flex w-full items-center justify-between gap-3 px-3 py-3 text-left transition hover:bg-surface-muted/70 lg:px-5"
+          aria-label="Edit bonus"
+          className="inline-flex h-8 w-8 items-center justify-center rounded-full text-ink-subtle transition hover:bg-surface-muted hover:text-foreground"
           onClick={onEdit}
           type="button"
         >
-          <span className="text-sm font-medium text-ink-soft">Bonus</span>
-          <span className="flex items-center gap-2.5">
-            <span className="text-sm font-semibold text-foreground">
-              {formatCourseBonusPoints(bonusPoints)}
-            </span>
-            <Pencil className="h-3.5 w-3.5 text-ink-subtle" />
-          </span>
+          <Pencil className="h-3.5 w-3.5" />
         </button>
       </WorkspaceTableCell>
     </WorkspaceTableRow>
@@ -540,7 +527,7 @@ function MobileBonusRow({
 }) {
   return (
     <button
-      aria-label="Edit bonus points"
+      aria-label="Edit bonus"
       className="flex w-full items-center justify-between gap-3 border-t border-line bg-surface-muted/45 px-4 py-3 text-left transition hover:bg-surface-muted/70"
       onClick={onEdit}
       type="button"
@@ -564,30 +551,57 @@ function AddAssessmentRow({
   onSaveAssessment: (moduleId: string, assessment: Assessment) => void;
 }) {
   return (
-    <WorkspaceTableRow className="bg-surface-muted/90">
-      <WorkspaceTableCell className="px-1 py-2 text-center lg:px-2 min-[1024px]:max-[1120px]:px-0.5">
-        <Plus className="mx-auto h-3.5 w-3.5 text-ink-soft" />
-      </WorkspaceTableCell>
-      <WorkspaceTableCell
-        className="px-3 py-2 lg:px-5 min-[1024px]:max-[1120px]:px-2"
-        colSpan={4}
-      >
-        <AssessmentComposerDialog
+    <WorkspaceTableRow className="bg-surface-soft">
+      <WorkspaceTableCell className="p-0 lg:p-0" colSpan={6}>
+        <AssessmentFooterActions
           module={module}
           onSaveAssessment={onSaveAssessment}
-          triggerAsChild
-          triggerChildren={
-            <button
-              className="flex w-full items-center text-left text-xs font-semibold uppercase tracking-[0.14em] text-ink-soft transition hover:text-foreground"
-              type="button"
-            >
-              Add assignment
-            </button>
-          }
         />
       </WorkspaceTableCell>
-      <WorkspaceTableCell />
     </WorkspaceTableRow>
+  );
+}
+
+function AssessmentFooterActions({
+  module,
+  onSaveAssessment,
+}: {
+  module: Module;
+  onSaveAssessment: (moduleId: string, assessment: Assessment) => void;
+}) {
+  return (
+    <div className="grid grid-cols-2">
+      <AssessmentComposerDialog
+        initialMode="single"
+        module={module}
+        onSaveAssessment={onSaveAssessment}
+        triggerAsChild
+        triggerChildren={
+          <button
+            className="inline-flex h-9 w-full items-center justify-center gap-2 border-r border-line/50 text-sm font-medium text-ink-soft transition hover:bg-surface-muted/55 hover:text-foreground"
+            type="button"
+          >
+            <Plus className="h-4 w-4" />
+            New Assignment
+          </button>
+        }
+      />
+      <AssessmentComposerDialog
+        initialMode="group"
+        module={module}
+        onSaveAssessment={onSaveAssessment}
+        triggerAsChild
+        triggerChildren={
+          <button
+            className="inline-flex h-9 w-full items-center justify-center gap-2 text-sm font-medium text-ink-soft transition hover:bg-surface-muted/55 hover:text-foreground"
+            type="button"
+          >
+            <List className="h-4 w-4" />
+            New Category
+          </button>
+        }
+      />
+    </div>
   );
 }
 

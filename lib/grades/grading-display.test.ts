@@ -52,8 +52,8 @@ describe("grading display", () => {
   it("uses point labels and accepts totals over 100", () => {
     const course = makeCourse("points");
 
-    expect(getAssessmentWeightColumnLabel(course)).toBe("Points");
-    expect(getAssessmentWeightInputLabel(course)).toBe("Points");
+    expect(getAssessmentWeightColumnLabel(course)).toBe("Weight pts");
+    expect(getAssessmentWeightInputLabel(course)).toBe("Weight points");
     expect(getCourseWeightingTotalLabel(course)).toBe("155 pts total");
     expect(shouldShowCourseOverweightWarning(course)).toBe(false);
     expect(formatCourseRemainingWeight(course, 55)).toBe(
@@ -62,7 +62,7 @@ describe("grading display", () => {
   });
 
   it("formats zero and decimal bonus values", () => {
-    expect(formatCourseBonusPoints(0)).toBe("+0 pts");
-    expect(formatCourseBonusPoints(2.5)).toBe("+2.5 pts");
+    expect(formatCourseBonusPoints(0)).toBe("+0%");
+    expect(formatCourseBonusPoints(2.5)).toBe("+2.5%");
   });
 });
