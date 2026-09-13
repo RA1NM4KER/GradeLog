@@ -163,7 +163,10 @@ export function TopNav() {
           inert={!isExperimenting}
         >
           <div className="flex min-w-0 items-center gap-2 text-experiment-accent-strong">
-            <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-experiment-accent-soft bg-experiment-accent-soft">
+            <span className="relative flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-experiment-accent-soft bg-experiment-accent-soft">
+              <span className="pointer-events-none absolute -top-0.5 left-1/2 h-1.5 w-1.5 -translate-x-[7px] animate-ping rounded-full bg-experiment-ping-1 [animation-duration:1.8s]" />
+              <span className="pointer-events-none absolute -top-1.5 left-1/2 h-1 w-1 translate-x-[2px] animate-ping rounded-full bg-experiment-ping-2 [animation-delay:300ms] [animation-duration:2.1s]" />
+              <span className="pointer-events-none absolute top-0 left-1/2 h-1 w-1 -translate-x-[2px] animate-ping rounded-full bg-experiment-ping-3 [animation-delay:650ms] [animation-duration:1.6s]" />
               <FlaskConical className="h-4 w-4" />
             </span>
             <span className="truncate text-sm font-semibold">
