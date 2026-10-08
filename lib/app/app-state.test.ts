@@ -126,10 +126,31 @@ describe("app-state", () => {
     const migrated = migrateAppState({
       version: 2,
       selectedSemesterId: "semester-1",
-      semesters: [{ id: "semester-1", name: "Semester", periodLabel: "", courses: [{ id: "course-1", code: "C", name: "Course", instructor: "", credits: 1, accent: "teal", gradeBands: [], assessments: [] }] }],
+      semesters: [
+        {
+          id: "semester-1",
+          name: "Semester",
+          periodLabel: "",
+          courses: [
+            {
+              id: "course-1",
+              code: "C",
+              name: "Course",
+              instructor: "",
+              credits: 1,
+              accent: "teal",
+              gradeBands: [],
+              assessments: [],
+            },
+          ],
+        },
+      ],
     });
     expect(migrated.version).toBe(3);
-    expect(migrated.semesters[0]!.courses[0]).toMatchObject({ gradingScale: "percentage", bonusPoints: 0 });
+    expect(migrated.semesters[0]!.courses[0]).toMatchObject({
+      gradingScale: "percentage",
+      bonusPoints: 0,
+    });
   });
 
   it("serializes persisted state consistently", () => {

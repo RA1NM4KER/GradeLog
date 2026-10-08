@@ -275,7 +275,8 @@ function migrateVersion2AppState(
       const course = isRecord(rawCourse) ? rawCourse : {};
       return {
         ...course,
-        gradingScale: course.gradingScale === "points" ? "points" : "percentage",
+        gradingScale:
+          course.gradingScale === "points" ? "points" : "percentage",
         bonusPoints: Math.max(getNumber(course.bonusPoints, 0), 0),
       };
     });
