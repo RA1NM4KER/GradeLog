@@ -2,6 +2,16 @@
 
 [![CI](https://github.com/RA1NM4KER/GradeLog/actions/workflows/ci.yml/badge.svg)](https://github.com/RA1NM4KER/GradeLog/actions/workflows/ci.yml)
 
+**A private grade tracker for students. No account, works offline, your marks stay on your device.**
+
+[**Open GradeLog →**](https://www.gradelog.app)
+
+<p align="center"><img src="docs/assets/module.png" alt="GradeLog module view showing assignments, current standing and the average needed for each grade" width="820"></p>
+
+- **Know what you need** — see the average you must score on the rest of a module to reach an A, B, C or D, plus a what-if mode.
+- **Private by default** — no sign up, data kept in your browser, optional sync across your devices.
+- **Works everywhere** — web app, installable offline PWA, and Android/iOS shells via Capacitor.
+
 GradeLog is a simple grade tracker that keeps your marks on your device.
 
 No accounts required. No cloud by default.
